@@ -1,54 +1,51 @@
-var connectionState = {
-	notConnected: "not connected",
-	connecting: "connecting",
-	connected: "connected"
-};
+#!/usr/bin/env node
 
-var state = connectionState.notConnected;
+var connectionPool = [];
 
-var connect = function() {
-	url = "ws://localhost:60600";
-	
-	if ("WebSocket" in window)
-	{
-		ws = new WebSocket(url);
-	}
-	else if ("MozWebSocket" in window)
-	{
-		ws = new MozWebSocket(url);
-	}
-	else
-	{
-		alert('This Browser does not support WebSockets');
-		autoConnect = false;
-		return;
-	}
+var WebSocketServer = require('websocket').server;
+var http = require('http');
 
-	state = connectionState.connecting;
-	document.getElementById('status').innerHTML = 'connecting'
+var server = http.createServer(function(request, response) {
+	console.log((new Date()) + ' Received request for ' + request.url);
+	response.writeHead(404);
+	response.write('nothing to see here');
+	response.end();
+});
 
-	ws.onopen = function(e)
-	{
-		state = connectionState.connected;
-	};
-}
+server.listen(60600, function() {
+	console.log((new Date()) + ' Server is listening on port 60600');
+});
 
-window.onload = function() {
-	window.setTimeout(function() {
-		if (state === connectionState.notConnected) {
-			connect();
-		}
-	}, 1000);
+wsServer = new WebSocketServer({
+	httpServer: server,
+	autoAcceptConnections: false
+});
 
-	window.setTimeout(function() {
-		if (state === connectionState.connected) {
-			ws.send(JSON.stringify({
-				time: performance.now(),
+wsServer.on('request', function(request) {
+	var connection = request.accept('', request.origin);
+	connectionPool.push(connection);
+	console.log('connection added. Pool length: ' + connectionPool.length);
+	// connection.sendUTF('test');
+
+	// connection.on('message', function(message) {
+ //        if (message.type === 'utf8') {
+ //            console.log('Received Message: ' + message.utf8Data);
+ //            connection.sendUTF(message.utf8Data);
+ //        }
+ //        else if (message.type === 'binary') {
+ //            console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+ //            connection.sendBytes(message.binaryData);
+ //        }
+});
+
+setInterval(function() {
+	for (var i = 0; i < connectionPool.length; ++i) {
+		connectionPool[i].sendUTF(JSON.stringify({
+				time: new Date().getMilliseconds(),
 				position: {
-					x: Math.sin(performance.now() / 1000),
-					y: Math.cos(performance.now() / 1000)
+					x: Math.sin(new Date().getMilliseconds() / 1000),
+					y: Math.cos(new Date().getMilliseconds() / 1000)
 				}
-			}))
-		}
-	})
-}
+			}));
+	}
+}, 100);
