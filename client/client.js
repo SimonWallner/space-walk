@@ -4,6 +4,7 @@ var last = null;
 var svg;
 var rxStatus = false;
 var rx = null;
+var counter = null;
 
 var connectionState = {
 	notConnected: "not connected",
@@ -48,6 +49,8 @@ var connect = function() {
 		} else {
 			rx.attr('class', 'on');
 		}
+		counter.hit();
+		counter.print();
 	};
 
 	ws.onerror = function(event) {
@@ -58,17 +61,44 @@ var connect = function() {
 }
 
 var update = function() {
-	if (last) {
-		svg
+	// if (last) {
+	// 	svg
+	// 		.append('line')
+	// 			.attr('x1', last.position.x * 200)
+	// 			.attr('x2', current.position.x * 200)
+	// 			.attr('y1', last.position.y * 200)
+	// 			.attr('y2', current.position.y * 200);	
+	// }
+	svg.selectAll('line').data(data)
+		.enter()
 			.append('line')
-				.attr('x1', last.position.x * 200)
-				.attr('x2', current.position.x * 200)
-				.attr('y1', last.position.y * 200)
-				.attr('y2', current.position.y * 200);	
-	}
+				.attr('x1', function(d) {return d.position.x * 200})
+				.attr('x2', function(d, i) {return data[i-1] && data[i-1].position.x* 200})
+				.attr('y1', function(d) {return d.position.y* 200})
+				.attr('y2', function(d, i) {return data[i-1] && data[i-1].position.y* 200});	
+
 }
 
 window.onload = function() {
+
+	var Counter = function() {
+		var count = 0;
+		var start = performance.now();
+
+		var totalSpan = document.getElementById('total');
+		var rateSpan = document.getElementById('rate');
+
+		this.print = function() {
+			totalSpan.innerHTML = count;
+			rateSpan.innerHTML = (count / ((performance.now() - start) / 1000)).toFixed(3);
+		}
+
+		this.hit = function() {
+			count++;
+		}
+	}
+
+	counter = new Counter();
 
 	rx = d3.select('#rx');
 	rx.attr('class', 'off');

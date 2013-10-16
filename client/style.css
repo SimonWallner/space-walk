@@ -1,10 +1,12 @@
-#rx {
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
+#stats {
   position: absolute;
   top: 5px;
   right: 5px; }
+
+#rx {
+  width: 10px;
+  height: 10px;
+  border-radius: 10px; }
 
 .on {
   background-color: #17E528; }

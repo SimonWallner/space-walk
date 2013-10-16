@@ -1,12 +1,15 @@
 $backgroundColor: #eee;
 
+#stats {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
 #rx {
 	width: 10px;
 	height: 10px;
 	border-radius: 10px;
-	position: absolute;
-	top: 5px;
-	right: 5px;
 }
 
 .on {

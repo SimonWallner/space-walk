@@ -48,4 +48,4 @@ setInterval(function() {
 				}
 			}));
 	}
-}, 77);
+}, 7);
