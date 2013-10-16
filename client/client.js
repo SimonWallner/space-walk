@@ -1,3 +1,6 @@
+var data = [];
+var svg;
+
 var connectionState = {
 	notConnected: "not connected",
 	connecting: "connecting",
@@ -29,17 +32,30 @@ var connect = function() {
 	};
 
 	ws.onmessage = function(message) {
-		console.log(message.data);
+		data.push(JSON.parse(message.data));
+		update();
 	};
 
 	ws.onerror = function(event) {
-		console.log(event);
+		// console.log(event);
 		state = connectionState.notConnected;
 		document.getElementById('status').innerHTML = 'disconnected';
 	};
 }
 
+var update = function() {
+	svg.selectAll('circle').data(data)
+		.enter()
+			.append('circle')
+				.attr('cx', function(d) {return d.position.x * 100;})
+				.attr('cy', function(d) {return d.position.y * 100;})
+				.attr('r', 5);
+}
+
 window.onload = function() {
+
+	svg = d3.selectAll('#map');
+
 	window.setInterval(function() {
 		if (state === connectionState.notConnected) {
 			connect();
