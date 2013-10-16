@@ -1,5 +1,9 @@
 var data = [];
+var current = null;
+var last = null;
 var svg;
+var rxStatus = false;
+var rx = null;
 
 var connectionState = {
 	notConnected: "not connected",
@@ -33,7 +37,17 @@ var connect = function() {
 
 	ws.onmessage = function(message) {
 		data.push(JSON.parse(message.data));
+		last = current;
+		current = JSON.parse(message.data);
+
 		update();
+
+		rxStatus = !rxStatus;
+		if (rxStatus) {
+			rx.attr('class', 'off');
+		} else {
+			rx.attr('class', 'on');
+		}
 	};
 
 	ws.onerror = function(event) {
@@ -44,15 +58,20 @@ var connect = function() {
 }
 
 var update = function() {
-	svg.selectAll('circle').data(data)
-		.enter()
-			.append('circle')
-				.attr('cx', function(d) {return d.position.x * 100;})
-				.attr('cy', function(d) {return d.position.y * 100;})
-				.attr('r', 5);
+	if (last) {
+		svg
+			.append('line')
+				.attr('x1', last.position.x * 200)
+				.attr('x2', current.position.x * 200)
+				.attr('y1', last.position.y * 200)
+				.attr('y2', current.position.y * 200);	
+	}
 }
 
 window.onload = function() {
+
+	rx = d3.select('#rx');
+	rx.attr('class', 'off');
 
 	svg = d3.selectAll('#map');
 

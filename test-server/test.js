@@ -43,9 +43,9 @@ setInterval(function() {
 		connectionPool[i].sendUTF(JSON.stringify({
 				time: new Date().getMilliseconds(),
 				position: {
-					x: Math.sin(new Date().getMilliseconds() / 1000),
-					y: Math.cos(new Date().getMilliseconds() / 1000)
+					x: Math.random(new Date().getMilliseconds()),
+					y: Math.random(new Date().getMilliseconds())
 				}
 			}));
 	}
-}, 777);
+}, 77);
