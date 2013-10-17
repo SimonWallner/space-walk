@@ -38,14 +38,48 @@ wsServer.on('request', function(request) {
  //        }
 });
 
+var ConstrainedRandomWalk = function() {
+	var position = 0;
+	var speed = 0.1;
+	
+	this.get = function() {
+		position = (position + (Math.random() * 2 - 1) * speed);
+
+		if (position > 1) {
+			position = 1 - (position - 1);
+		} else if (position < -1) {
+			position = -1 - (position + 1);
+		}
+
+		return position;
+	}
+}
+
+var RandomWalk = function() {
+	var lastPosition = {x: 0, y: 0};
+	
+	var randomX = new ConstrainedRandomWalk();
+	var randomY = new ConstrainedRandomWalk();
+
+	this.getWaypoint = function() {
+		lastPosition.x += randomX.get();
+		lastPosition.y += randomY.get();
+		return lastPosition;
+	}
+}
+
+// var foo = new ConstrainedRandomWalk();
+// setInterval(function() {
+// 	console.log(foo.get());
+// }, 100)
+
+var randomWalk = new RandomWalk();
+
 setInterval(function() {
 	for (var i = 0; i < connectionPool.length; ++i) {
 		connectionPool[i].sendUTF(JSON.stringify({
 				time: new Date().getMilliseconds(),
-				position: {
-					x: Math.random(new Date().getMilliseconds()),
-					y: Math.random(new Date().getMilliseconds())
-				}
+				position: randomWalk.getWaypoint()
 			}));
 	}
 }, 7);
