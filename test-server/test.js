@@ -44,13 +44,6 @@ var ConstrainedRandomWalk = function() {
 	
 	this.get = function() {
 		position = (position + (Math.random() * 2 - 1) * speed);
-
-		if (position > 1) {
-			position = 1 - (position - 1);
-		} else if (position < -1) {
-			position = -1 - (position + 1);
-		}
-
 		return position;
 	}
 }
@@ -58,12 +51,12 @@ var ConstrainedRandomWalk = function() {
 var RandomWalk = function() {
 	var lastPosition = {x: 0, y: 0};
 	
-	var randomX = new ConstrainedRandomWalk();
-	var randomY = new ConstrainedRandomWalk();
+	var direction = new ConstrainedRandomWalk();
 
 	this.getWaypoint = function() {
-		lastPosition.x += randomX.get();
-		lastPosition.y += randomY.get();
+		var newDir = direction.get();
+		lastPosition.x += Math.cos(newDir);
+		lastPosition.y += Math.sin(newDir);
 		return lastPosition;
 	}
 }

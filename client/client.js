@@ -7,6 +7,8 @@ var rx = null;
 var counter = null;
 
 var group = null;
+var youAreHere = null;
+var grid = null;
 
 var bounds = {
 	top: -Number.MAX_VALUE,
@@ -86,6 +88,7 @@ var connect = function() {
 		current = JSON.parse(message.data);
 
 		update();
+		makeGrid(bounds);
 
 		rxStatus = !rxStatus;
 		if (rxStatus) {
@@ -112,7 +115,10 @@ var update = function() {
 				.attr('x2', current.position.x)
 				.attr('y1', last.position.y)
 				.attr('y2', current.position.y)
-				.attr('vector-effect', 'inherit');	
+				.attr('vector-effect', 'inherit');
+
+		youAreHere.attr('cx', current.position.x)
+			.attr('cy', current.position.y);
 	}
 
 	updateGroup(bounds);
@@ -127,8 +133,42 @@ var update = function() {
 }
 
 var updateGroup = function(bounds) {
-	group.attr('transform', 'translate(' + (-bounds.centerX() * 0.1 + svg.width / 2) + ' '+
-		(-bounds.centerY() * 0.1 + svg.height / 2) + ') scale(0.1)');
+	var scale = Math.min(svg.width / bounds.width(), svg.height / bounds.height());
+	
+	group.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
+		(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
+}
+
+var makeGrid = function(bounds) {
+
+	var logStep = Math.pow(2, Math.floor(Math.log(Math.min(bounds.width(), bounds.height()))));
+	// console.log(logStep);
+
+	var count = Math.ceil(bounds.width() / logStep);
+	// console.log(count);
+
+	var anchor = Math.floor((bounds.left - (bounds.width()) / 2) / logStep) * logStep;
+
+	var data = [];
+	for (var i = 0; i < count * 2; i++) {
+		data.push(anchor + logStep * i);
+	}
+
+	var foo = grid.selectAll('line').data(data);
+	foo
+		.attr('x1', function(d) {return d;})
+		.attr('x2', function(d) {return d;})
+		.attr('y1', bounds.bottom - bounds.height())
+		.attr('y2', bounds.top + bounds.height())
+		.attr('vector-effect', 'inherit')
+
+	foo.enter()
+		.append('line')
+			.attr('x1', function(d) {return d;})
+			.attr('x2', function(d) {return d;})
+			.attr('y1', bounds.bottom - bounds.height())
+			.attr('y2', bounds.top + bounds.height())
+			.attr('vector-effect', 'inherit');
 }
 
 window.onload = function() {
@@ -163,11 +203,14 @@ window.onload = function() {
 	group.attr('vector-effect', 'non-scaling-stroke');
 
 
-	// group.append('circle')
-	// 	.attr('cx', '0')
-	// 	.attr('cy', '0')
-	// 	.attr('r', '10');
-	// group.attr('transform', 'translate(100 10)');
+	youAreHere = group.append('circle')
+		.attr('cx', '0')
+		.attr('cy', '0')
+		.attr('r', '4');
+
+	grid = group.append('g');
+	grid.attr('vector-effect', 'non-scaling-stroke');
+
 
 	window.setInterval(function() {
 		if (state === connectionState.notConnected) {
