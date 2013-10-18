@@ -9,6 +9,8 @@ var counter = null;
 var group = null;
 var youAreHere = null;
 var grid = null;
+var gridH = null;
+var gridV = null;
 
 var bounds = {
 	top: -Number.MAX_VALUE,
@@ -135,26 +137,28 @@ var update = function() {
 var updateGroup = function(bounds) {
 	var scale = Math.min(svg.width / bounds.width(), svg.height / bounds.height());
 	
-	group.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
-		(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
+	group.transition()
+		.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
+			(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
 }
 
 var makeGrid = function(bounds) {
 
-	var logStep = Math.pow(2, Math.floor(Math.log(Math.min(bounds.width(), bounds.height()))));
+	var size = 4;
+	var logStep = Math.pow(size, Math.floor(Math.log(Math.min(bounds.width(), bounds.height())) / Math.log(size)));
 	// console.log(logStep);
 
 	var count = Math.ceil(bounds.width() / logStep);
 	// console.log(count);
 
-	var anchor = Math.floor((bounds.left - (bounds.width()) / 2) / logStep) * logStep;
+	var anchorV = Math.floor((bounds.left - (bounds.width())) / logStep) * logStep;
 
-	var data = [];
-	for (var i = 0; i < count * 2; i++) {
-		data.push(anchor + logStep * i);
+	var dataV = [];
+	for (var i = 0; i < count * 4; i++) {
+		dataV.push(anchorV + logStep * i);
 	}
 
-	var foo = grid.selectAll('line').data(data);
+	var foo = gridV.selectAll('line').data(dataV);
 	foo
 		.attr('x1', function(d) {return d;})
 		.attr('x2', function(d) {return d;})
@@ -169,6 +173,33 @@ var makeGrid = function(bounds) {
 			.attr('y1', bounds.bottom - bounds.height())
 			.attr('y2', bounds.top + bounds.height())
 			.attr('vector-effect', 'inherit');
+	foo.exit()
+		.remove();
+
+	var anchorH = Math.floor((bounds.bottom - (bounds.height())) / logStep) * logStep;
+
+	var dataH = [];
+	for (var i = 0; i < count * 4; i++) {
+		dataH.push(anchorH + logStep * i);
+	}
+
+	foo = gridH.selectAll('line').data(dataH);
+	foo
+		.attr('x1', bounds.left - bounds.width())
+		.attr('x2', bounds.right + bounds.width())
+		.attr('y1', function(d) {return d;})
+		.attr('y2', function(d) {return d;})
+		.attr('vector-effect', 'inherit')
+
+	foo.enter()
+		.append('line')
+	.attr('x1', bounds.left - bounds.width())
+		.attr('x2', bounds.right + bounds.width())
+		.attr('y1', function(d) {return d;})
+		.attr('y2', function(d) {return d;})
+		.attr('vector-effect', 'inherit')
+	foo.exit()
+		.remove();
 }
 
 window.onload = function() {
@@ -208,7 +239,10 @@ window.onload = function() {
 		.attr('cy', '0')
 		.attr('r', '4');
 
-	grid = group.append('g');
+	grid = group.append('g').attr('id', 'grid');
+	gridV = grid.append('g').attr('vector-effect', 'non-scaling-stroke');;
+	gridH = grid.append('g').attr('vector-effect', 'non-scaling-stroke');;
+
 	grid.attr('vector-effect', 'non-scaling-stroke');
 
 
