@@ -1,4 +1,12 @@
 var data = [];
+var data2 = [];
+var data4 = [];
+var data8 = [];
+var data16 = [];
+var dataCount = 0;
+currentData = data;
+var maxElements = 1000;
+
 var current = null;
 var last = null;
 var svg;
@@ -82,7 +90,26 @@ var connect = function() {
 
 	ws.onmessage = function(message) {
 		var sample = JSON.parse(message.data);
+
+		dataCount++;
 		data.push(sample);
+		if (dataCount % 2 === 0) {
+			data2.push(sample);
+		}
+		if (dataCount % 4 === 0) {
+			data2.push(sample);
+		}
+		if (dataCount % 8 === 0) {
+			data2.push(sample);
+		}
+		if (dataCount % 16 === 0) {
+			data2.push(sample);
+		}
+
+
+		// if (currentData.length > maxElements) {
+		// 	currentData = data2;
+		// }
 
 		updateBounds(sample.position, bounds);
 
@@ -110,6 +137,18 @@ var connect = function() {
 }
 
 var update = function() {
+	// if (data.length > 1) {
+	// 	group.selectAll('line').data(data)
+	// 		.enter()
+	// 			.append('line')
+	// 				.attr('x1', function(d) {return d.position.x })
+	// 				.attr('x2', function(d, i) {
+	// 					return data[i-1].position.x})
+	// 				.attr('y1', function(d) {return d.position.y})
+	// 				.attr('y2', function(d, i) {return data[i-1].position.y})
+	// 				.attr('vector-effect', 'inherit');
+	// 	}
+
 	if (last) {
 		group
 			.append('line')
@@ -124,13 +163,6 @@ var update = function() {
 	}
 
 	updateGroup(bounds);
-	// svg.selectAll('line').data(data)
-	// 	.enter()
-	// 		.append('line')
-	// 			.attr('x1', function(d) {return d.position.x * 200})
-	// 			.attr('x2', function(d, i) {return data[i-1] && data[i-1].position.x* 200})
-	// 			.attr('y1', function(d) {return d.position.y* 200})
-	// 			.attr('y2', function(d, i) {return data[i-1] && data[i-1].position.y* 200});	
 
 }
 
@@ -229,6 +261,24 @@ window.onload = function() {
 	svg = d3.select('#map');
 	svg.width = svg[0][0].clientWidth;
 	svg.height = svg[0][0].clientHeight;
+
+	var domSVG = document.getElementById('map');
+
+	var mouseDown = false;
+	document.onmousemove = function(event) {
+		if (mouseDown) {
+			// console.log('dragging')
+			// console.log(event.clientX);
+		}
+	}
+
+	domSVG.onmousedown = function() {
+		mouseDown = true;
+	}
+
+	document.onmouseup = function(event) {
+		mouseDown = false;
+	}
 
 	group = svg.append('g');
 	group.attr('vector-effect', 'non-scaling-stroke');
