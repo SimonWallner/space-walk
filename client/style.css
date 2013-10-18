@@ -1,12 +1,17 @@
 #stats {
   position: absolute;
   top: 5px;
-  right: 5px; }
+  right: 5px;
+  width: 100px;
+  background-color: #ddd;
+  padding: 0.5em;
+  border-radius: 2px; }
 
 #rx {
   width: 10px;
   height: 10px;
-  border-radius: 10px; }
+  border-radius: 10px;
+  display: inline-block; }
 
 .on {
   background-color: #17E528; }

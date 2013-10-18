@@ -6,11 +6,29 @@ var rxStatus = false;
 var rx = null;
 var counter = null;
 
+var group = null;
+
 var bounds = {
 	top: -Number.MAX_VALUE,
 	left: Number.MAX_VALUE,
 	bottom: Number.MAX_VALUE,
-	right: -Number.MAX_VALUE
+	right: -Number.MAX_VALUE,
+
+	width: function() {
+		return this.right - this.left;
+	},
+
+	height: function() {
+		return this.top - this.bottom;
+	},
+
+	centerX: function() {
+		return (this.right + this.left) / 2;
+	},
+
+	centerY: function() {
+		return (this.top + this.bottom) / 2;
+	}
 }
 
 var updateBounds = function(position, bounds) {
@@ -88,13 +106,16 @@ var connect = function() {
 
 var update = function() {
 	if (last) {
-		svg
+		group
 			.append('line')
-				.attr('x1', last.position.x * 200)
-				.attr('x2', current.position.x * 200)
-				.attr('y1', last.position.y * 200)
-				.attr('y2', current.position.y * 200);	
+				.attr('x1', last.position.x)
+				.attr('x2', current.position.x)
+				.attr('y1', last.position.y)
+				.attr('y2', current.position.y)
+				.attr('vector-effect', 'inherit');	
 	}
+
+	updateGroup(bounds);
 	// svg.selectAll('line').data(data)
 	// 	.enter()
 	// 		.append('line')
@@ -103,6 +124,11 @@ var update = function() {
 	// 			.attr('y1', function(d) {return d.position.y* 200})
 	// 			.attr('y2', function(d, i) {return data[i-1] && data[i-1].position.y* 200});	
 
+}
+
+var updateGroup = function(bounds) {
+	group.attr('transform', 'translate(' + (-bounds.centerX() * 0.1 + svg.width / 2) + ' '+
+		(-bounds.centerY() * 0.1 + svg.height / 2) + ') scale(0.1)');
 }
 
 window.onload = function() {
@@ -129,7 +155,19 @@ window.onload = function() {
 	rx = d3.select('#rx');
 	rx.attr('class', 'off');
 
-	svg = d3.selectAll('#map');
+	svg = d3.select('#map');
+	svg.width = svg[0][0].clientWidth;
+	svg.height = svg[0][0].clientHeight;
+
+	group = svg.append('g');
+	group.attr('vector-effect', 'non-scaling-stroke');
+
+
+	// group.append('circle')
+	// 	.attr('cx', '0')
+	// 	.attr('cy', '0')
+	// 	.attr('r', '10');
+	// group.attr('transform', 'translate(100 10)');
 
 	window.setInterval(function() {
 		if (state === connectionState.notConnected) {
