@@ -75,4 +75,4 @@ setInterval(function() {
 				position: randomWalk.getWaypoint()
 			}));
 	}
-}, 200);
+}, 17);
