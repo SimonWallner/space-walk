@@ -1,12 +1,15 @@
 var autoConnect = true;
 var ws = null;
 var path = null;
+var trailPath = null;
 
 var data = [];
 data.push([]);
 currentData = data[0];
 var dataCount = 0;
-var maxElements = 100;
+var maxElements = 500;
+var latestData = [];
+var currentLevel = 0;
 
 var current = null;
 var last = null;
@@ -93,6 +96,14 @@ var connect = function() {
 		var sample = JSON.parse(message.data);
 		
 		data[0].push(sample);
+		latestData.push(sample);
+
+		if ((latestData.length - 2) > dataCount % Math.pow(2, currentLevel)) {
+			var last = latestData[latestData.length - 1];
+			latestData.length = 0;
+			latestData.push(last);
+			latestData.push(sample);
+		}
 
 		for (var i = 1; i < data.length; i++) {
 			if (dataCount % (Math.pow(2, i)) === 0) {
@@ -101,11 +112,13 @@ var connect = function() {
 		}
 
 		if (data[data.length-1].length > maxElements) {
+			currentLevel++;
 			data.push([]);
 			for (var i = 0; i < data[data.length-2].length; i += 2) {
 				data[data.length-1].push(data[data.length-2][i]);
 			}
 			currentData = data[data.length-1];
+			path.datum(currentData);
 		}
 		
 		dataCount++;
@@ -146,7 +159,7 @@ var close = function() {
 		.attr('d', d3.svg.line()
 			.x(function(d) {return d.position.x})
 			.y(function(d) {return d.position.y})
-			.interpolate('linear')(currentData));
+			.interpolate('linear'));
 }
 
 var update = function() {
@@ -157,7 +170,14 @@ var update = function() {
 		.call(drawPath);
 	}
 
+	if (!trailPath) {
+		trailPath = group.append('path')
+		.datum(latestData)
+		.call(drawPath);
+	}
+
 	path.call(drawPath);
+	trailPath.call(drawPath);
 
 	youAreHere.attr('cx', current.position.x)
 		.attr('cy', current.position.y);
@@ -176,8 +196,8 @@ var updateGroup = function(bounds) {
 
 var makeGrid = function(bounds) {
 
-	var size = 4;
-	var logStep = Math.pow(size, Math.floor(Math.log(Math.min(bounds.width(), bounds.height())) / Math.log(size)));
+	var size = 3;
+	var logStep = Math.pow(size, Math.floor(Math.log(Math.max(bounds.width(), bounds.height())) / Math.log(size)));
 	// console.log(logStep);
 
 	var count = Math.ceil(bounds.width() / logStep);
@@ -186,7 +206,7 @@ var makeGrid = function(bounds) {
 	var anchorV = Math.floor((bounds.left - (bounds.width())) / logStep) * logStep;
 
 	var dataV = [];
-	for (var i = 0; i < count * 4; i++) {
+	for (var i = 0; i < count * 10; i++) {
 		dataV.push(anchorV + logStep * i);
 	}
 
