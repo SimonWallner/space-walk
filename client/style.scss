@@ -14,11 +14,33 @@ $backgroundColor: #eee;
 	position: absolute;
 	top: 5px;
 	right: 5px;
-	width: 100px;
+	width: 150px;
 	background-color: #ddd;
 	padding: 0.5em;
 	border-radius: 2px;
 }
+
+#connect {
+	border-radius: 10px;
+	padding-left: 0.4em;
+	display: inline-block;
+	display: block;
+	color: white;
+	cursor: pointer;
+}
+
+.offline {
+	background-color: $red;
+}
+
+.online {
+	background-color: $lime;
+}
+
+.connecting {
+	background-color: $orange;
+}
+
 
 #rx {
 	width: 10px;

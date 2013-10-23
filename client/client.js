@@ -1,3 +1,6 @@
+var autoConnect = true;
+var ws = null;
+
 var data = [];
 var data2 = [];
 var data4 = [];
@@ -68,7 +71,7 @@ var state = connectionState.notConnected;
 
 var connect = function() {
 	state = connectionState.connecting;
-	document.getElementById('status').innerHTML = 'connecting';
+	document.getElementById('connect').className = 'connecting';
 
 	url = "ws://localhost:60600";
 	
@@ -85,7 +88,7 @@ var connect = function() {
 	ws.onopen = function(e)
 	{
 		state = connectionState.connected;
-		document.getElementById('status').innerHTML = 'cconnected';
+		document.getElementById('connect').className = 'online';
 	};
 
 	ws.onmessage = function(message) {
@@ -132,8 +135,13 @@ var connect = function() {
 	ws.onerror = function(event) {
 		// console.log(event);
 		state = connectionState.notConnected;
-		document.getElementById('status').innerHTML = 'disconnected';
+		document.getElementById('connect').className = 'offline';
 	};
+}
+
+var close = function() {
+	ws.close();
+	state = connectionState.notConnected;
 }
 
 var update = function() {
@@ -295,10 +303,18 @@ window.onload = function() {
 
 	grid.attr('vector-effect', 'non-scaling-stroke');
 
+	document.getElementById('connect').onclick = function() {
+		autoConnect = !autoConnect;
+		document.getElementById('connect').className = 'offline';
+
+		if (state === connectionState.connected) {
+			close();
+		}
+	}
 
 	window.setInterval(function() {
-		if (state === connectionState.notConnected) {
+		if (autoConnect && state === connectionState.notConnected) {
 			connect();
 		}
-	}, 1000);
+	}, 500);
 }
