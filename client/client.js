@@ -3,12 +3,9 @@ var ws = null;
 var path = null;
 
 var data = [];
-var data2 = [];
-var data4 = [];
-var data8 = [];
-var data16 = [];
+data.push([]);
+currentData = data[0];
 var dataCount = 0;
-currentData = data;
 var maxElements = 100;
 
 var current = null;
@@ -95,33 +92,23 @@ var connect = function() {
 	ws.onmessage = function(message) {
 		var sample = JSON.parse(message.data);
 		
-		data.push(sample);
-		if (dataCount % 2 === 0) {
-			data2.push(sample);
-		}
-		if (dataCount % 4 === 0) {
-			data4.push(sample);
-		}
-		if (dataCount % 8 === 0) {
-			data8.push(sample);
-		}
-		if (dataCount % 16 === 0) {
-			data16.push(sample);
-		}
-		dataCount++;
+		data[0].push(sample);
 
-		if (data.length > maxElements) {
-			currentData = data2;
+		for (var i = 1; i < data.length; i++) {
+			if (dataCount % (Math.pow(2, i)) === 0) {
+				data[i].push(sample);
+			}
 		}
-		if (data.length > 2 * maxElements) {
-			currentData = data4;
+
+		if (data[data.length-1].length > maxElements) {
+			data.push([]);
+			for (var i = 0; i < data[data.length-2].length; i += 2) {
+				data[data.length-1].push(data[data.length-2][i]);
+			}
+			currentData = data[data.length-1];
 		}
-		if (data.length > 4 * maxElements) {
-			currentData = data8;
-		}
-		if (data.length > 8 * maxElements) {
-			currentData = data16;
-		}
+		
+		dataCount++;
 
 		updateBounds(sample.position, bounds);
 
@@ -179,9 +166,10 @@ var update = function() {
 }
 
 var updateGroup = function(bounds) {
-	var scale = Math.min(svg.width / bounds.width(), svg.height / bounds.height());
+	var scale = Math.min(svg.width / bounds.width(), svg.height / bounds.height()) * 0.9;
 	
-	group.transition()
+	group
+		// .transition()
 		.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
 			(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
 }
