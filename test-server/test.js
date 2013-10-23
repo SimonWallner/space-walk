@@ -71,7 +71,7 @@ var randomWalk = new RandomWalk();
 setInterval(function() {
 	for (var i = 0; i < connectionPool.length; ++i) {
 		connectionPool[i].sendUTF(JSON.stringify({
-				time: new Date().getMilliseconds(),
+				time: new Date().getTime(),
 				position: randomWalk.getWaypoint()
 			}));
 	}

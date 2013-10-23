@@ -8,7 +8,7 @@ var data8 = [];
 var data16 = [];
 var dataCount = 0;
 currentData = data;
-var maxElements = 1000;
+var maxElements = 50;
 
 var current = null;
 var last = null;
@@ -93,26 +93,29 @@ var connect = function() {
 
 	ws.onmessage = function(message) {
 		var sample = JSON.parse(message.data);
+		console.log(sample.time);
 
-		dataCount++;
 		data.push(sample);
 		if (dataCount % 2 === 0) {
 			data2.push(sample);
 		}
 		if (dataCount % 4 === 0) {
-			data2.push(sample);
+			data4.push(sample);
 		}
 		if (dataCount % 8 === 0) {
-			data2.push(sample);
+			data8.push(sample);
 		}
 		if (dataCount % 16 === 0) {
-			data2.push(sample);
+			data16.push(sample);
 		}
+		dataCount++;
 
-
-		// if (currentData.length > maxElements) {
-		// 	currentData = data2;
-		// }
+		if (data.length > maxElements) {
+			currentData = data2;
+		}
+		if (data.length > 2 * maxElements) {
+			currentData = data4;
+		}
 
 		updateBounds(sample.position, bounds);
 
@@ -144,31 +147,71 @@ var close = function() {
 	state = connectionState.notConnected;
 }
 
+var lines = function(selection) {
+	selection
+		.attr('x1', function(d) {return d.position.x })
+		.attr('x2', function(d, i) { return (currentData[i-1] || d).position.x})
+		.attr('y1', function(d) {return d.position.y})
+		.attr('y2', function(d, i) {return (currentData[i-1] || d).position.y})
+		.attr('vector-effect', 'inherit');
+}
+
+var drawPath = function(selection) {
+	selection
+		.attr('d', d3.svg.line()
+			.x(function(d) {return d.position.x})
+			.y(function(d) {return d.position.y})
+			.interpolate('linear')(currentData));
+}
+
 var update = function() {
-	// if (data.length > 1) {
-	// 	group.selectAll('line').data(data)
-	// 		.enter()
-	// 			.append('line')
-	// 				.attr('x1', function(d) {return d.position.x })
-	// 				.attr('x2', function(d, i) {
-	// 					return data[i-1].position.x})
-	// 				.attr('y1', function(d) {return d.position.y})
-	// 				.attr('y2', function(d, i) {return data[i-1].position.y})
-	// 				.attr('vector-effect', 'inherit');
+
+	var path = group.selectAll('path').data(currentData);
+	path.enter()
+		.append('path')
+		.call(drawPath);
+
+	path.exit()
+		.remove();
+
+		// .attr('d', d3.svg.line()
+		// 	.x(function(d) {return d.position.x})
+		// 	.y(function(d) {return d.position.y})
+		// 	.interpolate('linear')(currentData))
+		// 	.attr("stroke", "blue")
+		// 	.attr("stroke-width", 2)
+		// 	.attr("fill", "none");
+
+
+
+	// if (currentData.length > 1) {
+	// 	var selection = group.selectAll('line').data(currentData);
+	// 	selection.call(lines);
+		
+	// 	selection.enter()
+	// 		.append('line')
+	// 		.call(lines)
+		
+	// 	// selection.exit()
+	// 	// 		.remove()
+
+	// 	youAreHere.attr('cx', current.position.x)
+	// 		.attr('cy', current.position.y);
 	// 	}
 
-	if (last) {
-		group
-			.append('line')
-				.attr('x1', last.position.x)
-				.attr('x2', current.position.x)
-				.attr('y1', last.position.y)
-				.attr('y2', current.position.y)
-				.attr('vector-effect', 'inherit');
 
-		youAreHere.attr('cx', current.position.x)
-			.attr('cy', current.position.y);
-	}
+	// if (last) {
+	// 	group
+	// 		.append('line')
+	// 			.attr('x1', last.position.x)
+	// 			.attr('x2', current.position.x)
+	// 			.attr('y1', last.position.y)
+	// 			.attr('y2', current.position.y)
+	// 			.attr('vector-effect', 'inherit');
+
+	// 	youAreHere.attr('cx', current.position.x)
+	// 		.attr('cy', current.position.y);
+	// }
 
 	updateGroup(bounds);
 
