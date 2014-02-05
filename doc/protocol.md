@@ -48,3 +48,14 @@ Variables can be registered to be tweaked remotely
 			"description": "awesomeness coefficient"
 		}
 	}
+
+
+### Images
+
+	{
+		"type": "image",
+		"payload": {
+			"type": "image/png;base64",
+			"data": "asdfasfhkjadshflaksjdfhkla..."
+		}
+	}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>Objectif Lune Client</title>
+
+	<script type="text/javascript" src="d3/d3.v2.js"></script>
+	<script type="text/javascript" src="d3/lib/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="d3/lib/jquery-ui/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="jquery.hotkeys.js"></script>
+	<script type="text/javascript" src="viewer.js"></script>
+
+	
+	<link type="text/css" rel="stylesheet" href="reset.css" />
+	<link type="text/css" rel="stylesheet" href="style.css" />
+	
+	<link href='http://fonts.googleapis.com/css?family=Bitter:400italic,400,700' rel='stylesheet' type='text/css'>
+	
+</head>
+
+<body>
+<div class="notice-area" id="notice-area"></div>
+	
+
+
+<div class="container">
+	
+	<h1>Objectif Lune Viewer</h1>
+	<hr />
+	<p>
+		This is the client side of the moon, working in concert with the server component. It uses websockets for communication and should facitilate debugging and tweaking of games and other interactive applications alike.
+	</p>
+	<p>
+		ULR: <input type="text" name="server_url" id="server_url" value="ws://localhost:60600" disabled />
+	</p>
+	<p>
+		<span class="connection rounded-inline">
+			<span id="autoConnect" class="active">auto connect</span>
+			<span id="disconnect" class="rounded-inline">disconnect</span>
+		</span>
+	</p>
+	<p>
+		<div id="connectionStatus" class="connecting">initialising...</div>
+	</p>
+		
+	
+	
+	<!-- ========================= one up viewer =========================== -->
+	<h2><a name="viewer">Image Viewer</a></h2>
+	<hr />
+	<p>
+		Simple Image viewer for screen shots.
+	</p>
+	
+	<span class="rounded-inline button" id="get-screenshot">get screenshot</span>
+	<div id="viewer"></div>
+
+</div>
+
+</body>
+</html>
