@@ -18,7 +18,7 @@ RenderSettings:
   m_FogDensity: .00100000005
   m_LinearFogStart: 500
   m_LinearFogEnd: 2000
-  m_AmbientLight: {r: .200000003, g: .200000003, b: .200000003, a: 1}
+  m_AmbientLight: {r: .0882353187, g: .0882353187, b: .0882353187, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: a2126534b3a11b34e977105bd9e3cc03, type: 2}
   m_HaloStrength: .5
   m_FlareStrength: 1
@@ -325,7 +325,7 @@ GameObject:
   - 4: {fileID: 386753595}
   - 108: {fileID: 386753594}
   m_Layer: 0
-  m_Name: Key
+  m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -344,7 +344,7 @@ Light:
   m_Intensity: .129999995
   m_Range: 10
   m_SpotAngle: 30
-  m_CookieSize: 10
+  m_CookieSize: 9.85999966
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -860,7 +860,7 @@ GameObject:
   - 4: {fileID: 1253867634}
   - 108: {fileID: 1253867635}
   m_Layer: 0
-  m_Name: Fill
+  m_Name: Key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -872,8 +872,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1253867633}
-  m_LocalRotation: {x: .408217937, y: -.234569728, z: .109381676, w: .875426054}
-  m_LocalPosition: {x: 2.92043757, y: 9.5940752, z: -5.05834579}
+  m_LocalRotation: {x: .274995357, y: -.248108581, z: .0736847892, w: .925953746}
+  m_LocalPosition: {x: 12.7306786, y: 28.4115791, z: -22.0501804}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1133594749}
@@ -892,7 +892,7 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 1
     m_Resolution: -1
     m_Strength: 1
     m_Bias: .0500000007
@@ -1019,7 +1019,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1769947031}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.04904175e-05, y: -1.15208292, z: -42.0374374}
+  m_LocalPosition: {x: -1.04904175e-05, y: -.563759804, z: -42.0374374}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 381099277}

@@ -111,11 +111,11 @@ public class SocketServer {
 	
 	private static void SendCallback(IAsyncResult ar) {
 		try {
-			Debug.Log("send callback");
+//			Debug.Log("send callback");
 			Socket handler = (Socket)ar.AsyncState;
 			
 			int bytesSent = handler.EndSend(ar);
-			Debug.Log("Sent {0} bytes to client." + bytesSent);
+//			Debug.Log("Sent {0} bytes to client." + bytesSent);
 				
 		} catch (Exception e) {
 			Debug.Log(e.ToString());

@@ -4,6 +4,7 @@ using System.Collections;
 public static class Telemetry {
 
 	private static SocketServer serverHandle;
+	private static RemoteScreenCapture capture = null;
 
 	public static SocketServer Server
 	{
@@ -85,6 +86,23 @@ public static class Telemetry {
 			"\"reference\": " + Time.time + ", " + 
 			"\"value\": " + value + "}}";
 		
+		Server.Broadcast(json);
+	}
+
+	public static void registerCamera(RemoteScreenCapture cap) {
+		capture = cap;
+		Debug.Log("remote camera registered");
+	}
+
+	public static void captureImage() {
+		byte[] bytes = capture.capture();
+
+		string base64 = System.Convert.ToBase64String(bytes);
+
+		string json = "{\"type\": \"image\", \"payload\": {" +
+			"\"type\": \"image/png;base64\", " +
+			"\"data\": \"" + base64 + "\"}}";
+
 		Server.Broadcast(json);
 	}
 }
