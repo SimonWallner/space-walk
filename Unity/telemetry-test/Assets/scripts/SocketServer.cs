@@ -11,6 +11,7 @@ public class SocketServer {
 	private class State {
 		public SocketServer instance = null;
 		public Socket listener = null;
+		public Socket handler = null;
 		public const int BUFFER_SIZE = 1024;
 		public byte[] buffer = new byte[BUFFER_SIZE];
 	}
@@ -57,12 +58,12 @@ public class SocketServer {
 		Debug.Log("accept callback");
 
 		var state = (State)ar.AsyncState;
-		Socket handler = state.listener.EndAccept(ar);
+		state.handler = state.listener.EndAccept(ar);
 		state.listener.BeginAccept(new AsyncCallback(AcceptCallback), state);
 
-		state.instance.openSockets.Add(handler);
+		state.instance.openSockets.Add(state.handler);
 
-		handler.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,
+		state.handler.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,
 				new AsyncCallback(ReceiveCallback), state);
 	}
 
@@ -76,7 +77,7 @@ public class SocketServer {
 			Debug.Log(System.Text.Encoding.ASCII.GetString(state.buffer));
 		}
 
-		state.listener.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,
+		state.handler.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,
 				new AsyncCallback(ReceiveCallback), state);
 	}
 	
