@@ -41,6 +41,17 @@ $backgroundColor: #eee;
 	background-color: $orange;
 }
 
+span.button {
+	display: inline-block;
+}
+
+.button {
+	background-color: $lavender;
+	border-radius: 1em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	cursor: pointer;
+}
 
 #rx {
 	width: 10px;

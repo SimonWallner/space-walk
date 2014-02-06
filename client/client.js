@@ -324,9 +324,24 @@ window.onload = function() {
 		}
 	}
 
+	document.getElementById('requestMapTile').onclick = function() {
+		requestMapTile({x: 0, y: 0, width: 100, height: 100});
+	}
+
 	window.setInterval(function() {
 		if (autoConnect && state === connectionState.notConnected) {
 			connect();
 		}
 	}, 500);
+}
+
+var requestMapTile = function(rect) {
+	ws.send(JSON.stringify({
+		type: 'mapTileReuest',
+		payload: rect
+	}));
+}
+
+var receivedMapTile = function(data) {
+
 }

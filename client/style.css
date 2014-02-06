@@ -25,6 +25,16 @@
 .connecting {
   background-color: #e89f49; }
 
+span.button {
+  display: inline-block; }
+
+.button {
+  background-color: #8885ed;
+  border-radius: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  cursor: pointer; }
+
 #rx {
   width: 10px;
   height: 10px;
