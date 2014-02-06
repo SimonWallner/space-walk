@@ -4,7 +4,7 @@ using System.Collections;
 public static class Telemetry {
 
 	private static SocketServer serverHandle;
-	private static RemoteScreenCapture capture = null;
+	private static RemoteScreenCapture captureCam = null;
 
 	public static SocketServer Server
 	{
@@ -90,12 +90,15 @@ public static class Telemetry {
 	}
 
 	public static void registerCamera(RemoteScreenCapture cap) {
-		capture = cap;
+		captureCam = cap;
 		Debug.Log("remote camera registered");
 	}
 
-	public static void captureImage() {
-		byte[] bytes = capture.capture();
+	public static void capture() {
+		captureCam.capture(new Rect(0, 0, 0, 0));
+	}
+
+	public static void image(byte[] bytes) {
 
 		string base64 = System.Convert.ToBase64String(bytes);
 

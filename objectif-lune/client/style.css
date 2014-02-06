@@ -8,6 +8,9 @@
 
 img {
   width: 100%;
+  margin-top:8px;
+  border-radius: 8px;
+  display: inline-block;
 }
 
 .clear {

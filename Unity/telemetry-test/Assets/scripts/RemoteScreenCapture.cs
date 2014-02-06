@@ -11,7 +11,8 @@ public class RemoteScreenCapture : MonoBehaviour {
 	private RenderTexture rt;
 	private Texture2D texture;
 
-	bool captureNow = false;
+	bool captureNextFrame = false;
+	Rect captureCameraFrame;
 
 	public void Start() {
 		Telemetry.registerCamera(this);
@@ -24,38 +25,37 @@ public class RemoteScreenCapture : MonoBehaviour {
 	}
 
 	public void OnPostRender() {
-		if (captureNow) {
+		if (captureNextFrame) {
 			Debug.Log("cheeeese!");
-			Telemetry.captureImage();
 
-			captureNow = false;
+			RenderTexture.active = rt;
+
+			// setup camera...
+			// todo
+			camera.Render();
+			
+			
+			texture.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+			texture.Apply();
+			
+			RenderTexture.active = null;
+			
+			byte[] bytes = texture.EncodeToPNG();
+			
+			//		string filename = "textureTest.png";
+			//		System.IO.File.WriteAllBytes(filename, bytes);
+			//		Debug.Log(string.Format("Took screenshot to: {0}", filename));
+			
+			Telemetry.image(bytes);
+
+			captureNextFrame = false;
 		}
 	}
 
-	public void Update() {
-		if (Input.GetKeyDown(".")) {
-			captureNow = true;
-		}
-	}
 
-	public byte[] capture() {
-		RenderTexture.active = rt;
-
-		camera.Render();
-
-
-		texture.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
-		texture.Apply();
-
-		RenderTexture.active = null;
-
-		byte[] bytes = texture.EncodeToPNG();
-
-		string filename = "textureTest.png";
-		System.IO.File.WriteAllBytes(filename, bytes);
-		Debug.Log(string.Format("Took screenshot to: {0}", filename));
-
-		return bytes;
+	public void capture(Rect rect) {
+		captureNextFrame = true;
+		captureCameraFrame = rect;
 	}
 
 }

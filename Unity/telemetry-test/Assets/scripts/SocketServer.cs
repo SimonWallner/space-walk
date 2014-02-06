@@ -52,8 +52,7 @@ public class SocketServer {
 		}
 
 	}
-
-
+	
 	public static void AcceptCallback(IAsyncResult ar) {
 		Debug.Log("accept callback");
 
@@ -75,6 +74,8 @@ public class SocketServer {
 
 		if (bytesRead > 0) {
 			Debug.Log(System.Text.Encoding.ASCII.GetString(state.buffer));
+
+			Telemetry.capture();
 		}
 
 		state.handler.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,
