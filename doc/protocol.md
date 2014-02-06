@@ -59,3 +59,14 @@ Variables can be registered to be tweaked remotely
 			"data": "asdfasfhkjadshflaksjdfhkla..."
 		}
 	}
+
+
+
+## Space Walk Positional Tracking
+	{
+		"time": 123.34,
+		"position": {
+			"x": 123,
+			"y": 3456
+		}
+	}

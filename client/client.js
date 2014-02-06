@@ -54,11 +54,11 @@ var updateBounds = function(position, bounds) {
 	if (position.x < bounds.left) {
 		bounds.left = position.x;
 	}
-	if (position.y > bounds.top) {
-		bounds.top = position.y;
+	if (position.z > bounds.top) {
+		bounds.top = position.z;
 	}
-	if (position.y < bounds.bottom) {
-		bounds.bottom = position.y;
+	if (position.z < bounds.bottom) {
+		bounds.bottom = position.z;
 	}
 }
 
@@ -158,7 +158,7 @@ var close = function() {
 		.attr('vector-effect', 'inherit')
 		.attr('d', d3.svg.line()
 			.x(function(d) {return d.position.x})
-			.y(function(d) {return d.position.y})
+			.y(function(d) {return d.position.z})
 			.interpolate('linear'));
 }
 
@@ -180,7 +180,7 @@ var update = function() {
 	trailPath.call(drawPath);
 
 	youAreHere.attr('cx', current.position.x)
-		.attr('cy', current.position.y);
+		.attr('cy', current.position.z);
 
 	updateGroup(bounds);
 }

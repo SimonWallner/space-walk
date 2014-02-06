@@ -105,4 +105,14 @@ public static class Telemetry {
 
 		Server.Broadcast(json);
 	}
+
+	public static void position(Vector3 position) {
+		string json = "	{\"time\": " + Time.time + ", " + 
+			"\"position\": {" + 
+				"\"x\": " + position.x + ", " + 
+				"\"y\": " + position.y + ", " + 
+				"\"z\": " + -position.z + "}}";
+
+		Server.Broadcast(json);
+	}
 }

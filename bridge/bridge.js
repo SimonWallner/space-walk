@@ -30,10 +30,10 @@ var connect = function() {
 		// console.log('socket data: ' + data);
 
 		incomingMessageBuffer += data;
-		console.log("buffer init: " + incomingMessageBuffer);
+		// console.log("buffer init: " + incomingMessageBuffer);
 		var split = incomingMessageBuffer.split("\n");
 
-		console.log("split length pre: " + split.length);
+		// console.log("split length pre: " + split.length);
 		
 		if (incomingMessageBuffer.substr(incomingMessageBuffer.length - 1) === "\n") {
 			incomingMessageBuffer = "";
@@ -42,11 +42,10 @@ var connect = function() {
 			incomingMessageBuffer = split.pop();
 		}
 
-		console.log("split length post: " + split.length);
+		// console.log("split length post: " + split.length);
 
 		for (var i = 0; i < split.length; i++) {
-		
-			console.log("parsing: " + split[i]);
+			// console.log("parsing: " + split[i]);
 			var foo = JSON.parse(split[i]);
 	
 			// relay messages to websocket
