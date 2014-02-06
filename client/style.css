@@ -33,7 +33,9 @@ span.button {
   border-radius: 1em;
   padding-left: 0.5em;
   padding-right: 0.5em;
-  cursor: pointer; }
+  cursor: pointer;
+  margin-top: 0.2em;
+  color: white; }
 
 #rx {
   width: 10px;

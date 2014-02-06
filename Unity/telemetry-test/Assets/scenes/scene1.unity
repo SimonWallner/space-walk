@@ -184,8 +184,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 181711735}
   m_LocalRotation: {x: .707106829, y: 0, z: 0, w: .707106709}
-  m_LocalPosition: {x: .0436434746, y: -17.9060287, z: 445.471893}
-  m_LocalScale: {x: 50, y: 50, z: 50}
+  m_LocalPosition: {x: .0436434746, y: 43.6291466, z: 10.8670998}
+  m_LocalScale: {x: 20, y: 20, z: 20}
   m_Children: []
   m_Father: {fileID: 0}
 --- !u!1 &254337718
@@ -624,7 +624,7 @@ GameObject:
   - 114: {fileID: 714290448}
   m_Layer: 0
   m_Name: captureCam
-  m_TagString: Untagged
+  m_TagString: mapCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1075,6 +1075,7 @@ GameObject:
   - 114: {fileID: 1769947032}
   - 114: {fileID: 1769947036}
   - 114: {fileID: 1769947037}
+  - 96: {fileID: 1769947038}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1169,7 +1170,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1769947031}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.04904175e-05, y: -.563759804, z: -42.0374374}
+  m_LocalPosition: {x: .312316656, y: -.563759804, z: -42.0374374}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 381099277}
@@ -1204,6 +1205,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c40589d7650d248f5b2bff8d280245c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!96 &1769947038
+TrailRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1769947031}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
+  m_Time: 500
+  m_StartWidth: 1
+  m_EndWidth: 1
+  m_Colors:
+    m_Color[0]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[1]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[2]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[3]:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_Color[4]:
+      serializedVersion: 2
+      rgba: 16777215
+  m_MinVertexDistance: .100000001
+  m_Autodestruct: 0
 --- !u!1 &2109650617
 GameObject:
   m_ObjectHideFlags: 0

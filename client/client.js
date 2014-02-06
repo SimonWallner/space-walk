@@ -95,6 +95,12 @@ var connect = function() {
 	ws.onmessage = function(message) {
 		var sample = JSON.parse(message.data);
 		
+		if (sample.type === "image") {
+			d3.select('#image').append('img')
+				.attr('src', 'data:' + sample.payload.type + ',' + sample.payload.data);
+			return;
+		}
+		
 		data[0].push(sample);
 		latestData.push(sample);
 
@@ -326,6 +332,10 @@ window.onload = function() {
 
 	document.getElementById('requestMapTile').onclick = function() {
 		requestMapTile({x: 0, y: 0, width: 100, height: 100});
+	}
+
+	document.getElementById('clearImages').onclick = function() {
+		d3.selectAll('#image img').remove();
 	}
 
 	window.setInterval(function() {

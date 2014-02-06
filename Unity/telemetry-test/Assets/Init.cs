@@ -8,5 +8,7 @@ public class Init : MonoBehaviour {
 	void Awake () {
 		Debug.Log("init....");
 		Telemetry.trace("hello!");
+
+		Application.runInBackground = true;
 	}
 }
