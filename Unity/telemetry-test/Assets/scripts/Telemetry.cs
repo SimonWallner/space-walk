@@ -94,8 +94,9 @@ public static class Telemetry {
 		Debug.Log("remote camera registered");
 	}
 
-	public static void capture() {
-		captureCam.capture(new Rect(0, 0, 0, 0));
+	public static void capture(Rect rect) {
+		Debug.Log("capturing: " + rect);
+		captureCam.capture(rect);
 	}
 
 	public static void image(byte[] bytes) {

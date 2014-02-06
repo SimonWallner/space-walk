@@ -75,7 +75,34 @@ public class SocketServer {
 		if (bytesRead > 0) {
 			Debug.Log(System.Text.Encoding.ASCII.GetString(state.buffer));
 
-			Telemetry.capture();
+			var message = System.Text.Encoding.ASCII.GetString(state.buffer);
+
+			try {
+				var dict = (Dictionary<string, object>)MiniJSON.Json.Deserialize(message);
+				
+				if (dict != null) {
+
+					string type = (string)dict["type"];
+
+					if (type == "mapTileRequest") {
+						var payload = (Dictionary<string, object>)dict["payload"];
+		
+						float x = (float)payload["x"];
+//						float y = float.Parse((string)payload["y"]);
+//						float width = float.Parse((string)payload["width"]);
+//						float height = float.Parse((string)payload["height"]);
+//						Telemetry.capture(new Rect(x, y, width, height));
+					} else {
+						Debug.Log("unknown messag type: " + type + " (" + message + ")");
+					}
+				}
+			}
+			catch (KeyNotFoundException e) {
+				Debug.Log("failed to parse json string (Key not found): " + message + " (" + e.Message + ")");
+			}
+			catch (InvalidCastException e) {
+				Debug.Log("failed to parse json string (invalid cast): " + message + " (" + e.Message + ")");
+			}
 		}
 
 		state.handler.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,

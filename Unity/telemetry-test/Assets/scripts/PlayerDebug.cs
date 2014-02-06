@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 public class PlayerDebug : MonoBehaviour {
@@ -10,5 +11,14 @@ public class PlayerDebug : MonoBehaviour {
 //		Telemetry.data("right", CustomInputManager.GetAxis(CustomInputManager.Token.Right, 1));
 //		Telemetry.data("jump", CustomInputManager.GetAxis(CustomInputManager.Token.Jump, 1));
 		Telemetry.position(transform.position);
+
+//
+//		string message = "xxx{\"type\": \"foobar\"}";
+//
+//		var dict = MiniJSON.Json.Deserialize(message) as Dictionary<string, object>;
+//
+//		Debug.Log("dict: " + dict);
+//		
+//		Debug.Log(dict["type"]);
 	}
 }
