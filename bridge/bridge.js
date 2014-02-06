@@ -12,6 +12,8 @@ var connectionPool = [];
 
 var incomingMessageBuffer = "";
 
+var clientSocket = null;
+
 var connect = function() {
 	if (connected || connecting) {
 		return;
@@ -20,13 +22,13 @@ var connect = function() {
 	connecting = true;
 	console.log("connecting...");
 
-	var client = new net.Socket();
-	client.connect(port, host, function() {
+	clientSocket = new net.Socket();
+	clientSocket.connect(port, host, function() {
 		connected = true;
-		client.write('I am Chuck Norris!');
+		clientSocket.write('I am Chuck Norris!');
 	});
 
-	client.on('data', function(data) {
+	clientSocket.on('data', function(data) {
 		// console.log('socket data: ' + data);
 
 		incomingMessageBuffer += data;
@@ -55,13 +57,13 @@ var connect = function() {
 		}
 	});
 
-	client.on('close', function() {
+	clientSocket.on('close', function() {
 	    console.log('Connection closed');
 	    connected = false;
 	    connecting = false;
 	});
 
-	client.on('error', function(err) {
+	clientSocket.on('error', function(err) {
 		console.log('error occured: ' + err);
 		connected = false;
 		connecting = false;
@@ -95,7 +97,54 @@ wsServer.on('request', function(request) {
 	var connection = request.accept('', request.origin);
 	connectionPool.push(connection);
 	console.log('connection added. Pool length: ' + connectionPool.length);
+
+	connection.on('message', function(msg) {
+		var raw = msg.utf8Data;
+		console.log('ws message got: ' + raw);
+		clientSocket.write(raw);
+	});
 });
+
+
+
+
+
+
+
+
+
+// code taken from http://stackoverflow.com/questions/130404/javascript-data-formatting-pretty-printer
+function DumpObject(obj)
+{
+  var od = new Object;
+  var result = "";
+  var len = 0;
+
+  for (var property in obj)
+  {
+    var value = obj[property];
+    if (typeof value == 'string')
+      value = "'" + value + "'";
+    else if (typeof value == 'object')
+    {
+      if (value instanceof Array)
+      {
+        value = "[ " + value + " ]";
+      }
+      else
+      {
+        var ood = DumpObject(value);
+        value = "{ " + ood.dump + " }";
+      }
+    }
+    result += "'" + property + "' : " + value + ", ";
+    len++;
+  }
+  od.dump = result.replace(/, $/, "");
+  od.len = len;
+
+  return od;
+}
 
 
 

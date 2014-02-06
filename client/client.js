@@ -337,7 +337,7 @@ window.onload = function() {
 
 var requestMapTile = function(rect) {
 	ws.send(JSON.stringify({
-		type: 'mapTileReuest',
+		type: 'mapTileRequest',
 		payload: rect
 	}));
 }

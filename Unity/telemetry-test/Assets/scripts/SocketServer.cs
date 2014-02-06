@@ -11,6 +11,8 @@ public class SocketServer {
 	private class State {
 		public SocketServer instance = null;
 		public Socket listener = null;
+		public const int BUFFER_SIZE = 1024;
+		public byte[] buffer = new byte[BUFFER_SIZE];
 	}
 
 	public SocketServer(int port)
@@ -59,6 +61,23 @@ public class SocketServer {
 		state.listener.BeginAccept(new AsyncCallback(AcceptCallback), state);
 
 		state.instance.openSockets.Add(handler);
+
+		handler.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,
+				new AsyncCallback(ReceiveCallback), state);
+	}
+
+	public static void ReceiveCallback(IAsyncResult ar) {
+		Debug.Log ("receive callback");
+
+		var state = (State)ar.AsyncState;
+		int bytesRead = state.listener.EndReceive(ar);
+
+		if (bytesRead > 0) {
+			Debug.Log(System.Text.Encoding.ASCII.GetString(state.buffer));
+		}
+
+		state.listener.BeginReceive(state.buffer, 0, State.BUFFER_SIZE, 0,
+				new AsyncCallback(ReceiveCallback), state);
 	}
 	
 //	public static void ReadCallback(IAsyncResult ar) {
