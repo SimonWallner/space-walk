@@ -1,6 +1,7 @@
 ﻿Shader "Custom/terrain shader" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
+		_DetailTex ("Detail Texture", 2D) = "white" {}
 		_BaseColor ("Base Color", Color) = (1, 1, 1, 0.5)
 		_BaseHeight ("Base Hight", Float) = 0
 		_TopColor ("Top Color", Color) = (1, 1, 1, 0.5)
@@ -21,6 +22,10 @@
 			
 			sampler2D _MainTex;
 			float2 _MainTex_ST;
+			
+			sampler2D _DetailTex;
+			float2 _DetailTex_ST;
+			
 			float4 _BaseColor;
 			float _BaseHeight;
 			float4 _TopColor;
@@ -37,8 +42,8 @@
 			struct VSOutput
 			{
 				float4 pos : POSITION;
-//				float3 normal : NORMAL;
 				float4 color : COLOR;
+				float4 worldPos;
 			};
 
 			VSOutput vert(VSInput input)
@@ -46,12 +51,12 @@
 				VSOutput output;
 				
 				output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
-				float4 worldPos = mul(_Object2World, input.vertex);
+				output.worldPos = mul(_Object2World, input.vertex);
 				float3 normal = normalize(float3(mul(float4(input.normal, 0), _World2Object)));
 				
 				float randomFactor = normal.x * normal.y * normal.z;
 				
-				float heightFactor = smoothstep(_BaseHeight, _TopHeight, worldPos.y);
+				float heightFactor = smoothstep(_BaseHeight, _TopHeight, output.worldPos.y);
 				
 				output.color = lerp(_BaseColor, _TopColor, heightFactor);
 				
@@ -59,7 +64,7 @@
 							
 				output.color = lerp(output.color, tex,  _Variation.xxxx);
 				
-				output.color *= saturate(dot(normal, normalize(_WorldSpaceLightPos0.xyz)));
+				output.color *= saturate(dot(normal, -normalize(_WorldSpaceLightPos0.xyz)));
 				
 				
 				return output;
@@ -67,7 +72,7 @@
 			
 			float4 frag(VSOutput input) : COLOR 
 			{
-				return input.color;
+				return input.color;// * tex2D(_DetailTex, input.worldPos.xz * _DetailTex_ST);
 			}
 
 			ENDCG

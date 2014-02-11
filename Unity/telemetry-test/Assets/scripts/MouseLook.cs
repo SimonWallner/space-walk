@@ -17,10 +17,8 @@ using System.Collections;
 [AddComponentMenu("Camera-Control/Mouse Look")]
 public class MouseLook : MonoBehaviour {
 
-	public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
-	public RotationAxes axes = RotationAxes.MouseXAndY;
-	public float sensitivityX = 15F;
-	public float sensitivityY = 15F;
+	public float MouseSensitivity = 0.01f;
+	public float GamepadSensitivity = 200F;
 
 	public float minimumX = -360F;
 	public float maximumX = 360F;
@@ -28,30 +26,20 @@ public class MouseLook : MonoBehaviour {
 	public float minimumY = -60F;
 	public float maximumY = 60F;
 
-	float rotationY = 0F;
+	private float rotationX = 0.0f;
+	private float rotationY = 0.0f;
+
 
 	void Update ()
 	{
-		if (axes == RotationAxes.MouseXAndY)
-		{
-			float rotationX = transform.localEulerAngles.y + CustomInputManager.GetAxis(CustomInputManager.Token.LookRight, 1) * sensitivityX;
-			
-			rotationY += CustomInputManager.GetAxis(CustomInputManager.Token.LookUp, 1) * sensitivityY;
-			rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
-			
-			transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
-		}
-		else if (axes == RotationAxes.MouseX)
-		{
-			transform.Rotate(0, CustomInputManager.GetAxis(CustomInputManager.Token.LookRight, 1) * sensitivityX, 0);
-		}
-		else
-		{
-			rotationY += CustomInputManager.GetAxis(CustomInputManager.Token.LookUp, 1) * sensitivityY;
-			rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
-			
-			transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
-		}
+		rotationX += CustomInputManager.GetAxis(CustomInputManager.Token.LookRight, 1) * Time.deltaTime * GamepadSensitivity;
+		rotationX += Input.GetAxis("Mouse_X") * MouseSensitivity;
+
+		rotationY += Input.GetAxis("Mouse_Y") * MouseSensitivity;
+		rotationY += CustomInputManager.GetAxis(CustomInputManager.Token.LookUp, 1) * Time.deltaTime * GamepadSensitivity;
+		rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
+		
+		transform.localEulerAngles = new Vector3(-rotationY, rotationX, 0);
 	}
 	
 	void Start ()

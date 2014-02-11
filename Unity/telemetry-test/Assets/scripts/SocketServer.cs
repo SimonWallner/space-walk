@@ -67,7 +67,7 @@ public class SocketServer {
 	}
 
 	public static void ReceiveCallback(IAsyncResult ar) {
-		Debug.Log ("receive callback");
+//		Debug.Log("receive callback");
 
 		var state = (State)ar.AsyncState;
 		int bytesRead = state.listener.EndReceive(ar);

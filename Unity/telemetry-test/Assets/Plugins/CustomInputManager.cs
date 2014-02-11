@@ -65,8 +65,6 @@ using System;
 
 public static class CustomInputManager {
 
-	public static float cameraSensitivity = 0.2f;
-
 	public enum Token {
 		Forward,
 		Right,
@@ -134,25 +132,29 @@ public static class CustomInputManager {
 //			Debug.Log("Controller i: " + Input.GetJoystickNames()[i]);
 //		}
 
+		float keys = 0;
 		switch(token) {
 
 		case Token.Right:
-			return RetrieveAxisDataDeadZoned(playerID, 1);
+			keys = Convert.ToSingle(Input.GetKey("d")) - Convert.ToSingle(Input.GetKey("a"));
+			return RetrieveAxisDataDeadZoned(playerID, 1) + keys;
 		
 		case Token.Forward:
-			return -RetrieveAxisDataDeadZoned(playerID, 2);
+			keys = Convert.ToSingle(Input.GetKey("w")) - Convert.ToSingle(Input.GetKey("s"));
+			return -RetrieveAxisDataDeadZoned(playerID, 2) + keys;
 
 		case Token.LookRight:
-			return RetrieveAxisDataDeadZoned(playerID, 3) * cameraSensitivity;
+			return RetrieveAxisDataDeadZoned(playerID, 3);
 			
 		case Token.LookUp:
-			return -RetrieveAxisDataDeadZoned(playerID, 4) * cameraSensitivity;
+			return -RetrieveAxisDataDeadZoned(playerID, 4);
 
 		case Token.Jump:
+			float jump = Convert.ToSingle(Input.GetKey(KeyCode.Space));
 			if (controllers[playerID - 1] == Controller.PS3) {
-				return RetrieveButtonData(playerID, 14);
+				return RetrieveButtonData(playerID, 14) + jump;
 			} else {
-				return RetrieveButtonData(playerID, 16);
+				return RetrieveButtonData(playerID, 16) + jump;
 			}
 
 		default:

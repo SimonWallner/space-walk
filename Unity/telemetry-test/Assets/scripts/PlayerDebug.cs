@@ -12,6 +12,11 @@ public class PlayerDebug : MonoBehaviour {
 //		Telemetry.data("jump", CustomInputManager.GetAxis(CustomInputManager.Token.Jump, 1));
 		Telemetry.position(transform.position);
 
+		Telemetry.data("look right", CustomInputManager.GetAxis(CustomInputManager.Token.LookRight, 1));
+		Telemetry.data("look up", CustomInputManager.GetAxis(CustomInputManager.Token.LookUp, 1));
+
+		Telemetry.data("move right", CustomInputManager.GetAxis(CustomInputManager.Token.Forward, 1));
+		Telemetry.data("move up", CustomInputManager.GetAxis(CustomInputManager.Token.Right, 1));
 //
 //		string message = "xxx{\"type\": \"foobar\"}";
 //
