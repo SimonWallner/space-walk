@@ -9,6 +9,8 @@ public class Init : MonoBehaviour {
 		Debug.Log("init....");
 		Telemetry.trace("hello!");
 
+		Constants.Init();
+
 		Application.runInBackground = true;
 	}
 }

@@ -33,9 +33,13 @@ public class MouseLook : MonoBehaviour {
 	void Update ()
 	{
 		rotationX += CustomInputManager.GetAxis(CustomInputManager.Token.LookRight, 1) * Time.deltaTime * GamepadSensitivity;
-		rotationX += Input.GetAxis("Mouse_X") * MouseSensitivity;
+		if (Constants.enableMouse) {
+			rotationX += Input.GetAxis("Mouse_X") * MouseSensitivity;
+		}
 
-		rotationY += Input.GetAxis("Mouse_Y") * MouseSensitivity;
+		if (Constants.enableMouse) {
+			rotationY += Input.GetAxis("Mouse_Y") * MouseSensitivity;
+		}
 		rotationY += CustomInputManager.GetAxis(CustomInputManager.Token.LookUp, 1) * Time.deltaTime * GamepadSensitivity;
 		rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
 		
@@ -48,4 +52,4 @@ public class MouseLook : MonoBehaviour {
 		if (rigidbody)
 			rigidbody.freezeRotation = true;
 	}
-}
+}	
