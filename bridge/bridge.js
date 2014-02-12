@@ -20,7 +20,7 @@ var connect = function() {
 	}
 
 	connecting = true;
-	console.log("connecting...");
+	console.log("socket connecting...");
 
 	clientSocket = new net.Socket();
 	clientSocket.connect(port, host, function() {
@@ -57,14 +57,8 @@ var connect = function() {
 		}
 	});
 
-	clientSocket.on('close', function() {
-	    console.log('Connection closed');
-	    connected = false;
-	    connecting = false;
-	});
-
 	clientSocket.on('error', function(err) {
-		console.log('error occured: ' + err);
+		console.log('socket error occured: ' + err);
 		connected = false;
 		connecting = false;
 	});
@@ -96,16 +90,34 @@ wsServer = new WebSocketServer({
 wsServer.on('request', function(request) {
 	var connection = request.accept('', request.origin);
 	connectionPool.push(connection);
-	console.log('connection added. Pool length: ' + connectionPool.length);
+	console.log('ws connection added. Pool length: ' + connectionPool.length);
 
 	connection.on('message', function(msg) {
 		var raw = msg.utf8Data;
 		console.log('ws message got: ' + raw);
 		clientSocket.write(raw);
 	});
+
+	connection.on('close', function() {
+		console.log('ws client connection lost');
+
+		for (var i = 0; i < connectionPool.length; i++) {
+			if (connectionPool[i] === connection) {
+				connectionPool.splice(i, 1);
+			}
+		}
+	});
+
+	connection.on('error', function() {
+		console.log('ws client connection error');
+
+		for (var i = 0; i < connectionPool.length; i++) {
+			if (connectionPool[i] === connection) {
+				connectionPool.splice(i, 1);
+			}
+		}
+	});
 });
-
-
 
 
 
