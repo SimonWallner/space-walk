@@ -64,9 +64,11 @@ Variables can be registered to be tweaked remotely
 
 ## Space Walk Positional Tracking
 	{
-		"time": 123.34,
-		"position": {
+		"type": "position",
+		"payload": {
+			"time": 123.34,
 			"x": 123,
-			"y": 3456
+			"y": 3456,
+			"z": 789
 		}
 	}

@@ -100,52 +100,53 @@ var connect = function() {
 			d3.select('#image').append('img')
 				.attr('src', 'data:' + sample.payload.type + ',' + sample.payload.data);
 			return;
-		}
+		} else if (sample.type === "position") {
 		
-		data[0].push(sample);
-		latestData.push(sample);
+			data[0].push(sample.payload);
+			latestData.push(sample.payload);
 
-		if ((latestData.length - 2) > dataCount % Math.pow(2, currentLevel)) {
-			var last = latestData[latestData.length - 1];
-			latestData.length = 0;
-			latestData.push(last);
-			latestData.push(sample);
-		}
-
-		for (var i = 1; i < data.length; i++) {
-			if (dataCount % (Math.pow(2, i)) === 0) {
-				data[i].push(sample);
+			if ((latestData.length - 2) > dataCount % Math.pow(2, currentLevel)) {
+				var last = latestData[latestData.length - 1];
+				latestData.length = 0;
+				latestData.push(last);
+				latestData.push(sample.payload);
 			}
-		}
 
-		if (data[data.length-1].length > maxElements) {
-			currentLevel++;
-			data.push([]);
-			for (var i = 0; i < data[data.length-2].length; i += 2) {
-				data[data.length-1].push(data[data.length-2][i]);
+			for (var i = 1; i < data.length; i++) {
+				if (dataCount % (Math.pow(2, i)) === 0) {
+					data[i].push(sample.payload);
+				}
 			}
-			currentData = data[data.length-1];
-			path.datum(currentData);
+
+			if (data[data.length-1].length > maxElements) {
+				currentLevel++;
+				data.push([]);
+				for (var i = 0; i < data[data.length-2].length; i += 2) {
+					data[data.length-1].push(data[data.length-2][i]);
+				}
+				currentData = data[data.length-1];
+				path.datum(currentData);
+			}
+			
+			dataCount++;
+
+			updateBounds(sample.payload, bounds);
+
+			last = current;
+			current = JSON.parse(message.data);
+
+			update();
+			makeGrid(bounds);
+
+			rxStatus = !rxStatus;
+			if (rxStatus) {
+				rx.attr('class', 'off');
+			} else {
+				rx.attr('class', 'on');
+			}
+			counter.hit();
+			counter.print();
 		}
-		
-		dataCount++;
-
-		updateBounds(sample.position, bounds);
-
-		last = current;
-		current = JSON.parse(message.data);
-
-		update();
-		makeGrid(bounds);
-
-		rxStatus = !rxStatus;
-		if (rxStatus) {
-			rx.attr('class', 'off');
-		} else {
-			rx.attr('class', 'on');
-		}
-		counter.hit();
-		counter.print();
 	};
 
 	ws.onerror = function(event) {
@@ -172,8 +173,8 @@ var close = function() {
 	selection
 		.attr('vector-effect', 'inherit')
 		.attr('d', d3.svg.line()
-			.x(function(d) {return d.position.x})
-			.y(function(d) {return d.position.z})
+			.x(function(d) {return d.x})
+			.y(function(d) {return d.z})
 			.interpolate('linear'));
 }
 
@@ -194,8 +195,8 @@ var update = function() {
 	path.call(drawPath);
 	trailPath.call(drawPath);
 
-	youAreHere.attr('cx', current.position.x)
-		.attr('cy', current.position.z);
+	youAreHere.attr('cx', current.x)
+		.attr('cy', current.z);
 
 	updateGroup(bounds);
 }
