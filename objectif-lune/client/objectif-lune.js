@@ -115,14 +115,15 @@ function connect() {
 	};
 	
 	ws.onerror = function(e) {
-		// console.log(e);
+		console.log(' ws error: ' + e);
 		state = connectionState.notConnected;
 		d3.select('#connectionStatus')
 			.text('disconnected')
 			.attr('class', 'disconnected')
 	};
 	
-	ws.onclose = function(e) {
+	ws.onclose = function() {
+		console.log('ws connection closed"')
 		if (state === connectionState.connected) {
 			warn("connection to " + ws.URL + " closed!");
 		}

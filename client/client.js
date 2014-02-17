@@ -90,6 +90,7 @@ var connect = function() {
 	{
 		state = connectionState.connected;
 		document.getElementById('connect').className = 'online';
+		document.getElementById('connect').innerHTML = 'connected';
 	};
 
 	ws.onmessage = function(message) {
@@ -151,6 +152,14 @@ var connect = function() {
 		// console.log(event);
 		state = connectionState.notConnected;
 		document.getElementById('connect').className = 'offline';
+		document.getElementById('connect').innerHTML = 'disconnected';
+	};
+
+	ws.onclose = function(event) {
+		// console.log(event);
+		state = connectionState.notConnected;
+		document.getElementById('connect').className = 'offline';
+		document.getElementById('connect').innerHTML = 'disconnected';
 	};
 }
 
@@ -321,14 +330,14 @@ window.onload = function() {
 
 	grid.attr('vector-effect', 'non-scaling-stroke');
 
-	document.getElementById('connect').onclick = function() {
-		autoConnect = !autoConnect;
-		document.getElementById('connect').className = 'offline';
+	// document.getElementById('connect').onclick = function() {
+	// 	autoConnect = !autoConnect;
+	// 	document.getElementById('connect').className = 'offline';
 
-		if (state === connectionState.connected) {
-			close();
-		}
-	}
+	// 	if (state === connectionState.connected) {
+	// 		close();
+	// 	}
+	// }
 
 	document.getElementById('requestMapTile').onclick = function() {
 		requestMapTile({x: 0, y: 0, width: 100, height: 100});

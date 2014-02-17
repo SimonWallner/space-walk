@@ -25,7 +25,7 @@ var connect = function() {
 	clientSocket = new net.Socket();
 	clientSocket.connect(port, host, function() {
 		connected = true;
-		clientSocket.write('I am Chuck Norris!');
+		console.log('socket connection established');
 	});
 
 	clientSocket.on('data', function(data) {
@@ -59,6 +59,24 @@ var connect = function() {
 
 	clientSocket.on('error', function(err) {
 		console.log('socket error occured: ' + err);
+		connected = false;
+		connecting = false;
+	});
+
+	clientSocket.on('end', function() {
+		console.log('socket connection ended.');
+		connected = false;
+		connecting = false;
+	});
+
+	clientSocket.on('timeout', function() {
+		console.log('socket connection timed out.');
+		connected = false;
+		connecting = false;
+	});
+
+	clientSocket.on('close', function() {
+		console.log('socket connection closed.');
 		connected = false;
 		connecting = false;
 	});
