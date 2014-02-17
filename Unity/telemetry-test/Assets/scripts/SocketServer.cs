@@ -73,7 +73,7 @@ public class SocketServer {
 		int bytesRead = state.listener.EndReceive(ar);
 
 		if (bytesRead > 0) {
-			Debug.Log(System.Text.Encoding.ASCII.GetString(state.buffer));
+			Debug.Log("message got: '" + System.Text.Encoding.ASCII.GetString(state.buffer) + "'");
 
 			var message = System.Text.Encoding.ASCII.GetString(state.buffer);
 
@@ -85,13 +85,16 @@ public class SocketServer {
 					string type = (string)dict["type"];
 
 					if (type == "mapTileRequest") {
+//						Debug.Log("it's a map tile request!");
 						var payload = (Dictionary<string, object>)dict["payload"];
 		
-						float x = (float)payload["x"];
-//						float y = float.Parse((string)payload["y"]);
-//						float width = float.Parse((string)payload["width"]);
-//						float height = float.Parse((string)payload["height"]);
-//						Telemetry.capture(new Rect(x, y, width, height));
+						Debug.Log ("top: " + payload["top"]);
+						float top = System.Convert.ToSingle(payload["top"]);
+						float left = System.Convert.ToSingle(payload["left"]);
+						float width = System.Convert.ToSingle(payload["width"]);
+						float height = System.Convert.ToSingle(payload["height"]);
+
+						Telemetry.mapTileRequest(new Rect(left, top, width, height));
 					} else {
 						Debug.Log("unknown messag type: " + type + " (" + message + ")");
 					}

@@ -94,18 +94,22 @@ public static class Telemetry {
 		Debug.Log("remote camera registered");
 	}
 
-	public static void capture(Rect rect) {
-		Debug.Log("capturing: " + rect);
+	public static void mapTileRequest(Rect rect) {
+		Debug.Log("mapTileRequest for: " + rect);
 		captureCam.capture(rect);
 	}
 
-	public static void image(byte[] bytes) {
+	public static void mapTile(byte[] bytes) {
 
 		string base64 = System.Convert.ToBase64String(bytes);
 
-		string json = "{\"type\": \"image\", \"payload\": {" +
+		string json = "{\"type\": \"mapTile\", \"payload\": {" +
 			"\"type\": \"image/png;base64\", " +
-			"\"data\": \"" + base64 + "\"}}";
+			"\"data\": \"" + base64 + "\", " +
+			"\"top\": \"" + 0 + "\", " +
+			"\"left\": \"" + 0 + "\", " +
+			"\"width\": \"" + 100 + "\", " +
+			"\"height\": \"" + 100 + "\"}}";
 
 		Server.Broadcast(json);
 	}

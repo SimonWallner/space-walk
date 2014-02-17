@@ -24,6 +24,15 @@ var grid = null;
 var gridH = null;
 var gridV = null;
 
+var mapGroup = null;
+var currentTile = {
+	top: 0,
+	left: 0,
+	width: 0,
+	height: 0
+}
+var mapTileRequested = false;
+
 var bounds = {
 	top: -Number.MAX_VALUE,
 	left: Number.MAX_VALUE,
@@ -60,6 +69,19 @@ var updateBounds = function(position, bounds) {
 	if (position.z < bounds.bottom) {
 		bounds.bottom = position.z;
 	}
+
+	if (!mapTileRequested && (bounds.right - bounds.left > currentTile.width ||
+			bounds.top - bounds.bottom > currentTile.height)) {
+		// request new tile
+		requestMapTile({
+			left: bounds.left,
+			top: bounds.top,
+			width: (bounds.right - bounds.left),
+			height: (bounds.top - bounds.bottom)
+		});
+
+		mapTileRequested = true;
+	}
 }
 
 var connectionState = {
@@ -69,6 +91,19 @@ var connectionState = {
 };
 
 var state = connectionState.notConnected;
+
+var mapTile = function(json) {
+	mapGroup.selectAll('image').remove();
+	mapGroup.append('image')
+		.attr('x', json.left)
+		.attr('y', json.top)
+		.attr('width', json.width)
+		.attr('height', json.height)
+		.attr('xlink:href', 'data:' + json.type + ', ' + json.data);
+	
+	mapTileRequested = false;
+	currentTile = json;
+}
 
 var connect = function() {
 	state = connectionState.connecting;
@@ -96,9 +131,8 @@ var connect = function() {
 	ws.onmessage = function(message) {
 		var sample = JSON.parse(message.data);
 		
-		if (sample.type === "image") {
-			d3.select('#image').append('img')
-				.attr('src', 'data:' + sample.payload.type + ',' + sample.payload.data);
+		if (sample.type === "mapTile") {
+			mapTile(sample.payload);
 			return;
 		} else if (sample.type === "position") {
 		
@@ -208,6 +242,9 @@ var updateGroup = function(bounds) {
 		// .transition()
 		.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
 			(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
+
+		mapGroup.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
+			(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
 }
 
 var makeGrid = function(bounds) {
@@ -316,6 +353,8 @@ window.onload = function() {
 		mouseDown = false;
 	}
 
+	mapGroup = svg.append('g');
+
 	group = svg.append('g');
 	group.attr('vector-effect', 'non-scaling-stroke');
 
@@ -341,7 +380,7 @@ window.onload = function() {
 	// }
 
 	document.getElementById('requestMapTile').onclick = function() {
-		requestMapTile({x: 0, y: 0, width: 100, height: 100});
+		requestMapTile({top: 0, left: 0, width: 100, height: 100});
 	}
 
 	document.getElementById('clearImages').onclick = function() {

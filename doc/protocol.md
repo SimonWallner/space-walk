@@ -50,13 +50,29 @@ Variables can be registered to be tweaked remotely
 	}
 
 
-### Images
+### Map tiles
 
 	{
-		"type": "image",
+		"type": "mapTileRequest",
+		"payload": {
+			"top": 1234.1234,
+			"left": 123,
+			"width": 123,
+			"height": 1234
+		}
+	}
+
+// TODO separate mime type and encoding
+
+	{
+		"type": "mapTile",
 		"payload": {
 			"type": "image/png;base64",
-			"data": "asdfasfhkjadshflaksjdfhkla..."
+			"data": "asdfasfhkjadshflaksjdfhkla...",
+			"top": 1234.1234,
+			"left": 123,
+			"width": 123,
+			"height": 1234
 		}
 	}
 
