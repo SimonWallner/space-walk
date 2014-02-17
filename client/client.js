@@ -76,8 +76,8 @@ var updateBounds = function(position, bounds) {
 		requestMapTile({
 			left: bounds.left,
 			top: bounds.top,
-			width: (bounds.right - bounds.left),
-			height: (bounds.top - bounds.bottom)
+			width: (bounds.right - bounds.left) * 1.5 + 10,
+			height: (bounds.top - bounds.bottom) * 1.5 + 10
 		});
 
 		mapTileRequested = true;
@@ -93,6 +93,8 @@ var connectionState = {
 var state = connectionState.notConnected;
 
 var mapTile = function(json) {
+	console.log(json);
+
 	mapGroup.selectAll('image').remove();
 	mapGroup.append('image')
 		.attr('x', json.left)

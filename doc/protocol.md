@@ -1,6 +1,9 @@
 # protocol documentation for Space Walk
 Space walk uses a human readable and understandable json message interface. The messages are as follows:
 
+## JSON
+JSON is used as the transport format, becase it is easily understandable and parsable by both humans and computers. Keywords are therefore not ordered, since is an unordered set of name/value pairs.
+
 ## Server (game) --> Client (btowser)
 
 ### Log messages
@@ -69,8 +72,8 @@ Variables can be registered to be tweaked remotely
 		"payload": {
 			"type": "image/png;base64",
 			"data": "asdfasfhkjadshflaksjdfhkla...",
-			"top": 1234.1234,
 			"left": 123,
+			"top": 1234.1234,
 			"width": 123,
 			"height": 1234
 		}

@@ -32,6 +32,12 @@ public class RemoteScreenCapture : MonoBehaviour {
 
 			// setup camera...
 			// todo
+			float maxSize = Mathf.Max(captureCameraFrame.width, captureCameraFrame.height);
+
+			float cameraY = camera.transform.position.y;
+			camera.transform.position = new Vector3(captureCameraFrame.center.x, cameraY, captureCameraFrame.center.y);
+			camera.orthographicSize = maxSize / 2.0f;
+
 			camera.Render();
 			
 			
@@ -41,19 +47,18 @@ public class RemoteScreenCapture : MonoBehaviour {
 			RenderTexture.active = null;
 			
 			byte[] bytes = texture.EncodeToPNG();
+		
 			
-			//		string filename = "textureTest.png";
-			//		System.IO.File.WriteAllBytes(filename, bytes);
-			//		Debug.Log(string.Format("Took screenshot to: {0}", filename));
-			
-			Telemetry.mapTile(bytes);
+			Telemetry.mapTile(bytes, new Rect(captureCameraFrame.center.x - (maxSize / 2.0f),
+			                  captureCameraFrame.center.y - (maxSize / 2.0f),
+			                  maxSize, maxSize));
 
 			captureNextFrame = false;
 		}
 	}
 
 
-	public void capture(Rect rect) {
+	public void captureMapTile(Rect rect) {
 		captureNextFrame = true;
 		captureCameraFrame = rect;
 	}

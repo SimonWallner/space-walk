@@ -96,20 +96,20 @@ public static class Telemetry {
 
 	public static void mapTileRequest(Rect rect) {
 		Debug.Log("mapTileRequest for: " + rect);
-		captureCam.capture(rect);
+		captureCam.captureMapTile(rect);
 	}
 
-	public static void mapTile(byte[] bytes) {
+	public static void mapTile(byte[] bytes, Rect rect) {
 
 		string base64 = System.Convert.ToBase64String(bytes);
 
 		string json = "{\"type\": \"mapTile\", \"payload\": {" +
 			"\"type\": \"image/png;base64\", " +
 			"\"data\": \"" + base64 + "\", " +
-			"\"top\": \"" + 0 + "\", " +
-			"\"left\": \"" + 0 + "\", " +
-			"\"width\": \"" + 100 + "\", " +
-			"\"height\": \"" + 100 + "\"}}";
+			"\"left\": \"" + rect.xMin + "\", " +
+			"\"top\": \"" + rect.yMin + "\", " +
+			"\"width\": \"" + rect.width + "\", " +
+			"\"height\": \"" + rect.height + "\"}}";
 
 		Server.Broadcast(json);
 	}
