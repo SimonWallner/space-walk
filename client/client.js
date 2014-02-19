@@ -70,14 +70,15 @@ var updateBounds = function(position, bounds) {
 		bounds.bottom = position.z;
 	}
 
-	if (!mapTileRequested && (bounds.right - bounds.left > currentTile.width ||
-			bounds.top - bounds.bottom > currentTile.height)) {
+	if (!mapTileRequested && (bounds.width() > currentTile.width ||
+			bounds.height() > currentTile.height)) {
 		// request new tile
+		// compute bounds of canvas in world coords
 		requestMapTile({
-			left: bounds.left,
-			top: bounds.top,
-			width: (bounds.right - bounds.left) * 1.5 + 10,
-			height: (bounds.top - bounds.bottom) * 1.5 + 10
+			left: bounds.left - ((bounds.width() * 0.25) + 5),
+			top: bounds.top - ((bounds.height() * 0.25) + 5),
+			width: bounds.width() + ((bounds.width() * 0.5) + 10),
+			height: bounds.height() + ((bounds.height() * 0.5) + 10)
 		});
 
 		mapTileRequested = true;
@@ -98,13 +99,18 @@ var mapTile = function(json) {
 	mapGroup.selectAll('image').remove();
 	mapGroup.append('image')
 		.attr('x', json.left)
-		.attr('y', json.top)
+		.attr('y', -json.top)
 		.attr('width', json.width)
 		.attr('height', json.height)
 		.attr('xlink:href', 'data:' + json.type + ', ' + json.data);
 	
 	mapTileRequested = false;
 	currentTile = json;
+
+	// debug output
+	d3.select('#image img').remove();
+	d3.select('#image').append('img')
+		.attr('src', 'data:' + json.type + ', ' + json.data);
 }
 
 var connect = function() {
@@ -244,9 +250,6 @@ var updateGroup = function(bounds) {
 		// .transition()
 		.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
 			(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
-
-		mapGroup.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
-			(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
 }
 
 var makeGrid = function(bounds) {
@@ -355,10 +358,10 @@ window.onload = function() {
 		mouseDown = false;
 	}
 
-	mapGroup = svg.append('g');
 
 	group = svg.append('g');
 	group.attr('vector-effect', 'non-scaling-stroke');
+	mapGroup = group.append('g');
 
 
 	youAreHere = group.append('circle')
@@ -381,14 +384,6 @@ window.onload = function() {
 	// 	}
 	// }
 
-	document.getElementById('requestMapTile').onclick = function() {
-		requestMapTile({top: 0, left: 0, width: 100, height: 100});
-	}
-
-	document.getElementById('clearImages').onclick = function() {
-		d3.selectAll('#image img').remove();
-	}
-
 	window.setInterval(function() {
 		if (autoConnect && state === connectionState.notConnected) {
 			connect();
@@ -401,8 +396,4 @@ var requestMapTile = function(rect) {
 		type: 'mapTileRequest',
 		payload: rect
 	}));
-}
-
-var receivedMapTile = function(data) {
-
 }

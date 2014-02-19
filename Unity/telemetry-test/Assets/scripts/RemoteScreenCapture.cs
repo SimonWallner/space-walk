@@ -30,13 +30,20 @@ public class RemoteScreenCapture : MonoBehaviour {
 
 			RenderTexture.active = rt;
 
+			Debug.Log("rendering map tile. min X: " + captureCameraFrame.xMin +
+			          ", max X: " + captureCameraFrame.xMax +
+			          ", min Y: " + captureCameraFrame.yMin +
+			          ", max Y: " + captureCameraFrame.yMax +
+			          ", width: " + captureCameraFrame.width +
+			          ", height: " + captureCameraFrame.height);
+
 			// setup camera...
 			// todo
 			float maxSize = Mathf.Max(captureCameraFrame.width, captureCameraFrame.height);
 
 			float cameraY = camera.transform.position.y;
 			camera.transform.position = new Vector3(captureCameraFrame.center.x, cameraY, captureCameraFrame.center.y);
-			camera.orthographicSize = maxSize / 2.0f;
+			camera.orthographicSize = maxSize * 2.0f;
 
 			camera.Render();
 			

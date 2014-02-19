@@ -95,6 +95,7 @@ public class SocketServer {
 						float height = System.Convert.ToSingle(payload["height"]);
 
 						Telemetry.mapTileRequest(new Rect(left, top, width, height));
+//						Telemetry.mapTileRequest(new Rect(-500, 500, 1000, 1000));
 					} else {
 						Debug.Log("unknown messag type: " + type + " (" + message + ")");
 					}
