@@ -55,11 +55,12 @@ Variables can be registered to be tweaked remotely
 
 ### Map tiles
 
+Map tiles have span a quad with the following coords: (x, y), (x + width, y), (x, y + height), (x + width, y + height).
 	{
 		"type": "mapTileRequest",
 		"payload": {
-			"top": 1234.1234,
-			"left": 123,
+			"x": 1234.1234,
+			"y": 123,
 			"width": 123,
 			"height": 1234
 		}

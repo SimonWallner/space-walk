@@ -26,8 +26,8 @@ var gridV = null;
 
 var mapGroup = null;
 var currentTile = {
-	top: 0,
-	left: 0,
+	x: 0,
+	y: 0,
 	width: 0,
 	height: 0
 }
@@ -75,8 +75,8 @@ var updateBounds = function(position, bounds) {
 		// request new tile
 		// compute bounds of canvas in world coords
 		requestMapTile({
-			left: bounds.left - ((bounds.width() * 0.25) + 5),
-			top: bounds.top - ((bounds.height() * 0.25) + 5),
+			x: bounds.left - ((bounds.width() * 0.25) + 5),
+			y: bounds.top - ((bounds.height() * 0.25) + 5),
 			width: bounds.width() + ((bounds.width() * 0.5) + 10),
 			height: bounds.height() + ((bounds.height() * 0.5) + 10)
 		});
@@ -98,8 +98,8 @@ var mapTile = function(json) {
 
 	mapGroup.selectAll('image').remove();
 	mapGroup.append('image')
-		.attr('x', json.left)
-		.attr('y', -json.top)
+		.attr('x', json.x)
+		.attr('y', -json.y)
 		.attr('width', json.width)
 		.attr('height', json.height)
 		.attr('xlink:href', 'data:' + json.type + ', ' + json.data);

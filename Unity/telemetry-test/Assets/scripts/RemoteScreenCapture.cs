@@ -43,7 +43,7 @@ public class RemoteScreenCapture : MonoBehaviour {
 
 			float cameraY = camera.transform.position.y;
 			camera.transform.position = new Vector3(captureCameraFrame.center.x, cameraY, captureCameraFrame.center.y);
-			camera.orthographicSize = maxSize * 2.0f;
+			camera.orthographicSize = maxSize / 2.0f;
 
 			camera.Render();
 			

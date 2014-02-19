@@ -106,8 +106,8 @@ public static class Telemetry {
 		string json = "{\"type\": \"mapTile\", \"payload\": {" +
 			"\"type\": \"image/png;base64\", " +
 			"\"data\": \"" + base64 + "\", " +
-			"\"left\": \"" + rect.xMin + "\", " +
-			"\"top\": \"" + rect.yMin + "\", " +
+			"\"x\": \"" + rect.xMin + "\", " +
+			"\"y\": \"" + rect.yMin + "\", " +
 			"\"width\": \"" + rect.width + "\", " +
 			"\"height\": \"" + rect.height + "\"}}";
 

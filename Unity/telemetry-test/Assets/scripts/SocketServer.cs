@@ -87,15 +87,14 @@ public class SocketServer {
 					if (type == "mapTileRequest") {
 //						Debug.Log("it's a map tile request!");
 						var payload = (Dictionary<string, object>)dict["payload"];
-		
-						Debug.Log ("top: " + payload["top"]);
-						float top = System.Convert.ToSingle(payload["top"]);
-						float left = System.Convert.ToSingle(payload["left"]);
+
+						float x = System.Convert.ToSingle(payload["x"]);
+						float y = System.Convert.ToSingle(payload["y"]);
 						float width = System.Convert.ToSingle(payload["width"]);
 						float height = System.Convert.ToSingle(payload["height"]);
 
-						Telemetry.mapTileRequest(new Rect(left, top, width, height));
-//						Telemetry.mapTileRequest(new Rect(-500, 500, 1000, 1000));
+						Telemetry.mapTileRequest(new Rect(y, x, width, height));
+//						Telemetry.mapTileRequest(new Rect(125, 125, 125, 125));
 					} else {
 						Debug.Log("unknown messag type: " + type + " (" + message + ")");
 					}
