@@ -34,40 +34,45 @@ var currentTile = {
 var mapTileRequested = false;
 
 var bounds = {
-	top: -Number.MAX_VALUE,
-	left: Number.MAX_VALUE,
-	bottom: Number.MAX_VALUE,
-	right: -Number.MAX_VALUE,
+	xMin: Number.MAX_VALUE,
+	xMax: -Number.MAX_VALUE,
+	yMin: Number.MAX_VALUE,
+	yMax: -Number.MAX_VALUE,
+
+	// xMin: -100,
+	// xMax: 100,
+	// yMin: -100,
+	// yMax: 100,
 
 	width: function() {
-		return this.right - this.left;
+		return this.xMax - this.xMin;
 	},
 
 	height: function() {
-		return this.top - this.bottom;
+		return this.yMax - this.yMin;
 	},
 
 	centerX: function() {
-		return (this.right + this.left) / 2;
+		return (this.xMin + this.xMax) / 2.0;
 	},
 
 	centerY: function() {
-		return (this.top + this.bottom) / 2;
+		return (this.yMin + this.yMax) / 2.0;
 	}
 }
 
 var updateBounds = function(position, bounds) {
-	if (position.x > bounds.right) {
-		bounds.right = position.x;
+	if (position.x > bounds.xMax) {
+		bounds.xMax = position.x;
 	}
-	if (position.x < bounds.left) {
-		bounds.left = position.x;
+	if (position.x < bounds.xMin) {
+		bounds.xMin = position.x;
 	}
-	if (position.z > bounds.top) {
-		bounds.top = position.z;
+	if (position.z > bounds.yMax) {
+		bounds.yMax = position.z;
 	}
-	if (position.z < bounds.bottom) {
-		bounds.bottom = position.z;
+	if (position.z < bounds.yMin) {
+		bounds.yMin = position.z;
 	}
 
 	if (!mapTileRequested && (bounds.width() > currentTile.width ||
@@ -75,10 +80,20 @@ var updateBounds = function(position, bounds) {
 		// request new tile
 		// compute bounds of canvas in world coords
 		requestMapTile({
-			x: bounds.left - ((bounds.width() * 0.25) + 5),
-			y: bounds.top - ((bounds.height() * 0.25) + 5),
-			width: bounds.width() + ((bounds.width() * 0.5) + 10),
-			height: bounds.height() + ((bounds.height() * 0.5) + 10)
+			// x: bounds.xMin - ((bounds.width() * 0.25) + 5),
+			// y: bounds.yMin - ((bounds.height() * 0.25) + 5),
+			// width: bounds.width() + ((bounds.width() * 0.5) + 10),
+			// height: bounds.height() + ((bounds.height() * 0.5) + 10)
+
+			x: bounds.xMin,
+			y: bounds.yMin,
+			width: bounds.width(),
+			height: bounds.height()
+
+			// x: 62.5,
+			// y: 62.5,
+			// width: 125,
+			// height: 125
 		});
 
 		mapTileRequested = true;
@@ -99,7 +114,7 @@ var mapTile = function(json) {
 	mapGroup.selectAll('image').remove();
 	mapGroup.append('image')
 		.attr('x', json.x)
-		.attr('y', -json.y)
+		.attr('y', -(json.y + json.height))
 		.attr('width', json.width)
 		.attr('height', json.height)
 		.attr('xlink:href', 'data:' + json.type + ', ' + json.data);
@@ -261,7 +276,7 @@ var makeGrid = function(bounds) {
 	var count = Math.ceil(bounds.width() / logStep);
 	// console.log(count);
 
-	var anchorV = Math.floor((bounds.left - (bounds.width())) / logStep) * logStep;
+	var anchorV = Math.floor((bounds.xMin - (bounds.width())) / logStep) * logStep;
 
 	var dataV = [];
 	for (var i = 0; i < count * 10; i++) {
@@ -272,21 +287,21 @@ var makeGrid = function(bounds) {
 	foo
 		.attr('x1', function(d) {return d;})
 		.attr('x2', function(d) {return d;})
-		.attr('y1', bounds.bottom - bounds.height())
-		.attr('y2', bounds.top + bounds.height())
+		.attr('y1', bounds.yMin - 10 * bounds.height())
+		.attr('y2', bounds.yMax + 10 * bounds.height())
 		.attr('vector-effect', 'inherit')
 
 	foo.enter()
 		.append('line')
 			.attr('x1', function(d) {return d;})
 			.attr('x2', function(d) {return d;})
-			.attr('y1', bounds.bottom - bounds.height())
-			.attr('y2', bounds.top + bounds.height())
+			.attr('y1', bounds.yMin - 10 * bounds.height())
+			.attr('y2', bounds.yMax + 10 * bounds.height())
 			.attr('vector-effect', 'inherit');
 	foo.exit()
 		.remove();
 
-	var anchorH = Math.floor((bounds.bottom - (bounds.height())) / logStep) * logStep;
+	var anchorH = Math.floor((bounds.yMax - (bounds.height())) / logStep) * logStep;
 
 	var dataH = [];
 	for (var i = 0; i < count * 4; i++) {
@@ -295,19 +310,20 @@ var makeGrid = function(bounds) {
 
 	foo = gridH.selectAll('line').data(dataH);
 	foo
-		.attr('x1', bounds.left - bounds.width())
-		.attr('x2', bounds.right + bounds.width())
+		.attr('x1', bounds.xMin - 10 * bounds.width())
+		.attr('x2', bounds.xMax + 10 * bounds.width())
 		.attr('y1', function(d) {return d;})
 		.attr('y2', function(d) {return d;})
-		.attr('vector-effect', 'inherit')
+		.attr('vector-effect', 'inherit');
 
 	foo.enter()
 		.append('line')
-	.attr('x1', bounds.left - bounds.width())
-		.attr('x2', bounds.right + bounds.width())
+		.attr('x1', bounds.xMin - 10 * bounds.width())
+		.attr('x2', bounds.xMax + 10 * bounds.width())
 		.attr('y1', function(d) {return d;})
 		.attr('y2', function(d) {return d;})
-		.attr('vector-effect', 'inherit')
+		.attr('vector-effect', 'inherit');
+
 	foo.exit()
 		.remove();
 }
