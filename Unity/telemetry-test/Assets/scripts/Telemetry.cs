@@ -119,7 +119,7 @@ public static class Telemetry {
 			"\"time\": " + Time.time + ", " + 
 			"\"x\": " + position.x + ", " + 
 			"\"y\": " + position.y + ", " + 
-			"\"z\": " + -position.z + "}}";
+			"\"z\": " + position.z + "}}";
 
 		Server.Broadcast(json);
 	}

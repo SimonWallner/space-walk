@@ -3,6 +3,8 @@ var ws = null;
 var path = null;
 var trailPath = null;
 
+var ratio = 0;
+
 var data = [];
 data.push([]);
 currentData = data[0];
@@ -39,11 +41,6 @@ var bounds = {
 	yMin: Number.MAX_VALUE,
 	yMax: -Number.MAX_VALUE,
 
-	// xMin: -100,
-	// xMax: 100,
-	// yMin: -100,
-	// yMax: 100,
-
 	width: function() {
 		return this.xMax - this.xMin;
 	},
@@ -62,41 +59,23 @@ var bounds = {
 }
 
 var updateBounds = function(position, bounds) {
-	if (position.x > bounds.xMax) {
-		bounds.xMax = position.x;
-	}
-	if (position.x < bounds.xMin) {
-		bounds.xMin = position.x;
-	}
-	if (position.z > bounds.yMax) {
-		bounds.yMax = position.z;
-	}
-	if (position.z < bounds.yMin) {
-		bounds.yMin = position.z;
-	}
-
-	if (!mapTileRequested && (bounds.width() > currentTile.width ||
-			bounds.height() > currentTile.height)) {
+	bounds.xMax = Math.max(bounds.xMax, position.x);
+	bounds.xMin = Math.min(bounds.xMin, position.x);
+	bounds.yMax = Math.max(bounds.yMax, position.z);
+	bounds.yMin = Math.min(bounds.yMin, position.z);
+	
+	if (!mapTileRequested && ((bounds.width() * 2) > currentTile.width ||
+			(bounds.height() * 2) > currentTile.height)) {
 		// request new tile
 		// compute bounds of canvas in world coords
 		requestMapTile({
-			// x: bounds.xMin - ((bounds.width() * 0.25) + 5),
-			// y: bounds.yMin - ((bounds.height() * 0.25) + 5),
-			// width: bounds.width() + ((bounds.width() * 0.5) + 10),
-			// height: bounds.height() + ((bounds.height() * 0.5) + 10)
-
-			x: bounds.xMin,
-			y: bounds.yMin,
-			width: bounds.width(),
-			height: bounds.height()
-
-			// x: 62.5,
-			// y: 62.5,
-			// width: 125,
-			// height: 125
+			x: bounds.xMin - ((bounds.width() * 0.5) + 5),
+			y: bounds.yMin - ((bounds.height() * 0.5) + 5),
+			width: bounds.width() + ((bounds.width() * 1.5) + 10),
+			height: bounds.height() + ((bounds.height() * 1.5) + 10)
 		});
 
-		mapTileRequested = true;
+		// mapTileRequested = true;
 	}
 }
 
@@ -231,7 +210,7 @@ var close = function() {
 		.attr('vector-effect', 'inherit')
 		.attr('d', d3.svg.line()
 			.x(function(d) {return d.x})
-			.y(function(d) {return d.z})
+			.y(function(d) {return -d.z})
 			.interpolate('linear'));
 }
 
@@ -264,7 +243,7 @@ var updateGroup = function(bounds) {
 	group
 		// .transition()
 		.attr('transform', 'translate(' + (-bounds.centerX() * scale + svg.width / 2) + ' '+
-			(-bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
+			(bounds.centerY() * scale + svg.height / 2) + ') scale(' + scale + ')');
 }
 
 var makeGrid = function(bounds) {
@@ -355,6 +334,7 @@ window.onload = function() {
 	svg = d3.select('#map');
 	svg.width = svg[0][0].clientWidth;
 	svg.height = svg[0][0].clientHeight;
+	ratio = svg.width / svg.height;
 
 	var domSVG = document.getElementById('map');
 

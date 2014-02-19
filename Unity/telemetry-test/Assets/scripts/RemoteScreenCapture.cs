@@ -12,6 +12,7 @@ public class RemoteScreenCapture : MonoBehaviour {
 	private Texture2D texture;
 
 	bool captureNextFrame = false;
+	bool cameraSet = false;
 	Rect captureCameraFrame;
 
 	public void Start() {
@@ -25,11 +26,8 @@ public class RemoteScreenCapture : MonoBehaviour {
 	}
 
 	public void OnPostRender() {
-		if (captureNextFrame) {
+		if (captureNextFrame && cameraSet) {
 			Debug.Log("cheeeese!");
-
-			RenderTexture.active = rt;
-
 			Debug.Log("rendering map tile. min X: " + captureCameraFrame.xMin +
 			          ", max X: " + captureCameraFrame.xMax +
 			          ", min Y: " + captureCameraFrame.yMin +
@@ -37,13 +35,7 @@ public class RemoteScreenCapture : MonoBehaviour {
 			          ", width: " + captureCameraFrame.width +
 			          ", height: " + captureCameraFrame.height);
 
-			// setup camera...
-			// todo
-			float maxSize = Mathf.Max(captureCameraFrame.width, captureCameraFrame.height);
-
-			float cameraY = camera.transform.position.y;
-			camera.transform.position = new Vector3(captureCameraFrame.center.x, cameraY, captureCameraFrame.center.y);
-			camera.orthographicSize = maxSize / 2.0f;
+			RenderTexture.active = rt;
 
 			camera.Render();
 			
@@ -56,18 +48,30 @@ public class RemoteScreenCapture : MonoBehaviour {
 			byte[] bytes = texture.EncodeToPNG();
 		
 			
-			Telemetry.mapTile(bytes, new Rect(captureCameraFrame.center.x - (maxSize / 2.0f),
-			                  captureCameraFrame.center.y - (maxSize / 2.0f),
-			                  maxSize, maxSize));
+			Telemetry.mapTile(bytes, captureCameraFrame);
 
 			captureNextFrame = false;
 		}
 	}
 
+	void Update() {
+		float cameraY = camera.transform.position.y;
+		camera.transform.position = new Vector3(captureCameraFrame.center.x, cameraY, captureCameraFrame.center.y);
+		camera.orthographicSize = captureCameraFrame.width / 2.0f;
+
+		cameraSet = true;
+	}
+
 
 	public void captureMapTile(Rect rect) {
 		captureNextFrame = true;
-		captureCameraFrame = rect;
-	}
+		cameraSet = false;
+		
+		// setup camera...
+		float maxSize = Mathf.Max(rect.width, rect.height);
+		captureCameraFrame = new Rect(rect.center.x - (maxSize / 2.0f),
+		                              rect.center.y - (maxSize / 2.0f),
+		                              maxSize, maxSize);
 
+	}
 }
