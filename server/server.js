@@ -1,108 +1,141 @@
-#!/usr/bin/env node
+#! /usr/bin/env node
 
-var http = require('http');
-var url = require("url");
-var fs = require("fs");
-var path = require("path");
+var http = require('http')
+var director = require('director');
+var fs = require('fs');
+var path = require('path');
+var mustache = require('mustache');
+
+var documentRoot = process.cwd();
 
  // monkey patching
  String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
-var documentRoot = process.cwd();
-
-var quickResponse = function(response, status, message) {
-	response.writeHead(status);
-	response.write(message);
-	response.end();
+var notFound = function(response, file) {
+	  response.writeHead(404);
+      response.end('404 not found: ' + file);
 }
 
-var directoryListing = function(response) {
-	fs.readdir(path.join(documentRoot, '/'), function(err, files) {
+var staticFile = function(file, response) {
+
+	response = response || this.res;
+
+	var index = file.indexOf('?');
+	if (index >= 0) {
+		file = file.substring(0, index);
+	}
+
+	// console.log('trying to retrieve file: ' + file)
+
+	var mime;
+	if (file.endsWith('html')) {
+		mime = 'text/html';
+	} else if (file.endsWith('css')) {
+		mime = 'text/css';
+	} else if (file.endsWith('jpg')) {
+		mime = 'img/jpg';
+	} else if (file.endsWith('png')) {
+		mime = 'img/png';
+	} else if (file.endsWith('svg')) {
+		mime = 'image/svg';
+	} else {
+		mime = 'text/plain';
+	}
+	
+	var fullPath = path.join(documentRoot, 'static/', file);
+
+	fs.readFile(fullPath, function(err, data) {
 		if (err) {
-			quickResponse(response, 500, 'reading the directory failed');
+			console.log('resource not found: ' + fullPath);
+			notFound(response, file);
 		}
 		else {
-			var data = {resources: files};
-			response.writeHead(200);
-			response.write(JSON.stringify(data));
-			response.end();
+			console.log('serving static: ' + fullPath);
+			response.writeHead(200, { 'Content-Type': mime });
+			response.end(data);
 		}
-	})
+	});
 }
 
-var serveJson = function(absolutePathName, response) {
-	fs.exists(absolutePathName, function(exists) {
-		if (!exists) {
-			quickResponse(response, 404, 'resource not found: ' + absolutePathName);
-		}
-		else {
-			fs.readFile(absolutePathName, function(err, data) {
-				if (err) {
-					quickResponse(response, 404, 'error reading resource + absolutePathName');
-				}
-				else {
-					try {
-						json = JSON.parse(data);
-						response.writeHead(200);
-						response.write(JSON.stringify(json));
-						response.end();
-					}
-					catch (err)
-					{
-						quickResponse(response, 500, 'error parsing JSON file');
-						console.log(err);
-					}
-					
-				}
-			})
-		}
-	})
+function servePositions(session) {
+	this.res.writeHead(200, { 'Content-Type': 'text/plain' })
+	this.res.end('session: ' + session);
 }
 
-var serveResource = function(absolutePathName, response) {
-	fs.exists(absolutePathName, function(exists) {
-		if (!exists) {
-			quickResponse(response, 404, 'resource not found: ' + absolutePathName);
-		}
-		else {
-			fs.readFile(absolutePathName, function(err, data) {
-				if (err) {
-					quickResponse(response, 404, 'error reading resource + absolutePathName');
-				}
-				else {
-					response.writeHead(200);
-					response.write(data);
-					response.end();
-				}
-			})
-		}
-	})
+function index() {
+	// director relies on this keyword
+	staticFile.bind(this, 'index.html')();
+
+	// what to serve...
+	// - intro and help, how to use it
+	// - list of available services
 }
 
-var dispatch = function(request, response) {
-	// CORS header
-	response.setHeader('Access-Control-Allow-Origin', '*');
+var listPositions = function() {
 
-	var requestPath = url.parse(request.url).pathname;
-	var fullPath = path.join(documentRoot, requestPath);
-		
-	if (requestPath === '/') {
-		directoryListing(response);
-	}
-	else if(requestPath.endsWith('.json')) {
-		serveJson(fullPath, response);
-	}
-	else {
-		serveResource(fullPath, response);
-	}
+	var fullPath = path.join(documentRoot, 'data/positions/');
+
+	var response = this.res;
+
+	fs.readdir(fullPath, function(err, files) {
+		if (err) {
+			response.writeHead(500);
+      		response.end('500 failed to list positions');
+      		console.log('reading directory failed: ' + path + ' err: ' + err);
+		} else {
+			var locals = {resources: []};
+			files.map(function(element) {
+				locals.resources.push({name: element});
+			});
+
+			renderTemplate(response, 'listPositions.stache', locals)
+		}
+	});
 }
 
-var server = http.createServer(dispatch);
+var renderTemplate = function(response, name, locals) {
+	console.log('trying to render template: ' + name + ' with vars: ' + JSON.stringify(locals));
 
-server.listen(8000, function() {
-	console.log((new Date()) + ' Server is listening on port 8000');
+	var fullPath = path.join(documentRoot, 'templates/', name);
+	fs.readFile(fullPath, function(err, file) {
+		if (err) {
+			console.log('template not found: ' + name)
+			response.writeHead(500);
+      		response.end('500 template not found');
+		} else {
+			response.writeHead(200, { 'Content-Type': 'text/html' });
+			response.end(mustache.render(String(file), locals));
+		}
+	});
+}
+
+// routing table
+var router = new director.http.Router({
+	'/': { get: index },
+	'/positions': {get: listPositions },
+	'/positions/:session': { get: servePositions },
+});
+
+//
+// setup a server and when there is a request, dispatch the
+// route that was requested in the request object.
+//
+var server = http.createServer(function (req, response) {
+	router.dispatch(req, response, function (err) {
+		if (err) {
+			// TODO find out how to do propper static routes and stop abusing 
+			// the error function here.
+			var url = req.url;
+			staticFile(url, response)
+		}
+	});
 });
 
 
+//
+// set the server to listen on port `8080`.
+//
+server.listen(8080);
+console.log('starting server on: 8080');

@@ -1,0 +1,42 @@
+$light: #F3EFEB;
+$color: #F3594F;
+
+body {
+	background-color: $light;
+	font-family: 'Dosis';
+	font-size: 16px;
+	font-weight: 400;
+}
+
+#container {
+	width: 720px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 2em;
+}
+
+h1 {
+	font-size: 2em;
+	font-weight: 300;
+	text-transform: uppercase;
+	margin-bottom: 0.5em;
+
+	&:before {
+		content: '5' // 1/10th block
+	}
+	&:first-letter {
+		font-family: 'fontello';
+		letter-spacing: 0.1em;
+		color: $color;
+	}
+}
+
+hr {
+	width: 100%;
+	margin-left: 0px;
+	height: 1px;
+	border: none;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	background-color: $color;
+}

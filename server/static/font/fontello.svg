@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2014 by original authors @ fontello.com</metadata>
+<defs>
+<font id="fontello" horiz-adv-x="1000" >
+<font-face font-family="fontello" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="block-1-10" unicode="&#x31;" d="m0 730h73v-732h-73v732z" horiz-adv-x="70" />
+<glyph glyph-name="block-2-10" unicode="&#x32;" d="m0 730h146v-732h-146v732z" horiz-adv-x="140" />
+<glyph glyph-name="block-3-10" unicode="&#x33;" d="m0 730h220v-732h-220v732z" horiz-adv-x="210" />
+<glyph glyph-name="block-4-10" unicode="&#x34;" d="m0 730h293v-732h-293v732z" horiz-adv-x="290" />
+<glyph glyph-name="block-5-10" unicode="&#x35;" d="m366-2h-366v732h366v-732z" horiz-adv-x="360" />
+<glyph glyph-name="block-6-10" unicode="&#x36;" d="m439-2h-439v732h439v-732z" horiz-adv-x="430" />
+<glyph glyph-name="block-7-10" unicode="&#x37;" d="m512-2h-512v732h512v-732z" horiz-adv-x="510" />
+<glyph glyph-name="block-8-10" unicode="&#x38;" d="m585-2h-585v732h585v-732z" horiz-adv-x="580" />
+<glyph glyph-name="block-9-10" unicode="&#x39;" d="m659-2h-659v732h659v-732z" horiz-adv-x="650" />
+<glyph glyph-name="block-10-10" unicode="&#x30;" d="m732-2h-732v732h732v-732z" horiz-adv-x="730" />
+</font>
+</defs>
+</svg>

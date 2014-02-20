@@ -1,0 +1,32 @@
+body {
+  background-color: #f3efeb;
+  font-family: 'Dosis';
+  font-size: 16px;
+  font-weight: 400; }
+
+#container {
+  width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2em; }
+
+h1 {
+  font-size: 2em;
+  font-weight: 300;
+  text-transform: uppercase;
+  margin-bottom: 0.5em; }
+  h1:before {
+    content: "5"; }
+  h1:first-letter {
+    font-family: 'fontello';
+    letter-spacing: 0.1em;
+    color: #f3594f; }
+
+hr {
+  width: 100%;
+  margin-left: 0px;
+  height: 1px;
+  border: none;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  background-color: #f3594f; }

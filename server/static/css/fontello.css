@@ -1,0 +1,62 @@
+@font-face {
+  font-family: 'fontello';
+  src: url('../font/fontello.eot?11105279');
+  src: url('../font/fontello.eot?11105279#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff?11105279') format('woff'),
+       url('../font/fontello.ttf?11105279') format('truetype'),
+       url('../font/fontello.svg?11105279#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'fontello';
+    src: url('../font/fontello.svg?11105279#fontello') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+     
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.icon-block-1-10:before { content: '\31'; } /* '1' */
+.icon-block-2-10:before { content: '\32'; } /* '2' */
+.icon-block-3-10:before { content: '\33'; } /* '3' */
+.icon-block-4-10:before { content: '\34'; } /* '4' */
+.icon-block-5-10:before { content: '\35'; } /* '5' */
+.icon-block-6-10:before { content: '\36'; } /* '6' */
+.icon-block-7-10:before { content: '\37'; } /* '7' */
+.icon-block-8-10:before { content: '\38'; } /* '8' */
+.icon-block-9-10:before { content: '\39'; } /* '9' */
+.icon-block-10-10:before { content: '\30'; } /* '0' */
