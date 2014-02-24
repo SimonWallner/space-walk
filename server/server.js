@@ -1,4 +1,11 @@
 #! /usr/bin/env node
+/**
+ * known issues
+ * 	- spaces in the data file names confuses the router and leads to routing errors
+ *	- same goes for brackets
+ */
+
+
 
 var http = require('http')
 var director = require('director');
@@ -51,7 +58,7 @@ var staticFile = function(file, response) {
 
 	fs.readFile(fullPath, function(err, data) {
 		if (err) {
-			console.log('resource not found: ' + fullPath);
+			console.log('static resource not found: ' + fullPath);
 			notFound(response, file);
 		}
 		else {
@@ -61,16 +68,21 @@ var staticFile = function(file, response) {
 		}
 	});
 }
-
+/**
+ * @param directory the name of the directory under the '/data/' folder
+ * @param transformer The transformer object as in var transformer = require('foobar')
+ * @return a Function that is the called by the router with the router specific 'this'
+ */
 function serveData(directory, transformer) {
 	return function(resource) {
-		var fullPath = path.join(documentRoot, 'data', directory, resource);
+		var fullPath = path.join(documentRoot, 'data', directory, decodeURI(resource));
+		console.log('path: ' + fullPath);
 
 		var response = this.res;
 
 		fs.readFile(fullPath, function(err, data) {
 			if (err) {
-				console.log('resource not found: ' + fullPath);
+				console.log('serve Data: resource not found: ' + fullPath);
 				notFound(response, fullPath);
 			}
 			else {
@@ -90,9 +102,6 @@ function index() {
 	// director relies on this keyword
 	staticFile.bind(this, 'index.html')();
 
-	// what to serve...
-	// - intro and help, how to use it
-	// - list of available services
 }
 
 var listResources = function() {
@@ -139,10 +148,6 @@ var router = new director.http.Router({
 	'/positions/:session': { get: serveData('/positions', positionData) },
 });
 
-//
-// setup a server and when there is a request, dispatch the
-// route that was requested in the request object.
-//
 var server = http.createServer(function (req, response) {
 	router.dispatch(req, response, function (err) {
 		if (err) {
@@ -155,8 +160,5 @@ var server = http.createServer(function (req, response) {
 });
 
 
-//
-// set the server to listen on port `8080`.
-//
 server.listen(8080);
 console.log('starting server on: 8080');

@@ -18,7 +18,10 @@ var ws;
 var samples = [];
 var fs = require('fs');
 
-console.log('startgin recorder...');
+var strftime = require('strftime')
+
+
+console.log('starting recorder...');
 
 var sessionStart = function() {
 	console.log('session started');
@@ -26,11 +29,14 @@ var sessionStart = function() {
 
 var sessionEnd = function() {
 	console.log('session ended');
-	fs.writeFile('sessions/raw ' + Date() + '.json', JSON.stringify(samples), function(err) {
+
+	var fileName = strftime('%F_%H-%M-%S');
+
+	fs.writeFile('sessions/positions_' + fileName + '.json', JSON.stringify(samples, null, '\t'), function(err) {
 		if (err) {
 			console.log('error writing to file: ' + err);
 		} else {
-			console.log('+++ json file written.');
+			console.log('+++ json file writte: ' + fileName);
 		}
 	})
 }
@@ -78,12 +84,12 @@ function connect() {
 		ws.onmessage = function(msg) {
 			keepAlive();
 			console.log('message got: ' + msg.data);
-			samples.push(msg.data);
+			samples.push(JSON.parse(msg.data));
 		}
 	}
 }
 
-setInterval(connect, 100);
+setInterval(connect, 1000);
 
 var checkSession = function() {
 	if (sessionActive) {
