@@ -6,6 +6,9 @@ var fs = require('fs');
 var path = require('path');
 var mustache = require('mustache');
 
+// transformers
+var positionData = require('./transformers/positionData.js');
+
 var documentRoot = process.cwd();
 
  // monkey patching
@@ -59,7 +62,26 @@ var staticFile = function(file, response) {
 	});
 }
 
-function servePositions(session) {
+function serveData(directory, transformer) {
+	return function(resource) {
+		var fullPath = path.join(documentRoot, 'data', directory, resource);
+
+		var response = this.res;
+
+		fs.readFile(fullPath, function(err, data) {
+			if (err) {
+				console.log('resource not found: ' + fullPath);
+				notFound(response, fullPath);
+			}
+			else {
+				var transformed = transformer.transform(data);
+
+				response.writeHead(200, { 'Content-Type': transformer.mime });
+				response.end(transformed);
+			}
+		})
+	}
+
 	this.res.writeHead(200, { 'Content-Type': 'text/plain' })
 	this.res.end('session: ' + session);
 }
@@ -73,16 +95,15 @@ function index() {
 	// - list of available services
 }
 
-var listPositions = function() {
-
-	var fullPath = path.join(documentRoot, 'data/positions/');
+var listResources = function() {
+	var fullPath = path.join(documentRoot, 'data/', this.req.url);
 
 	var response = this.res;
 
 	fs.readdir(fullPath, function(err, files) {
 		if (err) {
 			response.writeHead(500);
-      		response.end('500 failed to list positions');
+      		response.end('500 failed to list Resources');
       		console.log('reading directory failed: ' + path + ' err: ' + err);
 		} else {
 			var locals = {resources: []};
@@ -114,8 +135,8 @@ var renderTemplate = function(response, name, locals) {
 // routing table
 var router = new director.http.Router({
 	'/': { get: index },
-	'/positions': {get: listPositions },
-	'/positions/:session': { get: servePositions },
+	'/positions': {get: listResources },
+	'/positions/:session': { get: serveData('/positions', positionData) },
 });
 
 //
