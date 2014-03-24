@@ -13,16 +13,27 @@ $lightGrey: #ccc;
 
 $backgroundColor: #eee;
 
-div {
-	// border: 1px solid red;
-	vertical-align: top;
-}
 
 body {
 	font-size: 16px;
 	font-family: 'Dosis';
 	font-weight: 400;
 }
+
+iframe {
+	width: 100%;
+	
+}
+
+#container {
+	padding: 0.5rem;
+}
+
+div {
+	// border: 1px solid red;
+	vertical-align: top;
+}
+
 
 #menu_overlay {
 	// position: fixed;
@@ -53,6 +64,19 @@ body {
 		}
 
 		font-size: 1rem;
+	}
+
+	#connection_status {
+		&.offline {
+			background-color: $red;
+		}
+
+		&.connecting {
+			background-color: $orange;
+		}
+		&.online {
+			background-color: $lime;
+		}
 	}
 
 	#rxtx {
@@ -94,9 +118,7 @@ body {
 	}
 }
 
-#container {
-	padding: 0.5rem
-}
+
 
 span.button {
 	display: inline-block;

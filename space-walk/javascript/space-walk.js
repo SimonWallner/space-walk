@@ -1,5 +1,13 @@
-var autoConnect = true;
+var userSettings = {};
 var ws = null;
+
+var plugins = [
+	{
+		name: 'Mapper',
+		url: 'plugins/mapper/mapper.html'
+	}
+]
+
 
 var connectionState = {
 	notConnected: "not connected",
@@ -11,14 +19,13 @@ var state = connectionState.notConnected;
 
 var connect = function() {
 	state = connectionState.connecting;
-	document.getElementById('connect').className = 'connecting';
-
-	url = window.localStorage['server'];
+	$('#connection_status').attr('class', 'connecting');
+	$('#connection_status').text('connecting');
 	
 	if ("WebSocket" in window) {
-		ws = new WebSocket(url);
+		ws = new WebSocket(userSettings.server);
 	} else if ("MozWebSocket" in window) {
-		ws = new MozWebSocket(url);
+		ws = new MozWebSocket(userSettings.server);
 	} else {
 		alert('This Browser does not support WebSockets');
 		autoConnect = false;
@@ -28,8 +35,8 @@ var connect = function() {
 	ws.onopen = function(e)
 	{
 		state = connectionState.connected;
-		document.getElementById('connect').className = 'online';
-		document.getElementById('connect').innerHTML = 'connected';
+		$('#connection_status').attr('class', 'online');
+		$('#connection_status').text('online');
 	};
 
 	ws.onmessage = function(message) {
@@ -90,21 +97,36 @@ var connect = function() {
 	ws.onerror = function(event) {
 		// console.log(event);
 		state = connectionState.notConnected;
-		document.getElementById('connect').className = 'offline';
-		document.getElementById('connect').innerHTML = 'disconnected';
+		$('#connection_status').attr('class', 'offline');
+		$('#connection_status').text('offline');
 	};
 
 	ws.onclose = function(event) {
 		// console.log(event);
 		state = connectionState.notConnected;
-		document.getElementById('connect').className = 'offline';
-		document.getElementById('connect').innerHTML = 'disconnected';
+		$('#connection_status').attr('class', 'offline');
+		$('#connection_status').text ('offline');
 	};
 }
 
-var close = function() {
+var disconnect = function() {
 	ws.close();
 	state = connectionState.notConnected;
+	$('#connection_status').attr('class', 'offline');
+	$('#connection_status').text ('offline');
+}
+
+var loadPlugin = function(plugin) {
+	var iframe = $(document.createElement('iframe'))
+		.attr('src', plugin.url)
+		.attr('seamless', '')
+		.attr('sandbox', 'allow-scripts allow-same-origin')
+		.attr('id', 'plugin_1');
+
+	$('#container').append(iframe);
+	$('#plugin_1').load(function() {
+		$('#plugin_1')[0].contentWindow.postMessage(JSON.stringify({type: 'load', id: 'plugin_1'}), '*');
+	});
 }
 
 window.onload = function() {
@@ -112,21 +134,50 @@ window.onload = function() {
 	console.log('------- onload --------');
 
 	$('#set_server').click(function() {
-		window.localStorage['server'] = $('#server').val();
-		$('#server_name').text($('#server').val());
+		userSettings.server = $('#server').val();
+		window.localStorage['server'] = userSettings.server;
+		$('#server_name').text(userSettings.server);
+		disconnect();
 	})
 
 	if (window.localStorage['server']) {
-		$('#server').val(window.localStorage['server']);
-		$('#server_name').text(window.localStorage['server']);
-		console.log(document.getElementById('server').value);
+		userSettings.server = window.localStorage['server']
+		$('#server').val(userSettings.server);
+		$('#server_name').text(userSettings.server);
 	}
 
+	userSettings.autoConnect = window.localStorage['server'] || true;
+
+	$('#disconnect').click(function() {
+		userSettings.autoConnect = false;
+		disconnect();
+	})
+
+	$('#dump_settings').click(function() {
+		alert('user settings: \n' + JSON.stringify(userSettings));
+	})
+
+	$('#load_settings').click(function() {
+		alert('not implemented yet :(')
+	})
+
 	window.setInterval(function() {
-		if (autoConnect && state === connectionState.notConnected) {
+		if (userSettings.autoConnect && state === connectionState.notConnected) {
 			connect();
 		}
 	}, 500);
+
+	// load plugins
+	loadPlugin(plugins[0]);
+	window.addEventListener('message', function (e) {
+	    var message = JSON.parse(e.data);
+
+	    switch (message.type) {
+	        case 'height':
+	            $('#' + message.id).height(message.height);
+	            break;
+	    }
+	});
 
 	console.log('------- /onload --------');
 }

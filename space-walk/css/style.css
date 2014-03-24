@@ -1,11 +1,17 @@
 /* some colors */
-div {
-  vertical-align: top; }
-
 body {
   font-size: 16px;
   font-family: 'Dosis';
   font-weight: 400; }
+
+iframe {
+  width: 100%; }
+
+#container {
+  padding: 0.5rem; }
+
+div {
+  vertical-align: top; }
 
 #menu_bar {
   background-color: #333333;
@@ -25,6 +31,12 @@ body {
     #menu_bar #menu_bar_settings div {
       display: inline-block;
       margin-left: 1em; }
+  #menu_bar #connection_status.offline {
+    background-color: #e25454; }
+  #menu_bar #connection_status.connecting {
+    background-color: #e89f49; }
+  #menu_bar #connection_status.online {
+    background-color: #b6ce4e; }
   #menu_bar #rxtx {
     font-size: 0.8em; }
     #menu_bar #rxtx p {
@@ -51,9 +63,6 @@ body {
     border-radius: 0.5em; }
   #settings input[type="text"] {
     padding: 0.2em; }
-
-#container {
-  padding: 0.5rem; }
 
 span.button {
   display: inline-block; }

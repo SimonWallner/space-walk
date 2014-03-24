@@ -11,7 +11,7 @@ performance.now = (function() {
 
 // patches END
 
-
+var pluginId = null;
 
 var autoConnect = true;
 var ws = null;
@@ -322,9 +322,13 @@ var makeGrid = function(bounds) {
 		.remove();
 }
 
+window.addEventListener('message', function (e) {
+	pluginId = JSON.parse(e.data).id;
+});
+
 window.onload = function() {
 
-	console.log('------- onload --------');
+	console.log('------- onload mapper --------');
 
 	var Counter = function() {
 		var count = 0;
@@ -405,7 +409,17 @@ window.onload = function() {
 		}
 	}, 500);
 
-	console.log('------- /onload --------');
+
+	var resize = function() {
+		var height = $(document).height();
+		
+	    // Backwards – send message to parent
+	    window.parent.postMessage(JSON.stringify({type: 'height', id: pluginId, height: height}), '*');
+	}
+
+	window.setInterval(resize, 500);
+
+	console.log('------- /onload mapper --------');
 }
 
 var requestMapTile = function(rect) {
