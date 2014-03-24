@@ -1,3 +1,18 @@
+// patches
+window.performance = window.performance || {};
+performance.now = (function() {
+    return performance.now       ||
+        performance.mozNow    ||
+        performance.msNow     ||
+        performance.oNow      ||
+        performance.webkitNow ||            
+        Date.now  /*none found - fallback to browser default */
+})();
+
+// patches END
+
+
+
 var autoConnect = true;
 var ws = null;
 var path = null;
@@ -111,7 +126,7 @@ var connect = function() {
 	state = connectionState.connecting;
 	document.getElementById('connect').className = 'connecting';
 
-	url = "ws://localhost:60600";
+	url = window.localStorage['server'];
 	
 	if ("WebSocket" in window) {
 		ws = new WebSocket(url);
@@ -309,6 +324,8 @@ var makeGrid = function(bounds) {
 
 window.onload = function() {
 
+	console.log('------- onload --------');
+
 	var Counter = function() {
 		var count = 0;
 		var start = performance.now();
@@ -371,20 +388,24 @@ window.onload = function() {
 
 	grid.attr('vector-effect', 'non-scaling-stroke');
 
-	// document.getElementById('connect').onclick = function() {
-	// 	autoConnect = !autoConnect;
-	// 	document.getElementById('connect').className = 'offline';
+	// server selection stuff
+	$('#save').on('touchstart touchend click', function() {
+		window.localStorage['server'] = document.getElementById('server').value;
+		$('#server').css('color', 'green');
+	});
 
-	// 	if (state === connectionState.connected) {
-	// 		close();
-	// 	}
-	// }
+	if (window.localStorage['server']) {
+		document.getElementById('server').value = window.localStorage['server'];
+		console.log(document.getElementById('server').value);
+	}
 
 	window.setInterval(function() {
 		if (autoConnect && state === connectionState.notConnected) {
 			connect();
 		}
 	}, 500);
+
+	console.log('------- /onload --------');
 }
 
 var requestMapTile = function(rect) {
