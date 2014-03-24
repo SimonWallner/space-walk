@@ -1,29 +1,41 @@
 /* some colors */
-#stats {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 150px;
-  background-color: #ddd;
+div {
+  vertical-align: top; }
+
+body {
+  font-size: 16px;
+  font-family: 'Dosis';
+  font-weight: 400; }
+
+#menu_bar {
+  background-color: #333333;
+  font-size: 1.5em;
   padding: 0.5em;
-  border-radius: 2px; }
-
-#connect {
-  border-radius: 10px;
-  padding-left: 0.4em;
-  display: inline-block;
-  display: block;
   color: white;
-  cursor: pointer; }
-
-.offline {
-  background-color: #e25454; }
-
-.online {
-  background-color: #b6ce4e; }
-
-.connecting {
-  background-color: #e89f49; }
+  position: relative; }
+  #menu_bar #title {
+    font-family: 'Dosis';
+    text-transform: uppercase;
+    font-weight: 200;
+    margin-left: 0.5em;
+    font-size: 0.9em; }
+  #menu_bar #menu_bar_settings {
+    float: right;
+    font-size: 1rem; }
+    #menu_bar #menu_bar_settings div {
+      display: inline-block;
+      margin-left: 1em; }
+    #menu_bar #menu_bar_settings input {
+      background-color: #333333;
+      color: #666666;
+      border: solid 1px;
+      border-color: #666666;
+      border-radius: 0.5em; }
+    #menu_bar #menu_bar_settings input[type="text"] {
+      color: white;
+      padding: 0.2em; }
+  #menu_bar #rxtx {
+    font-size: 0.8em; }
 
 span.button {
   display: inline-block; }
@@ -36,36 +48,6 @@ span.button {
   cursor: pointer;
   margin-top: 0.2em;
   color: white; }
-
-#rx {
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
-  display: inline-block; }
-
-.on {
-  background-color: #17E528; }
-
-.off {
-  background-color: #ccc; }
-
-body {
-  font-family: "Dosis", sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  background-color: #eeeeee; }
-
-h1, h2, h3, h4, h5, h6 {
-  text-transform: uppercase;
-  font-weight: 200;
-  font-size: 3em; }
-
-svg {
-  /*width: 100%;*/
-  /*height: 300px;*/
-  background-color: white;
-  border: 3px solid #dddddd;
-  border-radius: 3px; }
 
 /* --- SVG Styles ---*/
 circle {

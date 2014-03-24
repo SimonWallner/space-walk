@@ -7,38 +7,63 @@ $lavender: #8885ed;
 $rose: #c673d8;
 $red: #e25454;
 
+$darkGrey: #333;
+$lighterGrey: #666;
 
 $backgroundColor: #eee;
 
-#stats {
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	width: 150px;
-	background-color: #ddd;
+div {
+	// border: 1px solid red;
+	vertical-align: top;
+}
+
+body {
+	font-size: 16px;
+	font-family: 'Dosis';
+	font-weight: 400;
+}
+
+#menu_bar {
+	background-color: $darkGrey;
+	font-size: 1.5em;
 	padding: 0.5em;
-	border-radius: 2px;
-}
-
-#connect {
-	border-radius: 10px;
-	padding-left: 0.4em;
-	display: inline-block;
-	display: block;
 	color: white;
-	cursor: pointer;
-}
+	position: relative;
 
-.offline {
-	background-color: $red;
-}
+	#title {
+		font-family: 'Dosis';
+		text-transform: uppercase;;
+		font-weight: 200;
+		margin-left: 0.5em;
+		font-size: 0.9em;
+	}
 
-.online {
-	background-color: $lime;
-}
+	#menu_bar_settings {
+		float: right;
+		div {
+			display: inline-block;
+			margin-left: 1em;
+		}
 
-.connecting {
-	background-color: $orange;
+		font-size: 1rem;
+
+		input {
+			background-color: $darkGrey;
+			color: $lighterGrey;
+			border: solid 1px;
+			border-color: $lighterGrey;
+			border-radius: 0.5em;
+		}
+
+		input[type="text"] {
+			color: white;
+			padding: 0.2em;
+		}
+	}
+
+	#rxtx {
+		font-size: 0.8em;
+	}
 }
 
 span.button {
@@ -55,41 +80,86 @@ span.button {
 	color: white;
 }
 
-#rx {
-	width: 10px;
-	height: 10px;
-	border-radius: 10px;
-	display: inline-block;
-}
 
-.on {
-	background-color: #17E528;
-}
 
-.off {
-	background-color: #ccc;
-}
 
-body {
-	font-family: 'Dosis', sans-serif;
-	font-weight: 400;
-	font-size: 16px;
-	background-color: $backgroundColor;
-}
 
-h1, h2, h3, h4, h5 , h6 {
-	text-transform: uppercase;
-	font-weight: 200;
-	font-size: 3em;
-}
+// #stats {
+// 	position: absolute;
+// 	top: 5px;
+// 	right: 5px;
+// 	width: 150px;
+// 	background-color: #ddd;
+// 	padding: 0.5em;
+// 	border-radius: 2px;
+// }
 
-svg {
-	/*width: 100%;*/
-	/*height: 300px;*/
-	background-color: white;
-	border: 3px solid #ddd;
-	border-radius: 3px;
-}
+// #connect {
+// 	border-radius: 10px;
+// 	padding-left: 0.4em;
+// 	display: inline-block;
+// 	display: block;
+// 	color: white;
+// 	cursor: pointer;
+// }
+
+// .offline {
+// 	background-color: $red;
+// }
+
+// .online {
+// 	background-color: $lime;
+// }
+
+// .connecting {
+// 	background-color: $orange;
+// }
+
+// .button {
+// 	background-color: $lavender;
+// 	border-radius: 1em;
+// 	padding-left: 0.5em;
+// 	padding-right: 0.5em;
+// 	cursor: pointer;
+// 	margin-top: 0.2em;
+// 	color: white;
+// }
+
+// #rx {
+// 	width: 10px;
+// 	height: 10px;
+// 	border-radius: 10px;
+// 	display: inline-block;
+// }
+
+// .on {
+// 	background-color: #17E528;
+// }
+
+// .off {
+// 	background-color: #ccc;
+// }
+
+// body {
+// 	font-family: 'Dosis', sans-serif;
+// 	font-weight: 400;
+// 	font-size: 16px;
+// 	background-color: $backgroundColor;
+// }
+
+// h1, h2, h3, h4, h5 , h6 {
+// 	text-transform: uppercase;
+// 	font-weight: 200;
+// 	font-size: 3em;
+// }
+
+// svg {
+// 	/*width: 100%;*/
+// 	/*height: 300px;*/
+// 	background-color: white;
+// 	border: 3px solid #ddd;
+// 	border-radius: 3px;
+// }
 
 
 /* --- SVG Styles ---*/

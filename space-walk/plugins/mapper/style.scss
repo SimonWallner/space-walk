@@ -1,0 +1,114 @@
+/* some colors */
+$orange: #e89f49;
+$lime: #b6ce4e;
+$turquise: #5dd1a4;
+$blue: #3fc0c9;
+$lavender: #8885ed;
+$rose: #c673d8;
+$red: #e25454;
+
+
+$backgroundColor: #eee;
+
+#stats {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 150px;
+	background-color: #ddd;
+	padding: 0.5em;
+	border-radius: 2px;
+}
+
+#connect {
+	border-radius: 10px;
+	padding-left: 0.4em;
+	display: inline-block;
+	display: block;
+	color: white;
+	cursor: pointer;
+}
+
+.offline {
+	background-color: $red;
+}
+
+.online {
+	background-color: $lime;
+}
+
+.connecting {
+	background-color: $orange;
+}
+
+span.button {
+	display: inline-block;
+}
+
+.button {
+	background-color: $lavender;
+	border-radius: 1em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	cursor: pointer;
+	margin-top: 0.2em;
+	color: white;
+}
+
+#rx {
+	width: 10px;
+	height: 10px;
+	border-radius: 10px;
+	display: inline-block;
+}
+
+.on {
+	background-color: #17E528;
+}
+
+.off {
+	background-color: #ccc;
+}
+
+body {
+	font-family: 'Dosis', sans-serif;
+	font-weight: 400;
+	font-size: 16px;
+	background-color: $backgroundColor;
+}
+
+h1, h2, h3, h4, h5 , h6 {
+	text-transform: uppercase;
+	font-weight: 200;
+	font-size: 3em;
+}
+
+svg {
+	/*width: 100%;*/
+	/*height: 300px;*/
+	background-color: white;
+	border: 3px solid #ddd;
+	border-radius: 3px;
+}
+
+
+/* --- SVG Styles ---*/
+circle {
+	fill: $red;
+}
+
+line {
+	stroke: black;
+	stroke-width: 2;
+}
+
+#grid line {
+	stroke: #eee;
+	stroke-width: 1;
+}
+
+path {
+	stroke: $red;
+	stroke-width: 2;
+	fill: none;
+}
