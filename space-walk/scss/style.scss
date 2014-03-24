@@ -9,6 +9,7 @@ $red: #e25454;
 
 $darkGrey: #333;
 $lighterGrey: #666;
+$lightGrey: #ccc;
 
 $backgroundColor: #eee;
 
@@ -21,6 +22,12 @@ body {
 	font-size: 16px;
 	font-family: 'Dosis';
 	font-weight: 400;
+}
+
+#menu_overlay {
+	// position: fixed;
+	// top: 0px;
+	// width: 100%;
 }
 
 #menu_bar {
@@ -46,24 +53,49 @@ body {
 		}
 
 		font-size: 1rem;
-
-		input {
-			background-color: $darkGrey;
-			color: $lighterGrey;
-			border: solid 1px;
-			border-color: $lighterGrey;
-			border-radius: 0.5em;
-		}
-
-		input[type="text"] {
-			color: white;
-			padding: 0.2em;
-		}
 	}
 
 	#rxtx {
 		font-size: 0.8em;
+		p {
+			text-align: right;
+		}
+		span {
+			border-radius: 1em;
+			background-color: $lime;
+			width: 0.5em;
+			height: 0.5em;
+			display: inline-block;
+			vertical-align: middle;
+		}
 	}
+}
+
+#settings {
+	background-color: $lightGrey;
+	padding: 0.5em;
+
+	div.section {
+		margin-bottom: 1em;
+		&:last-child {
+			margin-bottom: 0px;
+		}
+	}
+
+	input {
+		background-color: $lightGrey;
+		border: solid 1px;
+		border-color: $lighterGrey;
+		border-radius: 0.5em;
+	}
+
+	input[type="text"] {
+		padding: 0.2em;
+	}
+}
+
+#container {
+	padding: 0.5rem
 }
 
 span.button {

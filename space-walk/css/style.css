@@ -25,17 +25,35 @@ body {
     #menu_bar #menu_bar_settings div {
       display: inline-block;
       margin-left: 1em; }
-    #menu_bar #menu_bar_settings input {
-      background-color: #333333;
-      color: #666666;
-      border: solid 1px;
-      border-color: #666666;
-      border-radius: 0.5em; }
-    #menu_bar #menu_bar_settings input[type="text"] {
-      color: white;
-      padding: 0.2em; }
   #menu_bar #rxtx {
     font-size: 0.8em; }
+    #menu_bar #rxtx p {
+      text-align: right; }
+    #menu_bar #rxtx span {
+      border-radius: 1em;
+      background-color: #b6ce4e;
+      width: 0.5em;
+      height: 0.5em;
+      display: inline-block;
+      vertical-align: middle; }
+
+#settings {
+  background-color: #cccccc;
+  padding: 0.5em; }
+  #settings div.section {
+    margin-bottom: 1em; }
+    #settings div.section:last-child {
+      margin-bottom: 0px; }
+  #settings input {
+    background-color: #cccccc;
+    border: solid 1px;
+    border-color: #666666;
+    border-radius: 0.5em; }
+  #settings input[type="text"] {
+    padding: 0.2em; }
+
+#container {
+  padding: 0.5rem; }
 
 span.button {
   display: inline-block; }
