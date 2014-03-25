@@ -38,6 +38,13 @@ div {
 	vertical-align: top;
 }
 
+li.itemize {
+	display: list-item;
+	border-radius: 0.5em;
+	background-color: $turquise;
+	margin-bottom: 0.2em;
+	padding: 0.2em;
+}
 
 #menu_overlay {
 	// position: fixed;

@@ -1,3 +1,13 @@
+// stuff
+var removeFromArray = function(array, element) {
+	var index = array.indexOf(element);
+
+	if (index > -1) {
+		array.splice(index, 1);
+	}
+}
+
+
 var userSettings = null;
 var ws = null;
 
@@ -97,7 +107,7 @@ var loadPlugin = function(plugin) {
 
 	$('#container').append(iframe);
 	
-	(function(id) {
+	(function(id, plugin) {
 		$('#' + id).load(function() {
 			var message = {
 				type: 'load',
@@ -108,8 +118,24 @@ var loadPlugin = function(plugin) {
 			}
 			$('#' + id)[0].contentWindow.postMessage(JSON.stringify(message), '*');
 			// console.log('on iframe load: ' + JSON.stringify(message));
+
+			var item = $(document.createElement('li'))
+				.text(plugin.name)
+				.attr('class', 'itemize')
+			$('#plugins').append(item);
+
+			var deleteLink = $(document.createElement('a'))
+				.text(' remove')
+				.click(function() {
+					$('#' + id).remove();
+					$(item).remove();
+					removeFromArray(userSettings.plugins, plugin);
+					window.localStorage['userSettings'] = JSON.stringify(userSettings)
+					
+				})
+			item.append(deleteLink);
 		});
-	})(id);
+	})(id, plugin);
 
 	iframes.push(iframe);
 }

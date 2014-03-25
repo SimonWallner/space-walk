@@ -16,6 +16,13 @@ iframe {
 div {
   vertical-align: top; }
 
+li.itemize {
+  display: list-item;
+  border-radius: 0.5em;
+  background-color: #5dd1a4;
+  margin-bottom: 0.2em;
+  padding: 0.2em; }
+
 #menu_bar {
   background-color: #333333;
   font-size: 1.5em;
