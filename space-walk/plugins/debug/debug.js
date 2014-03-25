@@ -6,6 +6,15 @@ window.addEventListener('message', function (message) {
 
 	if (data.type === 'load') {
 		pluginId = data.id;
+
+		data.styleSheets.reverse().forEach(function(element) {
+			var link = $(document.createElement('link'))
+				.attr('href', element)
+				.attr('type', 'text/css')
+				.attr('rel', 'stylesheet');
+			
+			$('head').prepend(link);
+		});
 	}
 	// else if (data.type === 'data')
 	// {

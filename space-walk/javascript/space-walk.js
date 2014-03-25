@@ -86,8 +86,18 @@ var loadPlugin = function(plugin, id) {
 		.attr('id', id)[0];
 
 	$('#container').append(iframe);
+
+
+	
 	$('#' + id).load(function() {
-		$('#' + id)[0].contentWindow.postMessage(JSON.stringify({type: 'load', id: id}), '*');
+		var message = {
+			type: 'load',
+			id: id,
+			styleSheets: $('.base_css').toArray().map(function(element) {
+				return element.href;
+			})
+		}
+		$('#' + id)[0].contentWindow.postMessage(JSON.stringify(message), '*');
 	});
 
 	iframes.push(iframe);
