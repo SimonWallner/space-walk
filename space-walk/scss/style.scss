@@ -1,3 +1,7 @@
+/*
+ * space walk main style sheet
+ */
+
 /* some colors */
 $orange: #e89f49;
 $lime: #b6ce4e;
@@ -22,7 +26,7 @@ body {
 
 iframe {
 	width: 100%;
-	
+
 }
 
 #container {
@@ -86,11 +90,14 @@ div {
 		}
 		span {
 			border-radius: 1em;
-			background-color: $lime;
+			background-color: $lightGrey * 0.6;
 			width: 0.5em;
 			height: 0.5em;
 			display: inline-block;
 			vertical-align: middle;
+		}
+		.on {
+			background-color: $lime;
 		}
 	}
 }

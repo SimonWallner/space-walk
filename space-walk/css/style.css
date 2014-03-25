@@ -1,3 +1,6 @@
+/*
+ * space walk main style sheet
+ */
 /* some colors */
 body {
   font-size: 16px;
@@ -43,11 +46,13 @@ div {
       text-align: right; }
     #menu_bar #rxtx span {
       border-radius: 1em;
-      background-color: #b6ce4e;
+      background-color: #7a7a7a;
       width: 0.5em;
       height: 0.5em;
       display: inline-block;
       vertical-align: middle; }
+    #menu_bar #rxtx .on {
+      background-color: #b6ce4e; }
 
 #settings {
   background-color: #cccccc;

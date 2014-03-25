@@ -1,10 +1,17 @@
 var userSettings = {};
 var ws = null;
 
+var rxStatus = false;
+var iframes = [];
+
 var plugins = [
 	{
 		name: 'Mapper',
 		url: 'plugins/mapper/mapper.html'
+	},
+	{
+		name: 'Debugger',
+		url: 'plugins/debug/debug.html'
 	}
 ]
 
@@ -40,58 +47,13 @@ var connect = function() {
 	};
 
 	ws.onmessage = function(message) {
-		var sample = JSON.parse(message.data);
-		
-		if (sample.type === "mapTile") {
-			mapTile(sample.payload);
-			return;
-		} else if (sample.type === "position") {
-		
-			data[0].push(sample.payload);
-			latestData.push(sample.payload);
+		iframes.forEach(function(iframe) {
+			data = JSON.parse(message.data);
+			iframe.contentWindow.postMessage(JSON.stringify({type: 'data', data: data}), '*');
+		})
 
-			if ((latestData.length - 2) > dataCount % Math.pow(2, currentLevel)) {
-				var last = latestData[latestData.length - 1];
-				latestData.length = 0;
-				latestData.push(last);
-				latestData.push(sample.payload);
-			}
-
-			for (var i = 1; i < data.length; i++) {
-				if (dataCount % (Math.pow(2, i)) === 0) {
-					data[i].push(sample.payload);
-				}
-			}
-
-			if (data[data.length-1].length > maxElements) {
-				currentLevel++;
-				data.push([]);
-				for (var i = 0; i < data[data.length-2].length; i += 2) {
-					data[data.length-1].push(data[data.length-2][i]);
-				}
-				currentData = data[data.length-1];
-				path.datum(currentData);
-			}
-			
-			dataCount++;
-
-			updateBounds(sample.payload, bounds);
-
-			last = current;
-			current = JSON.parse(message.data);
-
-			update();
-			makeGrid(bounds);
-
-			rxStatus = !rxStatus;
-			if (rxStatus) {
-				rx.attr('class', 'off');
-			} else {
-				rx.attr('class', 'on');
-			}
-			counter.hit();
-			counter.print();
-		}
+		rxStatus = !rxStatus;
+		$('#rx').toggleClass('on', rxStatus);
 	};
 
 	ws.onerror = function(event) {
@@ -116,17 +78,19 @@ var disconnect = function() {
 	$('#connection_status').text ('offline');
 }
 
-var loadPlugin = function(plugin) {
+var loadPlugin = function(plugin, id) {
 	var iframe = $(document.createElement('iframe'))
 		.attr('src', plugin.url)
 		.attr('seamless', '')
 		.attr('sandbox', 'allow-scripts allow-same-origin')
-		.attr('id', 'plugin_1');
+		.attr('id', id)[0];
 
 	$('#container').append(iframe);
-	$('#plugin_1').load(function() {
-		$('#plugin_1')[0].contentWindow.postMessage(JSON.stringify({type: 'load', id: 'plugin_1'}), '*');
+	$('#' + id).load(function() {
+		$('#' + id)[0].contentWindow.postMessage(JSON.stringify({type: 'load', id: id}), '*');
 	});
+
+	iframes.push(iframe);
 }
 
 window.onload = function() {
@@ -167,15 +131,28 @@ window.onload = function() {
 		}
 	}, 500);
 
+	window.setInterval(function() {
+		$('#rx').removeClass('on');
+	}, 666)
+
 	// load plugins
-	loadPlugin(plugins[0]);
+	loadPlugin(plugins[1], 'plugin_0');
+	loadPlugin(plugins[0], 'plugin_1');
 	window.addEventListener('message', function (e) {
 	    var message = JSON.parse(e.data);
+	    
+		switch (message.type) {
+			case 'height':
+				$('#' + message.id).height(message.height);
+				break;
+			case 'message':
+				ws.send(JSON.stringify(message.payload));
+				break;
+			default:
+				console.log('unknown post message received');
+				console.log(e);
+				break;
 
-	    switch (message.type) {
-	        case 'height':
-	            $('#' + message.id).height(message.height);
-	            break;
 	    }
 	});
 

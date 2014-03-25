@@ -13,8 +13,6 @@ performance.now = (function() {
 
 var pluginId = null;
 
-var autoConnect = true;
-var ws = null;
 var path = null;
 var trailPath = null;
 
@@ -31,8 +29,6 @@ var currentLevel = 0;
 var current = null;
 var last = null;
 var svg;
-var rxStatus = false;
-var rx = null;
 var counter = null;
 
 var group = null;
@@ -94,14 +90,6 @@ var updateBounds = function(position, bounds) {
 	}
 }
 
-var connectionState = {
-	notConnected: "not connected",
-	connecting: "connecting",
-	connected: "connected"
-};
-
-var state = connectionState.notConnected;
-
 var mapTile = function(json) {
 	console.log(json);
 
@@ -122,103 +110,54 @@ var mapTile = function(json) {
 		.attr('src', 'data:' + json.type + ', ' + json.data);
 }
 
-var connect = function() {
-	state = connectionState.connecting;
-	document.getElementById('connect').className = 'connecting';
-
-	url = window.localStorage['server'];
+var onMessage = function(message) {
+	var sample = message;
 	
-	if ("WebSocket" in window) {
-		ws = new WebSocket(url);
-	} else if ("MozWebSocket" in window) {
-		ws = new MozWebSocket(url);
-	} else {
-		alert('This Browser does not support WebSockets');
-		autoConnect = false;
+	if (sample.type === "mapTile") {
+		mapTile(sample.payload);
 		return;
-	}
+	} else if (sample.type === "position") {
+	
+		data[0].push(sample.payload);
+		latestData.push(sample.payload);
 
-	ws.onopen = function(e)
-	{
-		state = connectionState.connected;
-		document.getElementById('connect').className = 'online';
-		document.getElementById('connect').innerHTML = 'connected';
-	};
-
-	ws.onmessage = function(message) {
-		var sample = JSON.parse(message.data);
-		
-		if (sample.type === "mapTile") {
-			mapTile(sample.payload);
-			return;
-		} else if (sample.type === "position") {
-		
-			data[0].push(sample.payload);
+		if ((latestData.length - 2) > dataCount % Math.pow(2, currentLevel)) {
+			var last = latestData[latestData.length - 1];
+			latestData.length = 0;
+			latestData.push(last);
 			latestData.push(sample.payload);
-
-			if ((latestData.length - 2) > dataCount % Math.pow(2, currentLevel)) {
-				var last = latestData[latestData.length - 1];
-				latestData.length = 0;
-				latestData.push(last);
-				latestData.push(sample.payload);
-			}
-
-			for (var i = 1; i < data.length; i++) {
-				if (dataCount % (Math.pow(2, i)) === 0) {
-					data[i].push(sample.payload);
-				}
-			}
-
-			if (data[data.length-1].length > maxElements) {
-				currentLevel++;
-				data.push([]);
-				for (var i = 0; i < data[data.length-2].length; i += 2) {
-					data[data.length-1].push(data[data.length-2][i]);
-				}
-				currentData = data[data.length-1];
-				path.datum(currentData);
-			}
-			
-			dataCount++;
-
-			updateBounds(sample.payload, bounds);
-
-			last = current;
-			current = JSON.parse(message.data);
-
-			update();
-			makeGrid(bounds);
-
-			rxStatus = !rxStatus;
-			if (rxStatus) {
-				rx.attr('class', 'off');
-			} else {
-				rx.attr('class', 'on');
-			}
-			counter.hit();
-			counter.print();
 		}
-	};
 
-	ws.onerror = function(event) {
-		// console.log(event);
-		state = connectionState.notConnected;
-		document.getElementById('connect').className = 'offline';
-		document.getElementById('connect').innerHTML = 'disconnected';
-	};
+		for (var i = 1; i < data.length; i++) {
+			if (dataCount % (Math.pow(2, i)) === 0) {
+				data[i].push(sample.payload);
+			}
+		}
 
-	ws.onclose = function(event) {
-		// console.log(event);
-		state = connectionState.notConnected;
-		document.getElementById('connect').className = 'offline';
-		document.getElementById('connect').innerHTML = 'disconnected';
-	};
-}
+		if (data[data.length-1].length > maxElements) {
+			currentLevel++;
+			data.push([]);
+			for (var i = 0; i < data[data.length-2].length; i += 2) {
+				data[data.length-1].push(data[data.length-2][i]);
+			}
+			currentData = data[data.length-1];
+			path.datum(currentData);
+		}
+		
+		dataCount++;
 
-var close = function() {
-	ws.close();
-	state = connectionState.notConnected;
-}
+		updateBounds(sample.payload, bounds);
+
+		last = current;
+		current = sample;
+
+		update();
+		makeGrid(bounds);
+
+		counter.hit();
+		counter.print();
+	}
+};
 
  var drawPath = function(selection) {
 	selection
@@ -322,8 +261,15 @@ var makeGrid = function(bounds) {
 		.remove();
 }
 
-window.addEventListener('message', function (e) {
-	pluginId = JSON.parse(e.data).id;
+window.addEventListener('message', function (message) {
+	var data = JSON.parse(message.data);
+
+	if (data.type === 'load') {
+		pluginId = data.id;
+	}
+	else if (data.type === 'data') {
+		onMessage(data.data);
+	}
 });
 
 window.onload = function() {
@@ -392,23 +338,6 @@ window.onload = function() {
 
 	grid.attr('vector-effect', 'non-scaling-stroke');
 
-	// server selection stuff
-	$('#save').on('touchstart touchend click', function() {
-		window.localStorage['server'] = document.getElementById('server').value;
-		$('#server').css('color', 'green');
-	});
-
-	if (window.localStorage['server']) {
-		document.getElementById('server').value = window.localStorage['server'];
-		console.log(document.getElementById('server').value);
-	}
-
-	window.setInterval(function() {
-		if (autoConnect && state === connectionState.notConnected) {
-			connect();
-		}
-	}, 500);
-
 
 	var resize = function() {
 		var height = $(document).height();
@@ -423,8 +352,12 @@ window.onload = function() {
 }
 
 var requestMapTile = function(rect) {
-	ws.send(JSON.stringify({
-		type: 'mapTileRequest',
-		payload: rect
-	}));
+	var message = {
+		type: 'message',
+		payload: {
+			type: 'mapTileRequest',
+			payload: rect
+		}
+	}
+	window.parent.postMessage(JSON.stringify(message), '*');
 }
