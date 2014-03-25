@@ -126,6 +126,7 @@ var loadPlugin = function(plugin) {
 
 			var deleteLink = $(document.createElement('a'))
 				.text(' remove')
+				.attr('href', '#')
 				.click(function() {
 					$('#' + id).remove();
 					$(item).remove();
@@ -184,6 +185,19 @@ window.onload = function() {
 
 	$('#load_settings').click(function() {
 		alert('not implemented yet :(')
+	})
+
+	$('#load_external_plugin').click(function() {
+		var url = $('#external_plugin').val();
+		var plugin = {
+			name: url,
+			url: url
+		}
+
+		loadPlugin(plugin);
+		
+		userSettings.plugins.push(plugin);
+		window.localStorage['userSettings'] = JSON.stringify(userSettings);
 	})
 
 	window.setInterval(function() {
