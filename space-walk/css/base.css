@@ -5,4 +5,5 @@ body {
 h1 {
   text-transform: uppercase;
   font-size: 3em;
-  margin-bottom: 1rem; }
+  margin-bottom: 1rem;
+  font-weight: 200; }

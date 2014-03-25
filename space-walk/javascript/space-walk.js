@@ -1,8 +1,10 @@
-var userSettings = {};
+var userSettings = null;
 var ws = null;
 
 var rxStatus = false;
 var iframes = [];
+
+var pluginIndex = 0;
 
 var plugins = [
 	{
@@ -57,7 +59,8 @@ var connect = function() {
 	};
 
 	ws.onerror = function(event) {
-		// console.log(event);
+		console.log('connection error');
+		console.log(event);
 		state = connectionState.notConnected;
 		$('#connection_status').attr('class', 'offline');
 		$('#connection_status').text('offline');
@@ -78,7 +81,14 @@ var disconnect = function() {
 	$('#connection_status').text ('offline');
 }
 
-var loadPlugin = function(plugin, id) {
+var loadPlugin = function(plugin) {
+
+	// console.log('loading plugin:')
+	// console.log(plugin);
+
+	id = 'plugin_' + pluginIndex;
+	pluginIndex += 1;
+
 	var iframe = $(document.createElement('iframe'))
 		.attr('src', plugin.url)
 		.attr('seamless', '')
@@ -86,19 +96,20 @@ var loadPlugin = function(plugin, id) {
 		.attr('id', id)[0];
 
 	$('#container').append(iframe);
-
-
 	
-	$('#' + id).load(function() {
-		var message = {
-			type: 'load',
-			id: id,
-			styleSheets: $('.base_css').toArray().map(function(element) {
-				return element.href;
-			})
-		}
-		$('#' + id)[0].contentWindow.postMessage(JSON.stringify(message), '*');
-	});
+	(function(id) {
+		$('#' + id).load(function() {
+			var message = {
+				type: 'load',
+				id: id,
+				styleSheets: $('.base_css').toArray().map(function(element) {
+					return element.href;
+				})
+			}
+			$('#' + id)[0].contentWindow.postMessage(JSON.stringify(message), '*');
+			// console.log('on iframe load: ' + JSON.stringify(message));
+		});
+	})(id);
 
 	iframes.push(iframe);
 }
@@ -107,20 +118,34 @@ window.onload = function() {
 
 	console.log('------- onload --------');
 
-	$('#set_server').click(function() {
-		userSettings.server = $('#server').val();
-		window.localStorage['server'] = userSettings.server;
-		$('#server_name').text(userSettings.server);
-		disconnect();
-	})
+	// user settings
+	if (window.localStorage['userSettings']) {
+		userSettings = JSON.parse(window.localStorage['userSettings']);
+	}
+	else {
+		userSettings =  {};	
+	}
+	
+	userSettings.autoConnect = userSettings.autoConnect || true;
+	userSettings.plugins = userSettings.plugins || [];
+	userSettings.server = userSettings.server || 'ws://localhost:60600';
 
-	if (window.localStorage['server']) {
-		userSettings.server = window.localStorage['server']
+	if (userSettings.server) {
 		$('#server').val(userSettings.server);
 		$('#server_name').text(userSettings.server);
 	}
 
-	userSettings.autoConnect = window.localStorage['server'] || true;
+	$('#set_server').click(function() {
+		userSettings.server = $('#server').val();
+		window.localStorage['userSettings'] = JSON.stringify(userSettings)
+		$('#server_name').text(userSettings.server);
+		disconnect();
+	})
+
+	userSettings.plugins.forEach(function(plugin) {
+		loadPlugin(plugin);
+	});
+
 
 	$('#disconnect').click(function() {
 		userSettings.autoConnect = false;
@@ -146,8 +171,23 @@ window.onload = function() {
 	}, 666)
 
 	// load plugins
-	loadPlugin(plugins[1], 'plugin_0');
-	loadPlugin(plugins[0], 'plugin_1');
+	plugins.forEach(function(element, index) {
+		var option = $(document.createElement('option'))
+			.attr('value', index)
+			.text(element.name);
+
+		$('#build_in_plugins').append(option);
+	})
+	$('#build_in_plugins').change(function(e) {
+		var index = $('#build_in_plugins option:selected').val();
+		if (index !== '-1') {
+			loadPlugin(plugins[index]);
+
+			userSettings.plugins.push(plugins[index]);
+			window.localStorage['userSettings'] = JSON.stringify(userSettings);
+		}
+	});
+
 	window.addEventListener('message', function (e) {
 	    var message = JSON.parse(e.data);
 	    
