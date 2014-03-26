@@ -35,12 +35,16 @@ li.itemize {
     font-weight: 200;
     margin-left: 0.5em;
     font-size: 0.9em; }
+  #menu_bar #show_settings {
+    cursor: pointer; }
   #menu_bar #menu_bar_settings {
     float: right;
     font-size: 1rem; }
     #menu_bar #menu_bar_settings div {
       display: inline-block;
       margin-left: 1em; }
+  #menu_bar #server_settings, #menu_bar #connection_status {
+    margin-top: 0.3em; }
   #menu_bar #connection_status.offline {
     background-color: #e25454; }
   #menu_bar #connection_status.connecting {

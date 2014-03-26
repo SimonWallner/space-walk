@@ -1,39 +1,5 @@
-var pluginId = null;
+var libsw = new LibSpaceWalk();
 
-window.addEventListener('message', function (message) {
-	var data = JSON.parse(message.data);
-	$('#dump').append(new Date().toString() + ': message got: ' + message.data + '<br>');	
-
-	if (data.type === 'load') {
-		pluginId = data.id;
-
-		data.styleSheets.reverse().forEach(function(element) {
-			var link = $(document.createElement('link'))
-				.attr('href', element)
-				.attr('type', 'text/css')
-				.attr('rel', 'stylesheet');
-			
-			$('head').prepend(link);
-		});
-	}
-	// else if (data.type === 'data')
-	// {
-	// 	$('#dump').append(new Date().toString() + ': ' + JSON.stringify(data.data) + '<br>');
-	// }
-	// else {
-	// 	$('#dump').append(new Date().toString() + ': unknown message got: ' + message + '<br>');	
-	// }
-	
-});
-
-
-window.onload = function() {
-	var resize = function() {
-		var height = $(document).height();
-		
-	    // Backwards – send message to parent
-	    window.parent.postMessage(JSON.stringify({type: 'height', id: pluginId, height: height}), '*');
-	}
-
-	window.setInterval(resize, 500);
-};
+libsw.onMessage = function(data) {
+	$('#dump').append(new Date().toString() + ': message got: ' + JSON.stringify(data) + '<br>');	
+}	

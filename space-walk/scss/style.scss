@@ -67,6 +67,10 @@ li.itemize {
 		font-size: 0.9em;
 	}
 
+	#show_settings {
+		cursor: pointer;
+	}
+
 	#menu_bar_settings {
 		float: right;
 		div {
@@ -75,6 +79,10 @@ li.itemize {
 		}
 
 		font-size: 1rem;
+	}
+
+	#server_settings, #connection_status {
+		margin-top: 0.3em;
 	}
 
 	#connection_status {
@@ -111,6 +119,8 @@ li.itemize {
 
 #settings {
 	background-color: $lightGrey;
+	// opacity: 0.9;
+
 	padding: 0.5em;
 
 	div.section {

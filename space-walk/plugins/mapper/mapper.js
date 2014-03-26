@@ -11,7 +11,7 @@ performance.now = (function() {
 
 // patches END
 
-var pluginId = null;
+var libsw = new LibSpaceWalk();
 
 var path = null;
 var trailPath = null;
@@ -110,7 +110,7 @@ var mapTile = function(json) {
 		.attr('src', 'data:' + json.type + ', ' + json.data);
 }
 
-var onMessage = function(message) {
+libsw.onMessage = function(message) {
 	var sample = message;
 	
 	if (sample.type === "mapTile") {
@@ -261,26 +261,6 @@ var makeGrid = function(bounds) {
 		.remove();
 }
 
-window.addEventListener('message', function (message) {
-	var data = JSON.parse(message.data);
-
-	if (data.type === 'load') {
-		pluginId = data.id;
-
-		data.styleSheets.forEach(function(element) {
-			var link = $(document.createElement('link'))
-				.attr('href', element)
-				.attr('type', 'text/css')
-				.attr('rel', 'stylesheet');
-			
-			$('head').prepend(link);
-		});
-	}
-	else if (data.type === 'data') {
-		onMessage(data.data);
-	}
-});
-
 window.onload = function() {
 
 	console.log('------- onload mapper --------');
@@ -348,15 +328,6 @@ window.onload = function() {
 	grid.attr('vector-effect', 'non-scaling-stroke');
 
 
-	var resize = function() {
-		var height = $(document).height();
-		
-	    // Backwards – send message to parent
-	    window.parent.postMessage(JSON.stringify({type: 'height', id: pluginId, height: height}), '*');
-	}
-
-	window.setInterval(resize, 500);
-
 	console.log('------- /onload mapper --------');
 }
 
@@ -368,5 +339,5 @@ var requestMapTile = function(rect) {
 			payload: rect
 		}
 	}
-	window.parent.postMessage(JSON.stringify(message), '*');
+	libsw.postMessage(message);
 }

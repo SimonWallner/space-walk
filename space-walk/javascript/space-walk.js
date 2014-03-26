@@ -97,7 +97,6 @@ var loadPlugin = function(plugin) {
 	// console.log(plugin);
 
 	id = 'plugin_' + pluginIndex;
-	pluginIndex += 1;
 
 	var iframe = $(document.createElement('iframe'))
 		.attr('src', plugin.url)
@@ -107,7 +106,7 @@ var loadPlugin = function(plugin) {
 
 	$('#container').append(iframe);
 	
-	(function(id, plugin) {
+	(function(id, plugin, pluginIndex) {
 		$('#' + id).load(function() {
 			var message = {
 				type: 'load',
@@ -129,6 +128,8 @@ var loadPlugin = function(plugin) {
 				.attr('href', '#')
 				.click(function() {
 					$('#' + id).remove();
+					iframes.splice(pluginIndex, 1);
+
 					$(item).remove();
 					removeFromArray(userSettings.plugins, plugin);
 					window.localStorage['userSettings'] = JSON.stringify(userSettings)
@@ -136,9 +137,10 @@ var loadPlugin = function(plugin) {
 				})
 			item.append(deleteLink);
 		});
-	})(id, plugin);
+	})(id, plugin, pluginIndex);
 
-	iframes.push(iframe);
+	iframes[pluginIndex] = iframe;
+	pluginIndex += 1;
 }
 
 window.onload = function() {
@@ -195,9 +197,13 @@ window.onload = function() {
 		}
 
 		loadPlugin(plugin);
-		
+
 		userSettings.plugins.push(plugin);
 		window.localStorage['userSettings'] = JSON.stringify(userSettings);
+	})
+
+	$('#show_settings').click(function() {
+		$('#settings').toggleClass('hidden');
 	})
 
 	window.setInterval(function() {
