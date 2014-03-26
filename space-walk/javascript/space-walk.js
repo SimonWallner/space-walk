@@ -25,8 +25,11 @@ var plugins = [
 		name: 'Debugger',
 		url: 'plugins/debug/debug.html'
 	}
-]
+];
 
+var sessionTimeout = 3000; // ms
+var lastTimeStamp
+var sessionActive = false;
 
 var connectionState = {
 	notConnected: "not connected",
@@ -35,6 +38,12 @@ var connectionState = {
 };
 
 var state = connectionState.notConnected;
+
+var broadcast = function(data) {
+	iframes.forEach(function(iframe) {
+		iframe.contentWindow.postMessage(JSON.stringify(data), '*');
+	});
+}
 
 var connect = function() {
 	state = connectionState.connecting;
@@ -59,18 +68,22 @@ var connect = function() {
 	};
 
 	ws.onmessage = function(message) {
-		iframes.forEach(function(iframe) {
-			data = JSON.parse(message.data);
-			iframe.contentWindow.postMessage(JSON.stringify({type: 'data', data: data}), '*');
-		})
+		if (sessionActive === false) {
+			broadcast({type: 'sessionStarted'});
+		}
+		sessionActive = true;
+		lastTimeStamp = new Date().getTime();
+
+		var parsedData = JSON.parse(message.data);
+		broadcast({type: 'data', data: parsedData});
 
 		rxStatus = !rxStatus;
 		$('#rx').toggleClass('on', rxStatus);
 	};
 
 	ws.onerror = function(event) {
-		console.log('connection error');
-		console.log(event);
+		// console.log('connection error');
+		// console.log(event);
 		state = connectionState.notConnected;
 		$('#connection_status').attr('class', 'offline');
 		$('#connection_status').text('offline');
@@ -206,15 +219,21 @@ window.onload = function() {
 		$('#settings').toggleClass('hidden');
 	})
 
-	window.setInterval(function() {
+	window.setInterval(function() { // auto connect
 		if (userSettings.autoConnect && state === connectionState.notConnected) {
 			connect();
 		}
 	}, 500);
 
-	window.setInterval(function() {
+	window.setInterval(function() { // rx flipper
 		$('#rx').removeClass('on');
 	}, 666)
+
+	window.setInterval(function() { // sesison timeout
+		if ((new Date().getTime()) > (lastTimeStamp + sessionTimeout)) {
+			sessionActive = false;
+		}
+	}, 500)
 
 	// load plugins
 	plugins.forEach(function(element, index) {
@@ -235,6 +254,7 @@ window.onload = function() {
 	});
 
 	window.addEventListener('message', function (e) {
+		// console.log('post message got: ' + e.data);
 	    var message = JSON.parse(e.data);
 	    
 		switch (message.type) {

@@ -12,6 +12,11 @@ var LibSpaceWalk = function() {
 	 */
 	this.onPluginLoaded = function() {};
 
+	/*
+	 * Called whenever a new session was started. 
+	 */
+	this.onSessionStarted = function() {};
+
 	this.postMessage = function(message) {
 		var messageString;
 		if (typeof(message) === 'string') {
@@ -27,6 +32,7 @@ var LibSpaceWalk = function() {
 
 	// init
 	window.addEventListener('message', function (message) {
+		// console.log(message);
 		var data = JSON.parse(message.data);
 
 		if (data.type === 'load') {
@@ -42,13 +48,16 @@ var LibSpaceWalk = function() {
 			});
 			that.onPluginLoaded();
 		}
+		else if (data.type === 'sessionStarted') {
+			that.onSessionStarted();
+		}
 		else if (data.type === 'data') {
 			that.onMessage(data.data);
 		}
 	});
 
 	var resize =  function() {
-		var height = document.body.offsetHeight;
+		var height = document.body.scrollHeight;
 
 	    // Backwards – send message to parent
 	    window.parent.postMessage(JSON.stringify({type: 'height', id: pluginId, height: height}), '*');
