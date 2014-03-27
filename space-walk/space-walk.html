@@ -39,25 +39,25 @@
 			<div class="clear"></div>
 		</div>
 		<div id="settings"> 
-			<div class="section">
-				Server Settings
-				<hr>
-				<ul>
-					<li>server: <input id ="server" type="text"><button id="set_server">set</button></li>
-					<li>auto connect: <button id="auto_connect">set</button></li>
-					<li>disconnect: <button id="disconnect">set</button></li>
-				</ul>
-			</div>
-			<div class="section">
-				Plugins
-				<hr>
-				<ul id="plugins"></ul>
-				add built in: <select id="build_in_plugins">
-					<option value="-1">--</option>
-				</select><br>
-				load from interwebs: <input type="text" id="external_plugin"><button id="load_external_plugin">make it so!</button>
+			<h1>Server Settings</h1>
+			<ul>
+				<li>server: <input id ="server" type="text"><button id="set_server">set</button></li>
+				<li>auto connect: <button id="auto_connect">set</button></li>
+				<li>disconnect: <button id="disconnect">set</button></li>
+			</ul>
 
-			</div>
+			<h1>Plugins</h1>
+			<ul id="plugins"></ul>
+			<ul>
+				<li>add built in: <select id="build_in_plugins">
+					<option value="-1">--</option>
+					</select>
+				</li>
+				<li>
+					load from interwebs: <input type="text" id="external_plugin"><button id="load_external_plugin">make it so!</button>
+				</li>
+			</ul>
+
 			<!-- <div class="section">
 				Settings
 				<hr>
@@ -66,6 +66,7 @@
 					<li><input id="user_settings" type="text"><button id="load_settings">load user settings</button</li>
 				</ul>
 			</div> -->
+			<hr>
 		</div>
 	</div>
 

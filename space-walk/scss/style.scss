@@ -7,6 +7,7 @@ $orange: #e89f49;
 $lime: #b6ce4e;
 $turquise: #5dd1a4;
 $blue: #3fc0c9;
+$lightBlue: #C1DFE1;
 $lavender: #8885ed;
 $rose: #c673d8;
 $red: #e25454;
@@ -26,11 +27,15 @@ body {
 
 iframe {
 	width: 100%;
+	margin-bottom: 0.5em;
 
+	&:last-child {
+		margin-bottom: 0.0em;
+	}
 }
 
 #container {
-	padding: 0.5rem;
+	padding: 0.5em;
 }
 
 div {
@@ -40,20 +45,6 @@ div {
 
 .clear {
 	clear: both;
-}
-
-li.itemize {
-	display: list-item;
-	border-radius: 0.5em;
-	background-color: $turquise;
-	margin-bottom: 0.2em;
-	padding: 0.2em;
-}
-
-#menu_overlay {
-	// position: fixed;
-	// top: 0px;
-	// width: 100%;
 }
 
 #menu_bar {
@@ -139,16 +130,25 @@ li.itemize {
 }
 
 #settings {
-	background-color: $lightGrey;
-	// opacity: 0.9;
+	position: absolute;
+	top: 3em;
+	width: 100%;
 
-	padding: 0.5em;
+	h1 {
+		font-size: 1rem;
+		display: block;
+		background-color: $blue;
+		padding: 0.5em;
+		font-weight: 400;
+		color: white;
+		font-family: 'Bitter';
+		margin-bottom: 0;
+	}
 
-	div.section {
-		margin-bottom: 1em;
-		&:last-child {
-			margin-bottom: 0px;
-		}
+	ul li {
+		display: block;
+		padding: 0.5em;
+		background-color: $lightBlue;
 	}
 
 	input {
@@ -160,6 +160,13 @@ li.itemize {
 
 	input[type="text"] {
 		padding: 0.2em;
+	}
+
+	hr {
+		height: 0.5em;
+		border: none;
+		margin: 0;
+		background-color: $blue;
 	}
 }
 
