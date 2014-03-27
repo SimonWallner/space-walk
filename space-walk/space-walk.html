@@ -15,33 +15,37 @@
 <body>
 	<div id="menu_overlay">
 		<div id="menu_bar">
-			<a id="show_settings">&#9776</a>
-			<span id="title">Space Walk</span>
+			<div class="padded">
+				<a id="show_settings">&#9776</a>
+				<span id="title">Space Walk</span>
+			</div>
 
-			<div id="menu_bar_settings">
-				<div id="server_settings">
+			<div id="menu_bar_settings" class="right">
+				<!--
+ 				<div id="server_settings" class="padded">
 					server: <span id="server_name">--</span>
 				</div>
-				<div id="connection_status" class="offline">
-					offline
+				-->
+				<div id="connection_status" class="padded offline">
+						offline
 				</div>
-				<div id="rxtx">
+				<div id="rxtx" class="padded">
 					<p>
 						rx: <span id="rx">&nbsp</span><br>
 						tx: <span id="tx">&nbsp</span>
 					</p>
 				</div>
 			</div>
+			<div class="clear"></div>
 		</div>
-		<div id="settings" class="hidden"> 
+		<div id="settings"> 
 			<div class="section">
 				Server Settings
 				<hr>
 				<ul>
-					<li>server: <input id ="server" type="text">
-				<a id="set_server"><span class="button">set</span></a></li>
-					<li>auto connect: <span class="button" id="auto_connect">set</span></li>
-					<li>disconnect: <span class="button" id="disconnect">set</span></li>
+					<li>server: <input id ="server" type="text"><button id="set_server">set</button></li>
+					<li>auto connect: <button id="auto_connect">set</button></li>
+					<li>disconnect: <button id="disconnect">set</button></li>
 				</ul>
 			</div>
 			<div class="section">
@@ -51,15 +55,15 @@
 				add built in: <select id="build_in_plugins">
 					<option value="-1">--</option>
 				</select><br>
-				load from interwebs: <input type="text" id="external_plugin"><span id="load_external_plugin" class="button">make it so!</span>
+				load from interwebs: <input type="text" id="external_plugin"><button id="load_external_plugin">make it so!</button>
 
 			</div>
 			<!-- <div class="section">
 				Settings
 				<hr>
 				<ul>
-					<li><span class="button" id="dump_settings">dump user settings</span></li>
-					<li><input id="user_settings" type="text"><span class="button" id="load_settings">load user settings</span></li>
+					<li><button id="dump_settings">dump user settings</button></li>
+					<li><input id="user_settings" type="text"><button id="load_settings">load user settings</button</li>
 				</ul>
 			</div> -->
 		</div>

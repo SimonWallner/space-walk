@@ -47,7 +47,7 @@ var broadcast = function(data) {
 
 var connect = function() {
 	state = connectionState.connecting;
-	$('#connection_status').attr('class', 'connecting');
+	$('#connection_status').attr('class', 'connecting padded');
 	$('#connection_status').text('connecting');
 	
 	if ("WebSocket" in window) {
@@ -63,7 +63,7 @@ var connect = function() {
 	ws.onopen = function(e)
 	{
 		state = connectionState.connected;
-		$('#connection_status').attr('class', 'online');
+		$('#connection_status').attr('class', 'online padded');
 		$('#connection_status').text('online');
 	};
 
@@ -85,14 +85,14 @@ var connect = function() {
 		// console.log('connection error');
 		// console.log(event);
 		state = connectionState.notConnected;
-		$('#connection_status').attr('class', 'offline');
+		$('#connection_status').attr('class', 'offline padded');
 		$('#connection_status').text('offline');
 	};
 
 	ws.onclose = function(event) {
 		// console.log(event);
 		state = connectionState.notConnected;
-		$('#connection_status').attr('class', 'offline');
+		$('#connection_status').attr('class', 'offline padded');
 		$('#connection_status').text ('offline');
 	};
 }
@@ -100,7 +100,7 @@ var connect = function() {
 var disconnect = function() {
 	ws.close();
 	state = connectionState.notConnected;
-	$('#connection_status').attr('class', 'offline');
+	$('#connection_status').attr('class', 'offline padded');
 	$('#connection_status').text ('offline');
 }
 

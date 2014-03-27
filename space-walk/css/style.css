@@ -16,6 +16,9 @@ iframe {
 div {
   vertical-align: top; }
 
+.clear {
+  clear: both; }
+
 li.itemize {
   display: list-item;
   border-radius: 0.5em;
@@ -26,9 +29,16 @@ li.itemize {
 #menu_bar {
   background-color: #333333;
   font-size: 1.5em;
-  padding: 0.5em;
   color: white;
-  position: relative; }
+  position: relative;
+  height: 2em; }
+  #menu_bar .padded {
+    padding: 0.5em; }
+  #menu_bar div {
+    float: left;
+    overflow: hidden; }
+    #menu_bar div .right {
+      float: right; }
   #menu_bar #title {
     font-family: 'Dosis';
     text-transform: uppercase;
@@ -37,14 +47,15 @@ li.itemize {
     font-size: 0.9em; }
   #menu_bar #show_settings {
     cursor: pointer; }
+    #menu_bar #show_settings:hover {
+      color: #3fc0c9; }
   #menu_bar #menu_bar_settings {
     float: right;
     font-size: 1rem; }
-    #menu_bar #menu_bar_settings div {
-      display: inline-block;
-      margin-left: 1em; }
   #menu_bar #server_settings, #menu_bar #connection_status {
-    margin-top: 0.3em; }
+    padding-top: 0.9em;
+    padding-bottom: 0.1em;
+    height: 2em; }
   #menu_bar #connection_status.offline {
     background-color: #e25454; }
   #menu_bar #connection_status.connecting {
@@ -52,7 +63,11 @@ li.itemize {
   #menu_bar #connection_status.online {
     background-color: #b6ce4e; }
   #menu_bar #rxtx {
-    font-size: 0.8em; }
+    padding-top: 0.35em;
+    margin-left: 0.5em;
+    margin-right: 0.4em;
+    font-size: 1em;
+    letter-spacing: 1px; }
     #menu_bar #rxtx p {
       text-align: right; }
     #menu_bar #rxtx span {

@@ -38,6 +38,10 @@ div {
 	vertical-align: top;
 }
 
+.clear {
+	clear: both;
+}
+
 li.itemize {
 	display: list-item;
 	border-radius: 0.5em;
@@ -55,9 +59,22 @@ li.itemize {
 #menu_bar {
 	background-color: $darkGrey;
 	font-size: 1.5em;
-	padding: 0.5em;
 	color: white;
 	position: relative;
+	height: 2em;
+
+	.padded {
+		padding: 0.5em;
+	}
+
+	div {
+		float: left;
+		overflow: hidden;
+
+		.right {
+			float: right;
+		}
+	}
 
 	#title {
 		font-family: 'Dosis';
@@ -69,20 +86,20 @@ li.itemize {
 
 	#show_settings {
 		cursor: pointer;
+		&:hover {
+			color: $blue;
+		}
 	}
 
 	#menu_bar_settings {
 		float: right;
-		div {
-			display: inline-block;
-			margin-left: 1em;
-		}
-
 		font-size: 1rem;
 	}
 
 	#server_settings, #connection_status {
-		margin-top: 0.3em;
+		padding-top: 0.9em;
+		padding-bottom: 0.1em;
+		height: 2em;
 	}
 
 	#connection_status {
@@ -99,7 +116,11 @@ li.itemize {
 	}
 
 	#rxtx {
-		font-size: 0.8em;
+		padding-top: 0.35em;
+		margin-left: 0.5em;
+		margin-right: 0.4em;
+		font-size: 1em;
+		letter-spacing: 1px;
 		p {
 			text-align: right;
 		}
