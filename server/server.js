@@ -5,6 +5,10 @@
  *	- same goes for brackets
  */
 
+ /**
+  * find the routing table at the bottom of this file
+  */
+
 
 
 var http = require('http')
@@ -15,6 +19,7 @@ var mustache = require('mustache');
 
 // transformers
 var positionData = require('./transformers/positionData.js');
+var sessionSCV = require('./transformers/sessionCSV.js');
 
 var documentRoot = process.cwd();
 
@@ -141,14 +146,29 @@ var renderTemplate = function(response, name, locals) {
 	});
 }
 
+var postTest = function() {
+	console.log(this.req);
+
+	this.res.writeHead(200, { 'Content-Type': 'text/plain' });
+	this.res.end('\n\npost test received\n\n');
+}
+
 // routing table
 var router = new director.http.Router({
 	'/': { get: index },
 	'/positions': {get: listResources },
 	'/positions/:session': { get: serveData('/positions', positionData) },
+	'/sessionCSV': { get: listResources },
+	'/sessionCSV/:session': { get: serveData('/sessionCSV', sessionSCV) },
+	'/test': { post: postTest}
 });
 
 var server = http.createServer(function (req, response) {
+	req.chunks = [];
+    req.on('data', function (chunk) {
+      req.chunks.push(chunk.toString());
+    });
+
 	router.dispatch(req, response, function (err) {
 		if (err) {
 			// TODO find out how to do propper static routes and stop abusing 
