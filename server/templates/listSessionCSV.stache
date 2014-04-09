@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+	<title>MOON ROCK DATABASE</title>
+
+	<link type="text/css" rel="stylesheet" href="css/reset.css">
+	<link type="text/css" rel="stylesheet" href="css/style.css">
+
+	<link type="text/css" rel="stylesheet" href="css/fontello.css">
+	<link href='http://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+<div id="container">
+	<h1>available resources</h1>
+	<ul>
+		{{#resources}}
+		<li><a href="sessionCSV/{{name}}">{{name}}</li>
+		{{/resources}}
+	</ul>
+</div>
+
+</body>
+</html>

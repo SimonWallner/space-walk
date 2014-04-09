@@ -2,7 +2,7 @@
 
 exports.mime = "text/json";
 
-exports.transform = function(data) {
+exports.transformFile = function(data) {
 	
 	var json = JSON.parse(data);
 

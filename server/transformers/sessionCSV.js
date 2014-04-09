@@ -1,12 +1,25 @@
+var fs = require('fs')
+var async = require('async');
+var path = require('path');
+
 exports.mime = "text/csv";
 
-exports.transform = function(data) {
-	
-	var json = JSON.parse(data);
+exports.transformFolder = function(folderPath, callback) {
 
-	var result = json.filter(function(element) {
-		return(element.type == 'position')
-	})
+	var dataPath = path.join(folderPath, 'data.json');
+	var annotationsPath = path.join(folderPath, 'annotations.json');
 
-	return JSON.stringify(result, null, '\t');
+	async.map([dataPath, annotationsPath], fs.readFile, function(err, results){
+	    if (err) {
+	    	callback({
+				code: 500,
+				data: "failed reading files: " + err
+			});
+	    } else {
+	    	callback({
+				code: 200,
+				data: "OK" + results
+			});
+	    }
+	});
 }

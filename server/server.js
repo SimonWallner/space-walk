@@ -28,6 +28,13 @@ var documentRoot = process.cwd();
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
+var buildHeader = function(mime) {
+	return {
+		'Content-Type': mime,
+		'Cache-Control': 'no-cache'
+	}
+}
+
 var notFound = function(response, file) {
 	  response.writeHead(404);
       response.end('404 not found: ' + file);
@@ -68,7 +75,7 @@ var staticFile = function(file, response) {
 		}
 		else {
 			console.log('serving static: ' + fullPath);
-			response.writeHead(200, { 'Content-Type': mime });
+			response.writeHead(200, buildHeader(mime));
 			response.end(data);
 		}
 	});
@@ -78,7 +85,7 @@ var staticFile = function(file, response) {
  * @param transformer The transformer object as in var transformer = require('foobar')
  * @return a Function that is the called by the router with the router specific 'this'
  */
-function serveData(directory, transformer) {
+function transformFile(directory, transformer) {
 	return function(resource) {
 		var fullPath = path.join(documentRoot, 'data', directory, decodeURI(resource));
 		console.log('path: ' + fullPath);
@@ -91,16 +98,37 @@ function serveData(directory, transformer) {
 				notFound(response, fullPath);
 			}
 			else {
-				var transformed = transformer.transform(data);
+				var transformed = transformer.transformFile(data);
 
-				response.writeHead(200, { 'Content-Type': transformer.mime });
+				var header = buildHeader(transformer.mime);
+				header['content-length'] = Buffer.byteLength(transformed);
+
+				response.writeHead(200, header);
 				response.end(transformed);
 			}
 		})
 	}
+}
 
-	this.res.writeHead(200, { 'Content-Type': 'text/plain' })
-	this.res.end('session: ' + session);
+/**
+ * @param directory the name of the directory under the '/data/' folder
+ * @param transformer The transformer object as in var transformer = require('foobar')
+ * @return a Function that is the called by the router with the router specific 'this'
+ */
+function transformFolder(directory, transformer) {
+	return function(resource) {
+		var fullPath = path.join(documentRoot, 'data', directory, decodeURI(resource));
+		console.log('path: ' + fullPath);
+		
+		var response = this.res;
+
+		var result = transformer.transformFolder(fullPath, function(result) {
+			var header = buildHeader(result.mime);
+			header['content-length'] = Buffer.byteLength(result.data);
+			response.writeHead(result.code, header);
+			response.end(result.data);	
+		});
+	}
 }
 
 function index() {
@@ -109,25 +137,27 @@ function index() {
 
 }
 
-var listResources = function() {
-	var fullPath = path.join(documentRoot, 'data/', this.req.url);
+var listResources = function(template) {
+	return function() {
+		var fullPath = path.join(documentRoot, 'data/', this.req.url);
 
-	var response = this.res;
+		var response = this.res;
 
-	fs.readdir(fullPath, function(err, files) {
-		if (err) {
-			response.writeHead(500);
-      		response.end('500 failed to list Resources');
-      		console.log('reading directory failed: ' + path + ' err: ' + err);
-		} else {
-			var locals = {resources: []};
-			files.map(function(element) {
-				locals.resources.push({name: element});
-			});
+		fs.readdir(fullPath, function(err, files) {
+			if (err) {
+				response.writeHead(500);
+	      		response.end('500 failed to list Resources');
+	      		console.log('reading directory failed: ' + path + ' err: ' + err);
+			} else {
+				var locals = {resources: []};
+				files.map(function(element) {
+					locals.resources.push({name: element});
+				});
 
-			renderTemplate(response, 'listPositions.stache', locals)
-		}
-	});
+				renderTemplate(response, template, locals)
+			}
+		});
+	}
 }
 
 var renderTemplate = function(response, name, locals) {
@@ -140,7 +170,7 @@ var renderTemplate = function(response, name, locals) {
 			response.writeHead(500);
       		response.end('500 template not found');
 		} else {
-			response.writeHead(200, { 'Content-Type': 'text/html' });
+			response.writeHead(200, buildHeader('text/html'));
 			response.end(mustache.render(String(file), locals));
 		}
 	});
@@ -149,17 +179,17 @@ var renderTemplate = function(response, name, locals) {
 var postTest = function() {
 	console.log(this.req);
 
-	this.res.writeHead(200, { 'Content-Type': 'text/plain' });
+	this.res.writeHead(200, buildHeader('text/plain'));
 	this.res.end('\n\npost test received\n\n');
 }
 
 // routing table
 var router = new director.http.Router({
 	'/': { get: index },
-	'/positions': {get: listResources },
-	'/positions/:session': { get: serveData('/positions', positionData) },
-	'/sessionCSV': { get: listResources },
-	'/sessionCSV/:session': { get: serveData('/sessionCSV', sessionSCV) },
+	'/positions': {get: listResources('listPositions.stache') },
+	'/positions/:session': { get: transformFile('/positions', positionData) },
+	'/sessionCSV': { get: listResources('listSessionCSV.stache') },
+	'/sessionCSV/:session': { get: transformFolder('/sessionCSV', sessionSCV) },
 	'/test': { post: postTest}
 });
 
