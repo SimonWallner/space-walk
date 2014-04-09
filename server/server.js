@@ -199,6 +199,12 @@ var server = http.createServer(function (req, response) {
       req.chunks.push(chunk.toString());
     });
 
+    var time = new Date().getTime();
+	response.on('finish', function() {
+		var delta = new Date().getTime() - time;
+		console.log('request took: ' + delta + 'ms');
+	})
+
 	router.dispatch(req, response, function (err) {
 		if (err) {
 			// TODO find out how to do propper static routes and stop abusing 
