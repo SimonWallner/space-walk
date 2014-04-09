@@ -2,6 +2,12 @@ var fs = require('fs')
 var async = require('async');
 var path = require('path');
 
+var pushUnique = function(arr, element) {
+	if (arr.indexOf(element) == -1) {
+		arr.push(element);
+	}
+}
+
 var toSeconds = function(s, m, h) {
 	return s + m * 60 + h * 3600;
 }
@@ -61,20 +67,40 @@ exports.transformFolder = function(folderPath, callback) {
 				}	
 			}
 			
+			// grouping annotations
+			var groups = [];
+			annotations.annotations.forEach(function(annotation) {
+				pushUnique(groups, annotation.group);
+
+				if (!data[annotation.group]) {
+					data[annotation.group] = data[annotation.label];
+				} else {
+					data[annotation.group] = data[annotation.group].map(function(element, i) {
+						return Math.max(element, data[annotation.label][i]);
+					});
+				}
+			})
 
 			// writing csv string
 			var csv = 'time, speed';
-			labels.map(function(label) {
-					csv += ', ' + label;
-				})
+			labels.forEach(function(label) {
+				csv += ', ' + label;
+			});
+			groups.forEach(function(group) {
+				csv += ', ' + group
+			});
+
 			csv += '\n'
 
 
 			for (var i = 0; i < data.speeds.length; i++) {
 				csv += data.positions[i].payload.time + ', ' + data.speeds[i];
-				labels.map(function(label) {
+				labels.forEach(function(label) {
 					csv += ', ' + data[label][i]
-				})
+				});
+				groups.forEach(function(group) {
+					csv += ', ' + data[group][i]
+				});
 				csv += '\n'
 			}
 
