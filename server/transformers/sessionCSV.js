@@ -82,7 +82,7 @@ exports.transformFolder = function(folderPath, callback) {
 			})
 
 			// writing csv string
-			var csv = 'time, speed';
+			var csv = 'time, x, y, z, speed';
 			labels.forEach(function(label) {
 				csv += ', ' + label;
 			});
@@ -94,10 +94,16 @@ exports.transformFolder = function(folderPath, callback) {
 
 
 			for (var i = 0; i < data.speeds.length; i++) {
-				csv += data.positions[i].payload.time + ', ' + data.speeds[i];
+				csv += data.positions[i].payload.time;
+				csv += ', ' + data.positions[i].payload.x;
+				csv += ', ' + data.positions[i].payload.y;
+				csv += ', ' + data.positions[i].payload.z;
+				csv += ', ' + data.speeds[i];
+
 				labels.forEach(function(label) {
 					csv += ', ' + data[label][i]
 				});
+				
 				groups.forEach(function(group) {
 					csv += ', ' + data[group][i]
 				});
