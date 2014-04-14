@@ -40,3 +40,37 @@ hr {
 	margin-bottom: 1em;
 	background-color: $color;
 }
+
+video {
+	width: 100%;
+}
+
+// -------------- svg ------------
+
+svg {
+	background-color: white;
+}
+
+.bar {
+  fill: steelblue;
+  border-radius: 3px;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}

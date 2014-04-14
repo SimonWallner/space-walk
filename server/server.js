@@ -68,6 +68,14 @@ var staticFile = function(file, response) {
 		mime = 'img/png';
 	} else if (file.endsWith('svg')) {
 		mime = 'image/svg';
+	} else if (file.endsWith('mov')) {
+		mime = 'video/quicktime';
+	} else if (file.endsWith('mp4')) {
+		mime = 'video/mp4';
+	} else if (file.endsWith('js')) {
+		mime = 'application/javascript';
+	} else if (file.endsWith('json')) {
+		mime = 'text/json';
 	} else {
 		mime = 'text/plain';
 	}
