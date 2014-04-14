@@ -40,9 +40,7 @@ var notFound = function(response, file) {
       response.end('404 not found: ' + file);
 }
 
-var staticFile = function(file, response) {
-
-	response = response || this.res;
+var staticFile = function(file, request, response) {
 
 	// removing url parameters
 	var index = file.indexOf('?');
@@ -82,15 +80,43 @@ var staticFile = function(file, response) {
 
 	var fullPath = path.join(documentRoot, 'static/', file);
 
-	var stream = fs.createReadStream(fullPath);
-	stream.on('error', function(err) {
-		console.log('error creating stream: ' + err);
-		notFound(response, file);
-	});
+	if (file.endsWith('mp4')) { // 
+		// source taken from: http://blog.dojchinovski.mk/?p=41
+		var total = fs.statSync(fullPath).size;
+		var range = request.headers.range;
+		var positions = range.replace(/bytes=/, "").split("-");
+		var start = parseInt(positions[0], 10);
+		var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
+		var chunksize = (end-start)+1;
 
-	console.log('truing to serve static: ' + fullPath);
-	response.writeHead(200, buildHeader(mime));
-	stream.pipe(response);
+		var header = {
+			"Content-Range": "bytes " + start + "-" + end + "/" + total, 
+			"Accept-Ranges": "bytes",
+			"Content-Length": chunksize,
+			"Content-Type": "video/mp4"
+		};
+		
+		var stream = fs.createReadStream(fullPath, {start: start, end: end});
+		stream.on('error', function(err) {
+			console.log('error creating stream: ' + err);
+			notFound(response, file);
+		});
+
+		console.log('truing to serve chunked: ' + fullPath);
+		response.writeHead(206,header);
+		stream.pipe(response);
+	}
+	else {
+		var stream = fs.createReadStream(fullPath);
+		stream.on('error', function(err) {
+			console.log('error creating stream: ' + err);
+			notFound(response, file);
+		});
+
+		console.log('truing to serve static: ' + fullPath);
+		response.writeHead(200, buildHeader(mime));
+		stream.pipe(response);
+	}
 }
 
 
@@ -206,6 +232,9 @@ var server = http.createServer(function (req, response) {
       req.chunks.push(chunk.toString());
     });
 
+    console.log(req.headers);
+    console.log('----------------------')
+
     var time = new Date().getTime();
 	response.on('finish', function() {
 		var delta = new Date().getTime() - time;
@@ -217,7 +246,7 @@ var server = http.createServer(function (req, response) {
 			// TODO find out how to do propper static routes and stop abusing 
 			// the error function here.
 			var url = req.url;
-			staticFile(url, response)
+			staticFile(url, req, response)
 		}
 	});
 });
