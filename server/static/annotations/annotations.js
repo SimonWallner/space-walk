@@ -29,6 +29,19 @@ var toSeconds = function(obj) {
 	return obj.s + obj.m * 60 + obj.h * 3600;
 }
 
+var toTimeObject = function(valueString) {
+	if (valueString.length === 5) {
+		valueString += ':00'; // fuck you chrome, omitting seconds whenever possible!
+	}
+
+	var arr = valueString.split(':');
+	return {
+		h: parseInt(arr[0]),
+		m: parseInt(arr[1]),
+		s: parseInt(arr[2])
+	}
+}
+
 var trt = null;
 
 var svg = null;
@@ -39,11 +52,19 @@ var margin = 40;
 var video;
 var duration = 0;
 
+var zeroLead = function(obj, length) {
+	var string = obj.toString();
+	while (string.length < length) {
+		string = '0' + string;
+	}
+	return string;
+}
+
 var toHumanReadableTime = function(s) {
 	var hours = Math.floor(s / 3600);
-	var minutes = Math.floor((s % 3600) / 60)
-	var seconds = s % 60;
-	return hours + ':' + minutes + ':' + seconds.toFixed(2);
+	var minutes = Math.floor((s % 3600) / 60);
+	var seconds = Math.floor(s % 60);
+	return zeroLead(hours, 2) + ':' + zeroLead(minutes, 2) + ':' + zeroLead(seconds, 2);
 }
 
 
@@ -62,10 +83,10 @@ var init = function() {
 	width = $('#container').width();
 
 	var x = d3.scale.linear()
-	.range([margin, width - 2 * margin]);
+	.range([0, width - 2 * margin]);
 
 	var y = d3.scale.linear()
-		.range([margin, margin + 1]);
+		.range([0, 1]);
 
 	var xAxis = d3.svg.axis()
 	    .scale(x)
@@ -79,8 +100,8 @@ var init = function() {
 		.attr('width', width)
 		.attr('height', height);
 
-	var g = svg.append("g");
-		// .attr("transform", "translate(0, " + margin + ")");
+	var g = svg.append("g")
+		.attr("transform", "translate(" + margin + ", " + margin + ")");
 
 	video.addEventListener('loadedmetadata', function() {
     	duration = video.duration;
@@ -88,28 +109,48 @@ var init = function() {
 		y.domain([0, 1]);
 
 		svg.append("g")
+			.attr("transform", "translate(" + margin + ", " + margin + ")")
 			.attr("class", "x axis")
-			.attr("transform", "translate(0," + margin + ")")
 			.call(xAxis);
 
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
 
-			g.selectAll(".bar")
-				.data(annotations.annotations)
-					.enter().append("rect")
-						.attr('class', 'bar')
-						.attr('x', function(d) { return x(toSeconds(d.start)); })
-						.attr('width', function(d) { return x(toSeconds(d.start) + toSeconds(d.end)); })
-						.attr('y', function(d, i) { return  y(i * 20); })
-						.attr('height', 18)
-						.attr('data-startTime', function(d) { return toSeconds(d.start); })
-						.attr('data-endTime', function(d) { return toSeconds(d.end); })
-						.on('click', function(){
-							var seconds = d3.select(this).attr('data-startTime')
-							gotoVideo(seconds);
-						});
-		})
+			var updateData = function() {
+				g.selectAll(".bar")
+					.data(annotations.annotations)
+						.enter().append("rect")
+							.attr('class', 'bar')
+							.attr('x', function(d) { return x(toSeconds(d.start)); })
+							.attr('width', function(d) { return x(toSeconds(d.start) + toSeconds(d.end)); })
+							.attr('y', function(d, i) { return  y(i * 20); })
+							.attr('height', 18)
+							.attr('data-startTime', function(d) { return toSeconds(d.start); })
+							.attr('data-endTime', function(d) { return toSeconds(d.end); })
+							.on('click', function(){
+								var seconds = d3.select(this).attr('data-startTime')
+								gotoVideo(seconds);
+							});
+			}
+			updateData();
+
+			$('#addAnnotation').click(function() {
+				annotations.annotations.push({
+					start: toTimeObject($('#start').val()),
+					end: toTimeObject($('#end').val()),
+					annotation: $('#annotation').val(),
+					class: $('#annotation').val()
+				})
+				updateData();
+			});
+
+			$('#copyStart').click(function() {
+				$('#start').val(toHumanReadableTime(video.currentTime));
+			})
+			$('#copyEnd').click(function() {
+				$('#end').val(toHumanReadableTime(video.currentTime));
+			})
+		});
 	});
 }
 
