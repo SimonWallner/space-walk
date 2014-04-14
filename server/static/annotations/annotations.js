@@ -36,16 +36,27 @@ var width = null;
 var height = 200;
 var margin = 40;
 
+var video;
 var duration = 0;
 
+var toHumanReadableTime = function(s) {
+	var hours = Math.floor(s / 3600);
+	var minutes = Math.floor((s % 3600) / 60)
+	var seconds = s % 60;
+	return hours + ':' + minutes + ':' + seconds.toFixed(2);
+}
 
+
+var gotoVideo = function(seconds) {
+	video.currentTime = seconds;
+}
 
 var init = function() {
 	d3.select('#video').append('video')
 		.attr('src', '/data/sessionCSV/' + QueryString.dataset + '/screen-capture.mp4')
 		.attr('controls', 'controls');
 
-	var video = $('video')[0];
+	video = $('video')[0];
 
 
 	width = $('#container').width();
@@ -58,25 +69,28 @@ var init = function() {
 
 	var xAxis = d3.svg.axis()
 	    .scale(x)
-	    .orient("bottom");
+	    	.orient("bottom")
+	    	.tickSize(height - 2*margin)
+			.tickFormat(toHumanReadableTime)
+			.ticks(7);
 
 
 	svg = d3.select('#plots').append('svg')
 		.attr('width', width)
 		.attr('height', height);
-	
+
 	var g = svg.append("g");
 		// .attr("transform", "translate(0, " + margin + ")");
-
-	svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + (height - margin) + ")")
-      .call(xAxis);
 
 	video.addEventListener('loadedmetadata', function() {
     	duration = video.duration;
     	x.domain([0, duration]);
 		y.domain([0, 1]);
+
+		svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + margin + ")")
+			.call(xAxis);
 
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
@@ -84,11 +98,17 @@ var init = function() {
 			g.selectAll(".bar")
 				.data(annotations.annotations)
 					.enter().append("rect")
-						.attr("class", "bar")
-						.attr("x", function(d) { return x(toSeconds(d.start)); })
-						.attr("width", function(d) { return x(toSeconds(d.start) + toSeconds(d.end)); })
-						.attr("y", function(d, i) { return  y(i * 20); })
-						.attr("height", 18);
+						.attr('class', 'bar')
+						.attr('x', function(d) { return x(toSeconds(d.start)); })
+						.attr('width', function(d) { return x(toSeconds(d.start) + toSeconds(d.end)); })
+						.attr('y', function(d, i) { return  y(i * 20); })
+						.attr('height', 18)
+						.attr('data-startTime', function(d) { return toSeconds(d.start); })
+						.attr('data-endTime', function(d) { return toSeconds(d.end); })
+						.on('click', function(){
+							var seconds = d3.select(this).attr('data-startTime')
+							gotoVideo(seconds);
+						});
 		})
 	});
 }
