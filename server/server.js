@@ -44,9 +44,15 @@ var staticFile = function(file, response) {
 
 	response = response || this.res;
 
+	// removing url parameters
 	var index = file.indexOf('?');
 	if (index >= 0) {
 		file = file.substring(0, index);
+	}
+
+	// see if we are reuqesting a directory
+	if (file.slice(-1) === '/') {
+		file += 'index.html';
 	}
 
 	// console.log('trying to retrieve file: ' + file)
@@ -65,21 +71,21 @@ var staticFile = function(file, response) {
 	} else {
 		mime = 'text/plain';
 	}
-	
+
 	var fullPath = path.join(documentRoot, 'static/', file);
 
-	fs.readFile(fullPath, function(err, data) {
-		if (err) {
-			console.log('static resource not found: ' + fullPath);
-			notFound(response, file);
-		}
-		else {
-			console.log('serving static: ' + fullPath);
-			response.writeHead(200, buildHeader(mime));
-			response.end(data);
-		}
+	var stream = fs.createReadStream(fullPath);
+	stream.on('error', function(err) {
+		console.log('error creating stream: ' + err);
+		notFound(response, file);
 	});
+
+	console.log('truing to serve static: ' + fullPath);
+	response.writeHead(200, buildHeader(mime));
+	stream.pipe(response);
 }
+
+
 /**
  * @param directory the name of the directory under the '/data/' folder
  * @param transformer The transformer object as in var transformer = require('foobar')
@@ -131,12 +137,6 @@ function transformFolder(directory, transformer) {
 	}
 }
 
-function index() {
-	// director relies on this keyword
-	staticFile.bind(this, 'index.html')();
-
-}
-
 var listResources = function(template) {
 	return function() {
 		var fullPath = path.join(documentRoot, 'data/', this.req.url);
@@ -185,7 +185,6 @@ var postTest = function() {
 
 // routing table
 var router = new director.http.Router({
-	'/': { get: index },
 	'/positions': {get: listResources('listPositions.stache') },
 	'/positions/:session': { get: transformFile('/positions', positionData) },
 	'/sessionCSV': { get: listResources('listSessionCSV.stache') },

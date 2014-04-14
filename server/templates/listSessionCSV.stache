@@ -14,9 +14,14 @@
 <body>
 <div id="container">
 	<h1>available resources</h1>
+	<hr>
+	<p>
+		The server expects certain files in the subdirectory of each session: <strong>annotations.json</strong> a json file containing all the annotations, <strong>data.json</strong>, the data file with all recordet data, and <strong>screen-capture.mov</strong>, the screen recording of the session.
+	</p>
+	<hr>
 	<ul>
 		{{#resources}}
-		<li><a href="sessionCSV/{{name}}">{{name}}</li>
+		<li>{{name}} <a href="sessionCSV/{{name}}">download csv data</a>, <a href="annotations/index.html?dataset={{name}}">open in annotations editor</a></li>
 		{{/resources}}
 	</ul>
 </div>
