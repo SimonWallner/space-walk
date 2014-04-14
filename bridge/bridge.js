@@ -5,8 +5,8 @@ var connecting = false;
 var socket = null;
 
 var net = require('net');
-var host = '127.0.0.1';
-var port = 60601
+var host = process.argv[2] || '127.0.0.1';
+var port = process.argv[3] || 60601;
 
 var connectionPool = [];
 
@@ -20,7 +20,7 @@ var connect = function() {
 	}
 
 	connecting = true;
-	console.log("socket connecting...");
+	console.log("socket connecting..." + host + ':' + port);
 
 	clientSocket = new net.Socket();
 	clientSocket.connect(port, host, function() {
