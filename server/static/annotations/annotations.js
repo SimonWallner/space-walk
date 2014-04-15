@@ -93,22 +93,30 @@ var init = function() {
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
 
-			var updateData = function() {
-				div.selectAll(".bar")
-					.data(annotations.annotations)
-						.enter().append("div")
-							.attr('class', 'bar')
-							.style('width', function(d) { return x(toSeconds(d.end) - toSeconds(d.start)) + 'px'; })
-							.style('height', '18px')
-							.style('fill', 'yellow')
-							.style('margin-left', function(d) { return x(toSeconds(d.start)) + 'px'; })
-							.attr('data-startTime', function(d) { return toSeconds(d.start); })
-							.attr('data-endTime', function(d) { return toSeconds(d.end); })
-							.on('click', function(){
-								var seconds = d3.select(this).attr('data-startTime')
-								gotoVideo(seconds);
-							});
+			var createEntry = function(selection) {
+				selection
+					.attr('class', 'entry')
+					.attr('data-startTime', function(d) { return toSeconds(d.start); })
+					.attr('data-endTime', function(d) { return toSeconds(d.end); })
+					.on('click', function(){
+						var seconds = d3.select(this).attr('data-startTime')
+						gotoVideo(seconds);
+					})
+					.append('div')
+						.style('width', function(d) { return x(toSeconds(d.end) - toSeconds(d.start)) + 'px'; })
+						.style('height', '18px')
+						.style('fill', 'yellow')
+						.style('margin-left', function(d) { return x(toSeconds(d.start)) + 'px'; });
 			}
+
+			var updateData = function() {
+				var selection = div.selectAll(".entry").data(annotations.annotations, function(_, i) { return i; });
+				// selection.call(createEntry);
+				selection.enter().append("div")
+					.call(createEntry);
+				selection.exit().remove();
+			}
+
 			updateData();
 
 			$('#addAnnotation').click(function() {

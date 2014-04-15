@@ -34,9 +34,12 @@ hr {
 video {
   width: 100%; }
 
-.bar {
-  background-color: steelblue;
+.entry {
+  background-color: #ccc;
   border-radius: 3px; }
-
-.bar:hover {
-  background-color: brown; }
+  .entry div {
+    background-color: steelblue;
+    margin-bottom: 3px;
+    border-radius: inherit; }
+    .entry div:hover {
+      background-color: brown; }

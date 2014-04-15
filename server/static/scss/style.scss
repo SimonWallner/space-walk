@@ -46,11 +46,19 @@ video {
 }
 
 
-.bar {
-  background-color: steelblue;
-  border-radius: 3px;
+.entry {
+	background-color: #ccc;
+	border-radius: 3px;
+
+	div {
+		background-color: steelblue;
+		margin-bottom: 3px;
+		border-radius: inherit;
+
+		&:hover {
+			background-color: brown;
+		}
+	}
 }
 
-.bar:hover {
-  background-color: brown;
-}
+
