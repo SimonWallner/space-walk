@@ -79,52 +79,29 @@ var init = function() {
 
 	video = $('video')[0];
 
-
 	width = $('#container').width();
 
 	var x = d3.scale.linear()
-	.range([0, width - 2 * margin]);
+		.range([0, width]);
 
-	var y = d3.scale.linear()
-		.range([0, 1]);
-
-	var xAxis = d3.svg.axis()
-	    .scale(x)
-	    	.orient("bottom")
-	    	.tickSize(height - 2*margin)
-			.tickFormat(toHumanReadableTime)
-			.ticks(7);
-
-
-	svg = d3.select('#plots').append('svg')
-		.attr('width', width)
-		.attr('height', height);
-
-	var g = svg.append("g")
-		.attr("transform", "translate(" + margin + ", " + margin + ")");
+	var div = d3.select('#plots');
 
 	video.addEventListener('loadedmetadata', function() {
     	duration = video.duration;
     	x.domain([0, duration]);
-		y.domain([0, 1]);
-
-		svg.append("g")
-			.attr("transform", "translate(" + margin + ", " + margin + ")")
-			.attr("class", "x axis")
-			.call(xAxis);
 
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
 
 			var updateData = function() {
-				g.selectAll(".bar")
+				div.selectAll(".bar")
 					.data(annotations.annotations)
-						.enter().append("rect")
+						.enter().append("div")
 							.attr('class', 'bar')
-							.attr('x', function(d) { return x(toSeconds(d.start)); })
-							.attr('width', function(d) { return x(toSeconds(d.start) + toSeconds(d.end)); })
-							.attr('y', function(d, i) { return  y(i * 20); })
-							.attr('height', 18)
+							.style('width', function(d) { return x(toSeconds(d.end) - toSeconds(d.start)) + 'px'; })
+							.style('height', '18px')
+							.style('fill', 'yellow')
+							.style('margin-left', function(d) { return x(toSeconds(d.start)) + 'px'; })
 							.attr('data-startTime', function(d) { return toSeconds(d.start); })
 							.attr('data-endTime', function(d) { return toSeconds(d.end); })
 							.on('click', function(){

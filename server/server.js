@@ -82,6 +82,9 @@ var staticFile = function(file, request, response) {
 	var fullPath = path.join(documentRoot, 'static/', file);
 
 	// source based on: http://blog.dojchinovski.mk/?p=41
+
+	// hint a request for 'range: bytes 42-42' requests byte 42
+	// and thus the returned chunk has a length of 1
 	var total = fs.statSync(fullPath).size;
 	var start = 0;
 	var end = total - 1;
@@ -104,9 +107,6 @@ var staticFile = function(file, request, response) {
 		"Content-Type": mime,
 		'Cache-Control': 'no-cache'
 	};
-
-	console.log(header);
-	console.log('total: ' + total);
 	
 	var stream = fs.createReadStream(fullPath, {start: start, end: end});
 	stream.on('error', function(err) {
@@ -114,7 +114,7 @@ var staticFile = function(file, request, response) {
 		notFound(response, file);
 	});
 
-	console.log('trying to serve (chunked:): ' + fullPath);
+	console.log('trying to serve (chunked): ' + fullPath);
 	response.writeHead(responseCode, header);
 	stream.pipe(response);
 }
@@ -231,9 +231,6 @@ var server = http.createServer(function (req, response) {
     req.on('data', function (chunk) {
       req.chunks.push(chunk.toString());
     });
-
-    console.log(req.headers);
-    console.log('----------------------')
 
     var time = new Date().getTime();
 	response.on('finish', function() {

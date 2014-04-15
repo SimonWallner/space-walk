@@ -34,24 +34,9 @@ hr {
 video {
   width: 100%; }
 
-svg {
-  background-color: white; }
-
 .bar {
-  fill: steelblue;
+  background-color: steelblue;
   border-radius: 3px; }
 
 .bar:hover {
-  fill: brown; }
-
-.axis {
-  font: 10px sans-serif; }
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges; }
-
-.x.axis path {
-  display: none; }
+  background-color: brown; }
