@@ -31,7 +31,8 @@ var documentRoot = process.cwd();
 var buildHeader = function(mime) {
 	return {
 		'Content-Type': mime,
-		'Cache-Control': 'no-cache'
+		'Cache-Control': 'no-cache',
+		'Accept-Ranges': 'none'
 	}
 }
 
@@ -80,43 +81,42 @@ var staticFile = function(file, request, response) {
 
 	var fullPath = path.join(documentRoot, 'static/', file);
 
-	if (file.endsWith('mp4')) { // 
-		// source taken from: http://blog.dojchinovski.mk/?p=41
-		var total = fs.statSync(fullPath).size;
+	// source based on: http://blog.dojchinovski.mk/?p=41
+	var total = fs.statSync(fullPath).size;
+	var start = 0;
+	var end = total - 1;
+	var responseCode = 200;
+
+	if (request.headers.range) {
+		responseCode = 206;
 		var range = request.headers.range;
 		var positions = range.replace(/bytes=/, "").split("-");
 		var start = parseInt(positions[0], 10);
-		var end = positions[1] ? parseInt(positions[1], 10) : total - 1;
-		var chunksize = (end-start)+1;
-
-		var header = {
-			"Content-Range": "bytes " + start + "-" + end + "/" + total, 
-			"Accept-Ranges": "bytes",
-			"Content-Length": chunksize,
-			"Content-Type": "video/mp4"
-		};
-		
-		var stream = fs.createReadStream(fullPath, {start: start, end: end});
-		stream.on('error', function(err) {
-			console.log('error creating stream: ' + err);
-			notFound(response, file);
-		});
-
-		console.log('truing to serve chunked: ' + fullPath);
-		response.writeHead(206,header);
-		stream.pipe(response);
+		var end = positions[1] ? parseInt(positions[1], 10) : end;
 	}
-	else {
-		var stream = fs.createReadStream(fullPath);
-		stream.on('error', function(err) {
-			console.log('error creating stream: ' + err);
-			notFound(response, file);
-		});
 
-		console.log('truing to serve static: ' + fullPath);
-		response.writeHead(200, buildHeader(mime));
-		stream.pipe(response);
-	}
+	var chunksize = (end - start) + 1;
+	
+	var header = {
+		"Content-Range": "bytes " + start + "-" + end + "/" + total, 
+		"Accept-Ranges": "bytes",
+		"Content-Length": chunksize,
+		"Content-Type": mime,
+		'Cache-Control': 'no-cache'
+	};
+
+	console.log(header);
+	console.log('total: ' + total);
+	
+	var stream = fs.createReadStream(fullPath, {start: start, end: end});
+	stream.on('error', function(err) {
+		console.log('error creating stream: ' + err);
+		notFound(response, file);
+	});
+
+	console.log('trying to serve (chunked:): ' + fullPath);
+	response.writeHead(responseCode, header);
+	stream.pipe(response);
 }
 
 
