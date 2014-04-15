@@ -47,17 +47,18 @@ video {
 
 
 .entry {
-	background-color: #ccc;
+	background-color: #ddd;
 	border-radius: 3px;
+	margin-bottom: 3px;
 
-	div {
+	&:hover {
+		background-color: #ccc;
+	}
+
+	div.bar {
 		background-color: steelblue;
-		margin-bottom: 3px;
-		border-radius: inherit;
-
-		&:hover {
-			background-color: brown;
-		}
+		border-radius: 10px;
+		height: 10px;
 	}
 }
 

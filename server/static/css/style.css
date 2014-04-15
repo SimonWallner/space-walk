@@ -35,11 +35,12 @@ video {
   width: 100%; }
 
 .entry {
-  background-color: #ccc;
-  border-radius: 3px; }
-  .entry div {
+  background-color: #ddd;
+  border-radius: 3px;
+  margin-bottom: 3px; }
+  .entry:hover {
+    background-color: #ccc; }
+  .entry div.bar {
     background-color: steelblue;
-    margin-bottom: 3px;
-    border-radius: inherit; }
-    .entry div:hover {
-      background-color: brown; }
+    border-radius: 10px;
+    height: 10px; }

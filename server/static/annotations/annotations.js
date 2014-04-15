@@ -1,5 +1,14 @@
 var annotations = null;
+var runningID = 0;
 
+removeElement = function(needle, haystack) {
+	for (var i = 0; i < haystack.length; i++) {
+		if (haystack[i].id === needle) {
+			haystack.splice(i, 1);
+			break;
+		}
+	}
+}
 
 // code from http://stackoverflow.com/questions/979975/how-to-get-the-value-from-url-parameter
 var QueryString = function () {
@@ -92,6 +101,10 @@ var init = function() {
 
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
+			annotations.annotations = annotations.annotations.map(function(element) {
+				element.id = runningID++;
+				return element;
+			})
 
 			var createEntry = function(selection) {
 				selection
@@ -103,14 +116,24 @@ var init = function() {
 						gotoVideo(seconds);
 					})
 					.append('div')
+						.attr('class', 'bar')
 						.style('width', function(d) { return x(toSeconds(d.end) - toSeconds(d.start)) + 'px'; })
-						.style('height', '18px')
 						.style('fill', 'yellow')
 						.style('margin-left', function(d) { return x(toSeconds(d.start)) + 'px'; });
+
+				selection.append('div')
+					.text(function(d) { return d.annotation + ' - ' + d.group; })
+					.append('a')
+						.attr('href', '#')
+						.text(' remove')
+						.on('click', function(d) {
+							removeElement(d.id, annotations.annotations);
+							updateData();
+						})
 			}
 
 			var updateData = function() {
-				var selection = div.selectAll(".entry").data(annotations.annotations, function(_, i) { return i; });
+				var selection = div.selectAll(".entry").data(annotations.annotations, function(d) { return d.id; });
 				// selection.call(createEntry);
 				selection.enter().append("div")
 					.call(createEntry);
@@ -124,7 +147,8 @@ var init = function() {
 					start: toTimeObject($('#start').val()),
 					end: toTimeObject($('#end').val()),
 					annotation: $('#annotation').val(),
-					class: $('#annotation').val()
+					class: $('#annotation').val(),
+					id: runningID++
 				})
 				updateData();
 			});
