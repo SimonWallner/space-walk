@@ -1,6 +1,5 @@
 var annotations = null;
 var runningID = 0;
-var offset = 0;
 var offsetIncrement = 0.5;
 
 removeElement = function(needle, haystack) {
@@ -227,21 +226,23 @@ var init = function() {
 		var movePlayhead = function() {
 			if (video) {
 				playHead
-					.attr('x1', x(video.currentTime + offset))
-					.attr('x2', x(video.currentTime + offset));
+					.attr('x1', x(video.currentTime + annotations.offset))
+					.attr('x2', x(video.currentTime + annotations.offset));
 			}
 		}
 
 		window.setInterval(movePlayhead, 10);
 
+		$('#offset').val(annotations.offset);
+
 		$('#offsetPlus').click(function() {
-			offset += offsetIncrement;
-			$('#offset').val(offset);
+			annotations.offset += offsetIncrement;
+			$('#offset').val(annotations.offset);
 		})
 
 		$('#offsetMinus').click(function() {
-			offset -= offsetIncrement;
-			$('#offset').val(offset);
+			annotations.offset -= offsetIncrement;
+			$('#offset').val(annotations.offset);
 		})
 
 		var hoverLine = g.append('line')
@@ -274,12 +275,26 @@ var init = function() {
 				var mouse = d3.mouse(this);
 				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
 				var time = x.invert(mX);
-				video.currentTime = time - offset;
+				video.currentTime = time - annotations.offset;
 				console.log(time);
-			});
-
-		
+			});	
 	});
+
+	$('#save').click(function() {
+		if (annotations) {
+			var path = '/data/sessionCSV/' + QueryString.dataset + '/annotations.json'
+			$.ajax(path, {
+				method: 'PUT',
+				data: JSON.stringify(annotations),
+				success: function() {
+					console.log('annotations saved');
+				},
+				error: function(err) {
+					alert('failed to save annotations on server: ' + err);
+				}
+			})
+		}
+	})
 }
 
 $('document').ready(init)
