@@ -51,6 +51,7 @@ video {
 	border-radius: 3px;
 	margin-bottom: 3px;
 
+
 	&:hover {
 		background-color: #ccc;
 	}
@@ -61,6 +62,15 @@ video {
 		height: 10px;
 		min-width: 10px;
 	}
+
+	.options {
+		padding: 0.5em;
+		background-color: #ccc;
+	}
+}
+
+.hideOptions .options {
+	display: none;
 }
 
 #plots {

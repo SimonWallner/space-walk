@@ -11,6 +11,37 @@ removeElement = function(needle, haystack) {
 	}
 }
 
+// MDN polyfill: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+if (!Array.prototype.find) {
+	Object.defineProperty(Array.prototype, 'find', {
+		enumerable: false,
+		configurable: true,
+		writable: true,
+		value: function(predicate) {
+			if (this == null) {
+				throw new TypeError('Array.prototype.find called on null or undefined');
+			}
+			if (typeof predicate !== 'function') {
+				throw new TypeError('predicate must be a function');
+			}
+			var list = Object(this);
+			var length = list.length >>> 0;
+			var thisArg = arguments[1];
+			var value;
+
+			for (var i = 0; i < length; i++) {
+				if (i in list) {
+					value = list[i];
+					if (predicate.call(thisArg, value, i, list)) {
+						return value;
+					}
+				}
+			}
+			return undefined;
+		}
+	});
+}
+
 // code from http://stackoverflow.com/questions/979975/how-to-get-the-value-from-url-parameter
 var QueryString = function () {
 	// This function is anonymous, is executed immediately and 
@@ -77,6 +108,10 @@ var toHumanReadableTime = function(s) {
 	return zeroLead(hours, 2) + ':' + zeroLead(minutes, 2) + ':' + zeroLead(seconds, 2);
 }
 
+var objToTime = function(obj) {
+	return zeroLead(obj.h, 2) + ':' + zeroLead(obj.m, 2) + ':' + zeroLead(obj.s, 2);	
+}
+
 
 var gotoVideo = function(seconds) {
 	video.currentTime = seconds;
@@ -113,17 +148,23 @@ var init = function() {
 				selection
 					.attr('class', 'entry')
 					.attr('data-startTime', function(d) { return toSeconds(d.start); })
-					.attr('data-endTime', function(d) { return toSeconds(d.end); })
-					.on('click', function(){
-						var seconds = d3.select(this).attr('data-startTime')
+					.attr('data-endTime', function(d) { return toSeconds(d.end); });
+					
+				var container = selection.append('div')
+					.on('click', function() {
+						var seconds = $(this).parent().attr('data-startTime')
 						gotoVideo(seconds);
-					})
-					.append('div')
+
+						$(this).parent().toggleClass('hideOptions');
+					});
+
+				container.append('div')
 						.attr('class', 'bar')
 						.style('width', function(d) { return x(toSeconds(d.end) - toSeconds(d.start)) + 'px'; })
 						.style('margin-left', function(d) { return x(toSeconds(d.start)) + 'px'; });
 
-				selection.append('div')
+				container.append('div')
+					.attr('class', 'description')
 					.text(function(d) { return d.annotation + ' - ' + d.group; })
 					.append('a')
 						.attr('href', '#')
@@ -131,16 +172,113 @@ var init = function() {
 						.on('click', function(d) {
 							removeElement(d.id, annotations.annotations);
 							updateData();
-						})
-			}
+						});
+
+				var optionsDiv = selection.append('div')
+					.attr('class', 'options');
+
+				optionsDiv.append('span')
+					.text('annotation: ');
+				
+				optionsDiv.append('input')
+					.attr('class', 'annotation-input')
+					.attr('type', 'text')
+					.attr('id', function(d) { return 'annotation-' + d.id; })
+					.attr('value', function(d) { return d.annotation; });
+
+				optionsDiv.append('span')
+					.text(' start: ');
+
+				optionsDiv.append('input')
+					.attr('class', 'start-input')
+					.attr('type', 'time')
+					.attr('id', function(d) { return 'start-' + d.id; })
+					.attr('step', '1')
+					.attr('value', function(d) { return objToTime(d.start); });
+
+				optionsDiv.append('button')
+					.text('=')
+					.on('click', function(d) {
+						$('#start-' + d.id).val(toHumanReadableTime(video.currentTime));
+					});
+
+				optionsDiv.append('span')
+					.text(' end: ');
+
+				optionsDiv.append('input')
+					.attr('class', 'end-input')
+					.attr('type', 'time')
+					.attr('id', function(d) { return 'end-' + d.id; })
+					.attr('step', '1')
+					.attr('value', function(d) { return objToTime(d.end); });
+
+				optionsDiv.append('button')
+					.text('=')
+					.on('click', function(d) {
+						$('#end-' + d.id).val(toHumanReadableTime(video.currentTime));
+					});
+
+				optionsDiv.append('span')
+					.text(' group: ');
+
+				optionsDiv.append('input')
+					.attr('class', 'group-input')
+					.attr('type', 'text')
+					.attr('id', function(d) { return 'group-' + d.id; })
+					.attr('value', function(d) { return d.group; })
+
+				optionsDiv.append('button')
+					.text('update')
+					.on('click', function(d) {
+						var annotation = annotations.annotations.find(function(element) {
+							return (element.id === d.id);
+						});
+
+						annotation.start = toTimeObject($('#start-' + d.id).val());
+						annotation.end = toTimeObject($('#end-' + d.id).val());
+						annotation.annotation = $('#annotation-' + d.id).val();
+						annotation.group =  $('#group-' + d.id).val();
+
+						updateData();
+					});
+			};
+
+			var updateEntry = function(selection) {
+				selection
+					.attr('data-startTime', function(d) { return toSeconds(d.start); })
+					.attr('data-endTime', function(d) { return toSeconds(d.end); });
+					
+				var container = selection.select('div')
+
+				container.select('.bar')
+					.style('width', function(d) { return x(toSeconds(d.end) - toSeconds(d.start)) + 'px'; })
+					.style('margin-left', function(d) { return x(toSeconds(d.start)) + 'px'; });
+
+				container.select('.description')
+					.text(function(d) { return d.annotation + ' - ' + d.group; })
+
+				var optionsDiv = selection.select('.options')
+					
+				optionsDiv.select('.annotation-input')
+					.attr('value', function(d) { return d.annotation; });
+
+				optionsDiv.select('start-input')
+					.attr('value', function(d) { return objToTime(d.start); });
+
+				optionsDiv.select('end-input')
+					.attr('value', function(d) { return objToTime(d.end); });
+
+				optionsDiv.select('group-input')
+					.attr('value', function(d) { return d.group; })
+			};
 
 			var div = d3.select('#annotations');
 
 			var updateData = function() {
 				var selection = div.selectAll(".entry").data(annotations.annotations, function(d) { return d.id; });
-				// selection.call(createEntry);
 				selection.enter().append("div")
 					.call(createEntry);
+				selection.call(updateEntry);
 				selection.exit().remove();
 			}
 
@@ -153,16 +291,18 @@ var init = function() {
 					annotation: $('#annotation').val(),
 					group: $('#group').val(),
 					id: runningID++
-				})
+				});
+
 				updateData();
 			});
 
 			$('#copyStart').click(function() {
 				$('#start').val(toHumanReadableTime(video.currentTime));
-			})
+			});
+
 			$('#copyEnd').click(function() {
 				$('#end').val(toHumanReadableTime(video.currentTime));
-			})
+			});
 		});
 	});
 

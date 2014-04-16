@@ -45,6 +45,12 @@ video {
     border-radius: 10px;
     height: 10px;
     min-width: 10px; }
+  .entry .options {
+    padding: 0.5em;
+    background-color: #ccc; }
+
+.hideOptions .options {
+  display: none; }
 
 #plots {
   overflow-x: scroll;
