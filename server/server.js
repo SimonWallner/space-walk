@@ -85,38 +85,45 @@ var staticFile = function(file, request, response) {
 
 	// hint a request for 'range: bytes 42-42' requests byte 42
 	// and thus the returned chunk has a length of 1
-	var total = fs.statSync(fullPath).size;
-	var start = 0;
-	var end = total - 1;
-	var responseCode = 200;
+	fs.stat(fullPath, function(err, stats) {
+		if (err) {
+			console.log('error reading fstat: ' + err);
+			notFound(response, file);
+		} else {
+			var total = stats.size;
+			var start = 0;
+			var end = total - 1;
+			var responseCode = 200;
 
-	if (request.headers.range) {
-		responseCode = 206;
-		var range = request.headers.range;
-		var positions = range.replace(/bytes=/, "").split("-");
-		var start = parseInt(positions[0], 10);
-		var end = positions[1] ? parseInt(positions[1], 10) : end;
-	}
+			if (request.headers.range) {
+				responseCode = 206;
+				var range = request.headers.range;
+				var positions = range.replace(/bytes=/, "").split("-");
+				var start = parseInt(positions[0], 10);
+				var end = positions[1] ? parseInt(positions[1], 10) : end;
+			}
 
-	var chunksize = (end - start) + 1;
-	
-	var header = {
-		"Content-Range": "bytes " + start + "-" + end + "/" + total, 
-		"Accept-Ranges": "bytes",
-		"Content-Length": chunksize,
-		"Content-Type": mime,
-		'Cache-Control': 'no-cache'
-	};
-	
-	var stream = fs.createReadStream(fullPath, {start: start, end: end});
-	stream.on('error', function(err) {
-		console.log('error creating stream: ' + err);
-		notFound(response, file);
+			var chunksize = (end - start) + 1;
+			
+			var header = {
+				"Content-Range": "bytes " + start + "-" + end + "/" + total, 
+				"Accept-Ranges": "bytes",
+				"Content-Length": chunksize,
+				"Content-Type": mime,
+				'Cache-Control': 'no-cache'
+			};
+			
+			var stream = fs.createReadStream(fullPath, {start: start, end: end});
+			stream.on('error', function(err) {
+				console.log('error creating stream: ' + err);
+				notFound(response, file);
+			});
+
+			console.log('trying to serve (chunked): ' + fullPath);
+			response.writeHead(responseCode, header);
+			stream.pipe(response);
+		}
 	});
-
-	console.log('trying to serve (chunked): ' + fullPath);
-	response.writeHead(responseCode, header);
-	stream.pipe(response);
 }
 
 

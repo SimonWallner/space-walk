@@ -41,6 +41,6 @@ video {
   .entry:hover {
     background-color: #ccc; }
   .entry div.bar {
-    background-color: steelblue;
+    background-color: #f3594f;
     border-radius: 10px;
     height: 10px; }
