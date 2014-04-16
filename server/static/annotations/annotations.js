@@ -231,7 +231,7 @@ var init = function() {
 			}
 		}
 
-		window.setInterval(movePlayhead, 10);
+		window.setInterval(movePlayhead, 1000);
 
 		$('#offset').val(annotations.offset);
 
@@ -282,12 +282,13 @@ var init = function() {
 
 	$('#save').click(function() {
 		if (annotations) {
-			var path = '/data/sessionCSV/' + QueryString.dataset + '/annotations.json'
+			var path = '/sessionCSV/' + QueryString.dataset + '/annotations.json'
+			// var path = '/test'
 			$.ajax(path, {
 				method: 'PUT',
 				data: JSON.stringify(annotations),
-				success: function() {
-					console.log('annotations saved');
+				success: function(response) {
+					console.log('annotations saved: ' + response);
 				},
 				error: function(err) {
 					alert('failed to save annotations on server: ' + err);

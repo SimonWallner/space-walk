@@ -217,11 +217,11 @@ var renderTemplate = function(response, name, locals) {
 	});
 }
 
-var postTest = function() {
+var putTest = function() {
 	console.log(this.req);
 
 	this.res.writeHead(200, buildHeader('text/plain'));
-	this.res.end('\n\npost test received\n\n');
+	this.res.end('\n\nput test received\n\n');
 }
 
 // routing table
@@ -230,7 +230,7 @@ var router = new director.http.Router({
 	'/positions/:session': { get: transformFile('/positions', positionData) },
 	'/sessionCSV': { get: listResources('listSessionCSV.stache') },
 	'/sessionCSV/:session': { get: transformFolder('/sessionCSV', sessionSCV) },
-	'/test': { post: postTest}
+	'/sessionCSV/:session/:resource': { put: putTest}
 });
 
 var server = http.createServer(function (req, response) {
@@ -249,8 +249,17 @@ var server = http.createServer(function (req, response) {
 		if (err) {
 			// TODO find out how to do propper static routes and stop abusing 
 			// the error function here.
-			var url = req.url;
-			staticFile(url, req, response)
+			if (req.method === 'GET') {
+				var url = req.url;
+				staticFile(url, req, response)
+			} else {
+				response.writeHead(500);
+				response.end('HTTP Method not supported!');
+				console.log('HTTP method not supported');
+				console.log('method: ' + req.method);
+				console.log('url: ' + req.url);
+				console.log(req.headers);
+			}
 		}
 	});
 });
