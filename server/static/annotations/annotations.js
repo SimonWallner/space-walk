@@ -97,6 +97,9 @@ var init = function() {
 		
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
+
+			$('#offset').val(annotations.offset);
+
 			annotations.annotations = annotations.annotations.map(function(element) {
 				element.id = runningID++;
 				return element;
@@ -233,8 +236,6 @@ var init = function() {
 
 		window.setInterval(movePlayhead, 1000);
 
-		$('#offset').val(annotations.offset);
-
 		$('#offsetPlus').click(function() {
 			annotations.offset += offsetIncrement;
 			$('#offset').val(annotations.offset);
@@ -286,7 +287,7 @@ var init = function() {
 			// var path = '/test'
 			$.ajax(path, {
 				method: 'PUT',
-				data: JSON.stringify(annotations),
+				data: {data: JSON.stringify(annotations)},
 				success: function(response) {
 					console.log('annotations saved: ' + response);
 				},

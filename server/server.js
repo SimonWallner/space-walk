@@ -28,6 +28,18 @@ var documentRoot = process.cwd();
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
+// taken from http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+               .toString(16)
+               .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+         s4() + '-' + s4() + s4() + s4();
+}
+
+
 var buildHeader = function(mime) {
 	return {
 		'Content-Type': mime,
@@ -217,12 +229,35 @@ var renderTemplate = function(response, name, locals) {
 	});
 }
 
-var putTest = function() {
-	console.log(this.req);
+var storeAnnotations = function() {
+	return function(session, resource) {
+		console.log('session: ' + session + ', ' + resource);
+		console.log(this.req.body);
 
-	this.res.writeHead(200, buildHeader('text/plain'));
-	this.res.end('\n\nput test received\n\n');
-}
+		var that = this;
+		var body = JSON.parse(this.req.body.data);
+
+		var fullPath = path.join(documentRoot, 'data/sessionCSV', session, resource);
+		var backupPath = path.join(documentRoot, 'data/sessionCSV', session, resource + '_backup_' + guid());
+		var readable = fs.createReadStream(fullPath);
+		var writeable = fs.createWriteStream(backupPath);
+		readable.pipe(writeable);
+
+		writeable.on('finish', function() {
+			fs.writeFile(fullPath, JSON.stringify(body, undefined, 4), function(err) {
+				if (err) {
+					that.res.writeHead(500);
+					that.res.end('error writing annotations file!');
+					console.log('error writing annotations file!');
+				} else {
+					that.res.writeHead(200, buildHeader('text/plain'));
+					that.res.end('Annotations file saved!');
+					console.log('Annotations file saved!');	
+				}
+			});
+		});
+	};
+};
 
 // routing table
 var router = new director.http.Router({
@@ -230,7 +265,7 @@ var router = new director.http.Router({
 	'/positions/:session': { get: transformFile('/positions', positionData) },
 	'/sessionCSV': { get: listResources('listSessionCSV.stache') },
 	'/sessionCSV/:session': { get: transformFolder('/sessionCSV', sessionSCV) },
-	'/sessionCSV/:session/:resource': { put: putTest}
+	'/sessionCSV/:session/:resource': { put: storeAnnotations()}
 });
 
 var server = http.createServer(function (req, response) {
