@@ -1,5 +1,7 @@
 var annotations = null;
 var runningID = 0;
+var offset = 0;
+var offsetIncrement = 0.5;
 
 removeElement = function(needle, haystack) {
 	for (var i = 0; i < haystack.length; i++) {
@@ -173,13 +175,13 @@ var init = function() {
 		var minT = positions[0].payload.time;
 		var maxT = positions[positions.length - 1].payload.time;
 
-		width = 8 * width;
+		extendedWidth = 8 * width;
 		var margin = {top: 20, right: 10, bottom: 20, left: 10};
-		var innerWidth = width - margin.left - margin.right;
+		var innerWidth = extendedWidth - margin.left - margin.right;
 		var innerHeight = height - margin.top - margin.bottom;
 
 		var svg = plots.append('svg')
-			.attr('width', width)
+			.attr('width', extendedWidth)
 			.attr('height', height);
 
 		var g = svg.append('g')
@@ -213,6 +215,35 @@ var init = function() {
 				.attr("class", "line")
 				.attr("d", line);
 
+		var playHead = g.append('line')
+			.attr('class', 'hover-line')
+			.attr('x1', 20).attr('x2', 20)
+			.attr('y1', 2)// prevent touching x-axis line
+			.attr('y2', height + 20)
+			.attr('stroke-width', 1)
+			.attr('stroke', 'red')
+			.attr('opacity', 1);
+
+		var movePlayhead = function() {
+			if (video) {
+				playHead
+					.attr('x1', x(video.currentTime + offset))
+					.attr('x2', x(video.currentTime + offset));
+			}
+		}
+
+		window.setInterval(movePlayhead, 10);
+
+		$('#offsetPlus').click(function() {
+			offset += offsetIncrement;
+			$('#offset').val(offset);
+		})
+
+		$('#offsetMinus').click(function() {
+			offset -= offsetIncrement;
+			$('#offset').val(offset);
+		})
+
 		var hoverLine = g.append('line')
 			.attr('class', 'hover-line')
 			.attr('x1', 20).attr('x2', 20)
@@ -243,9 +274,11 @@ var init = function() {
 				var mouse = d3.mouse(this);
 				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
 				var time = x.invert(mX);
-				video.currentTime = time;
+				video.currentTime = time - offset;
 				console.log(time);
 			});
+
+		
 	});
 }
 
