@@ -259,7 +259,7 @@ var init = function() {
 			var mouse = d3.mouse(this);
 			var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
 
-			if (mX > 0 && mY > 0 && mX < width)                    
+			if (mX > 0 && mY > 0 && mX < extendedWidth)                    
 				hoverLine.style('opacity', 1);                
 			else
 				hoverLine.style("opacity", 1e-6);

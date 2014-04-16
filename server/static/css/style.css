@@ -47,7 +47,9 @@ video {
     min-width: 10px; }
 
 #plots {
-  overflow: scroll; }
+  overflow-x: scroll;
+  background-color: #ddd;
+  border-radius: 3px; }
 
 .line {
   fill: none;
