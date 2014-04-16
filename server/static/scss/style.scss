@@ -59,7 +59,30 @@ video {
 		background-color: $color;
 		border-radius: 10px;
 		height: 10px;
+		min-width: 10px;
 	}
 }
 
+#plots {
+	overflow: scroll;
+}
+
+// ------------ svg -------------
+
+.line {
+	fill: none;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  // display: none;
+}
 

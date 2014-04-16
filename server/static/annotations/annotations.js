@@ -90,21 +90,20 @@ var init = function() {
 
 	width = $('#container').width();
 
-	var x = d3.scale.linear()
-		.range([0, width]);
-
-	var div = d3.select('#plots');
 
 	video.addEventListener('loadedmetadata', function() {
-    	duration = video.duration;
-    	x.domain([0, duration]);
-
+		duration = video.duration;
+		
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
 			annotations.annotations = annotations.annotations.map(function(element) {
 				element.id = runningID++;
 				return element;
 			})
+
+			var x = d3.scale.linear()
+				.range([0, width])
+				.domain([0, duration]);
 
 			var createEntry = function(selection) {
 				selection
@@ -118,7 +117,6 @@ var init = function() {
 					.append('div')
 						.attr('class', 'bar')
 						.style('width', function(d) { return x(toSeconds(d.end) - toSeconds(d.start)) + 'px'; })
-						.style('fill', 'yellow')
 						.style('margin-left', function(d) { return x(toSeconds(d.start)) + 'px'; });
 
 				selection.append('div')
@@ -131,6 +129,8 @@ var init = function() {
 							updateData();
 						})
 			}
+
+			var div = d3.select('#annotations');
 
 			var updateData = function() {
 				var selection = div.selectAll(".entry").data(annotations.annotations, function(d) { return d.id; });
@@ -147,7 +147,7 @@ var init = function() {
 					start: toTimeObject($('#start').val()),
 					end: toTimeObject($('#end').val()),
 					annotation: $('#annotation').val(),
-					class: $('#annotation').val(),
+					group: $('#group').val(),
 					id: runningID++
 				})
 				updateData();
@@ -160,6 +160,92 @@ var init = function() {
 				$('#end').val(toHumanReadableTime(video.currentTime));
 			})
 		});
+	});
+
+	$.get('/data/sessionCSV/' + QueryString.dataset + '/data.json', function(data) {
+		var plots = d3.select('#plots');
+
+		var positions = data.filter(function(element) {
+			return (element.type === 'position');
+		});
+
+		// get min/max values
+		var minT = positions[0].payload.time;
+		var maxT = positions[positions.length - 1].payload.time;
+
+		width = 8 * width;
+		var margin = {top: 20, right: 10, bottom: 20, left: 10};
+		var innerWidth = width - margin.left - margin.right;
+		var innerHeight = height - margin.top - margin.bottom;
+
+		var svg = plots.append('svg')
+			.attr('width', width)
+			.attr('height', height);
+
+		var g = svg.append('g')
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		var x = d3.scale.linear()
+			.range([0, innerWidth])
+			.domain([minT, maxT]);
+
+		var y = d3.scale.linear()
+			.range([0, innerHeight])
+			.domain(d3.extent(positions, function(d) {return d.payload.x; }));
+
+		var line = d3.svg.line()
+			.x(function(d) { return x(d.payload.time); })
+			.y(function(d) { return y(d.payload.x); });
+
+
+		var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom")
+			.ticks(40);
+
+		 g.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + innerHeight + ")")
+			.call(xAxis);
+
+		g.append("path")
+			.datum(data)
+				.attr("class", "line")
+				.attr("d", line);
+
+		var hoverLine = g.append('line')
+			.attr('class', 'hover-line')
+			.attr('x1', 20).attr('x2', 20)
+			.attr('y1', 2)// prevent touching x-axis line
+			.attr('y2', height + 20)
+			.attr('stroke-width', 1)
+			.attr('stroke', 'grey')
+			.attr('opacity', 1e-6);
+
+		svg.on('mouseover', function () {
+			var mouse = d3.mouse(this);
+			var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
+
+			if (mX > 0 && mY > 0 && mX < width)                    
+				hoverLine.style('opacity', 1);                
+			else
+				hoverLine.style("opacity", 1e-6);
+			})
+			.on('mouseout', function () {
+				hoverLine.style("opacity", 1e-6);
+			})
+			.on('mousemove', function () {
+				var mouse = d3.mouse(this);
+				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
+				hoverLine.attr('x1', mX).attr('x2', mX);
+			})
+			.on('click', function () {
+				var mouse = d3.mouse(this);
+				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
+				var time = x.invert(mX);
+				video.currentTime = time;
+				console.log(time);
+			});
 	});
 }
 

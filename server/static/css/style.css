@@ -43,4 +43,19 @@ video {
   .entry div.bar {
     background-color: #f3594f;
     border-radius: 10px;
-    height: 10px; }
+    height: 10px;
+    min-width: 10px; }
+
+#plots {
+  overflow: scroll; }
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px; }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges; }
