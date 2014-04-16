@@ -146,9 +146,9 @@ var init = function() {
 
 			var createEntry = function(selection) {
 				selection
-					.attr('class', 'entry')
+					.attr('class', 'entry hideOptions')
 					.attr('data-startTime', function(d) { return toSeconds(d.start); })
-					.attr('data-endTime', function(d) { return toSeconds(d.end); });
+					.attr('data-endTime', function(d) { return toSeconds(d.end); })
 					
 				var container = selection.append('div')
 					.on('click', function() {
@@ -184,7 +184,6 @@ var init = function() {
 					.attr('class', 'annotation-input')
 					.attr('type', 'text')
 					.attr('id', function(d) { return 'annotation-' + d.id; })
-					.attr('value', function(d) { return d.annotation; });
 
 				optionsDiv.append('span')
 					.text(' start: ');
@@ -194,7 +193,6 @@ var init = function() {
 					.attr('type', 'time')
 					.attr('id', function(d) { return 'start-' + d.id; })
 					.attr('step', '1')
-					.attr('value', function(d) { return objToTime(d.start); });
 
 				optionsDiv.append('button')
 					.text('=')
@@ -210,7 +208,6 @@ var init = function() {
 					.attr('type', 'time')
 					.attr('id', function(d) { return 'end-' + d.id; })
 					.attr('step', '1')
-					.attr('value', function(d) { return objToTime(d.end); });
 
 				optionsDiv.append('button')
 					.text('=')
@@ -225,7 +222,6 @@ var init = function() {
 					.attr('class', 'group-input')
 					.attr('type', 'text')
 					.attr('id', function(d) { return 'group-' + d.id; })
-					.attr('value', function(d) { return d.group; })
 
 				optionsDiv.append('button')
 					.text('update')
@@ -262,13 +258,13 @@ var init = function() {
 				optionsDiv.select('.annotation-input')
 					.attr('value', function(d) { return d.annotation; });
 
-				optionsDiv.select('start-input')
+				optionsDiv.select('.start-input')
 					.attr('value', function(d) { return objToTime(d.start); });
 
-				optionsDiv.select('end-input')
+				optionsDiv.select('.end-input')
 					.attr('value', function(d) { return objToTime(d.end); });
 
-				optionsDiv.select('group-input')
+				optionsDiv.select('.group-input')
 					.attr('value', function(d) { return d.group; })
 			};
 
