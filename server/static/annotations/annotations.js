@@ -433,6 +433,14 @@ var init = function() {
 			})
 		}
 	})
+
+	// folding stuff
+	$('.foldout').each(function(_, element) {
+		$(element).click(function() {
+			$(this).parent().toggleClass('folded');
+			console.log('fold!');
+		});
+	});
 }
 
 $('document').ready(init)

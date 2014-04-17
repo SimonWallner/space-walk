@@ -21,22 +21,36 @@
 	<h1>MOON ROCK - MISSION LOG</h1>
 	<p>The mission log allows you to add annotations to the data</p>
 	<hr>
-	<div id="video"></div>
-	<div>
-		video offset (seconds): <input type="text" id="offset" value="0.0" disabled><button id="offsetMinus">-</button> <button id="offsetPlus">+</button>
+	<div id="video" class="section">
+		<div class="foldout">fold</div>
+		<h2>Video</h2>
 	</div>
-	<div>
+	<div class="section">
+		<div class="foldout">fold</div>
+		<h2>Video Offset</h2>
+
+		video offset (seconds): <input type="text" id="offset" value="0.0" disabled><button id="offsetMinus">-</button> <button id="offsetPlus">+</button> <br>
 		<button id="save">save to server</button>
 	</div>
-	<div id="plots"></div>
-	<div>
+	<div class="section">
+		<div class="foldout">fold</div>
+		<h2>Plots</h2>
+		<div id="plots"></div>
+	</div>
+	<div class="section">
+		<div class="foldout">fold</div>
+		<h2>Add Annotations</h2>
+
 		annotation: <input type="text" id="annotation" required><br>
 		start (hh:mm:ss): <input type="time" step="1" id="start" required><button id="copyStart">•</button><br>
 		end (hh:mm:ss): <input type="time" step="1" id="end" required><button id="copyEnd">•</button><br>
 		group: <input type="text" id="group" required><br>
 		<button id="addAnnotation">add annotation</button>
 	</div>
-	<div id="annotations"></div>
+	<div id="annotations" class="section">
+		<div class="foldout">fold</div>
+		<h2>Annotations</h2>
+	</div>
 </div>
 
 </body>

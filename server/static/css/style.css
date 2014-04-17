@@ -34,12 +34,48 @@ hr {
 video {
   width: 100%; }
 
-.entry {
+.folded {
+  height: 0.95em;
+  overflow: hidden; }
+  .folded .foldout {
+    margin-left: -0.5em;
+    border-radius: 0; }
+
+div.foldout {
+  padding: 0.2em;
+  padding-left: 0.4em;
+  background-color: #ccc;
+  color: white;
+  width: 1.95em;
+  margin-left: -3em;
+  margin-top: -0.2em;
+  margin-right: 0.5em;
+  z-index: -1;
+  border-bottom-left-radius: 0.5em;
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+  cursor: pointer;
+  content: 'asdf';
+  float: left; }
+
+div.section {
+  padding: 0.5em;
+  padding-top: 0.2em;
   background-color: #ddd;
+  border-radius: 0.5em;
+  margin-bottom: 0.5em;
+  z-index: 1; }
+  div.section h2 {
+    text-transform: uppercase;
+    margin-bottom: 0.5em; }
+
+.entry {
+  background-color: #ccc;
   border-radius: 3px;
-  margin-bottom: 3px; }
+  margin-bottom: 3px;
+  padding: 0.3em; }
   .entry:hover {
-    background-color: #ccc; }
+    background-color: #e5cdcb; }
   .entry div.bar {
     background-color: #f3594f;
     border-radius: 10px;
@@ -47,15 +83,17 @@ video {
     min-width: 10px; }
   .entry .options {
     padding: 0.5em;
-    background-color: #ccc; }
+    background-color: #f3efeb;
+    border-radius: inherit; }
 
 .hideOptions .options {
   display: none; }
 
 #plots {
-  overflow-x: scroll;
-  background-color: #ddd;
-  border-radius: 3px; }
+  overflow-x: scroll; }
+
+svg {
+  background-color: white; }
 
 .line {
   fill: none;
