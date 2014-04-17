@@ -55,8 +55,8 @@ exports.transformFolder = function(folderPath, callback) {
 			var annotations = JSON.parse(results[1]);
 			for (var i = 0; i < annotations.annotations.length; i++) {
 				var annotation = annotations.annotations[i];
-				var start = toSeconds(annotation.start.s, annotation.start.m, annotation.start.h);
-				var end = toSeconds(annotation.end.s, annotation.end.m, annotation.end.h);
+				var start = annotations.offset + toSeconds(annotation.start.s, annotation.start.m, annotation.start.h);
+				var end = annotations.offset + toSeconds(annotation.end.s, annotation.end.m, annotation.end.h);
 
 				data[annotation.label] = [];
 				labels.push(annotation.label);

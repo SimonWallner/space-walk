@@ -286,6 +286,7 @@ var init = function() {
 					start: toTimeObject($('#start').val()),
 					end: toTimeObject($('#end').val()),
 					annotation: $('#annotation').val(),
+					label: $('#annotation').val().replace(/,/g, ''),
 					group: $('#group').val(),
 					id: runningID++
 				});
@@ -331,7 +332,7 @@ var init = function() {
 			.domain([minT, maxT]);
 
 		var y = d3.scale.linear()
-			.range([0, innerHeight])
+			.range([innerHeight, 0])
 			.domain(d3.extent(positions, function(d) {return d.payload.x; }));
 
 		var line = d3.svg.line()
@@ -357,8 +358,8 @@ var init = function() {
 		var playHead = g.append('line')
 			.attr('class', 'hover-line')
 			.attr('x1', 20).attr('x2', 20)
-			.attr('y1', 2)// prevent touching x-axis line
-			.attr('y2', height + 20)
+			.attr('y1', -100)
+			.attr('y2', 500)
 			.attr('stroke-width', 1)
 			.attr('stroke', 'red')
 			.attr('opacity', 1);
@@ -386,8 +387,8 @@ var init = function() {
 		var hoverLine = g.append('line')
 			.attr('class', 'hover-line')
 			.attr('x1', 20).attr('x2', 20)
-			.attr('y1', 2)// prevent touching x-axis line
-			.attr('y2', height + 20)
+			.attr('y1', -100)
+			.attr('y2', 500)
 			.attr('stroke-width', 1)
 			.attr('stroke', 'grey')
 			.attr('opacity', 1e-6);
