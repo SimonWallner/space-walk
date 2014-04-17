@@ -92,6 +92,9 @@ div.section {
 #plots {
   overflow-x: scroll; }
 
+button.danger {
+  color: red; }
+
 svg {
   background-color: white; }
 

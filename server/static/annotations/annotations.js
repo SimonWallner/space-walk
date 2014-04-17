@@ -166,13 +166,6 @@ var init = function() {
 				container.append('div')
 					.attr('class', 'description')
 					.text(function(d) { return d.annotation + ' - ' + d.group; })
-					.append('a')
-						.attr('href', '#')
-						.text(' remove')
-						.on('click', function(d) {
-							removeElement(d.id, annotations.annotations);
-							updateData();
-						});
 
 				var optionsDiv = selection.append('div')
 					.attr('class', 'options');
@@ -235,6 +228,14 @@ var init = function() {
 						annotation.annotation = $('#annotation-' + d.id).val();
 						annotation.group =  $('#group-' + d.id).val();
 
+						updateData();
+					});
+
+				optionsDiv.append('button')
+					.text(' remove')
+					.attr('class', 'danger')
+					.on('click', function(d) {
+						removeElement(d.id, annotations.annotations);
 						updateData();
 					});
 			};
@@ -426,6 +427,10 @@ var init = function() {
 				data: {data: JSON.stringify(annotations)},
 				success: function(response) {
 					console.log('annotations saved: ' + response);
+					$('#saveSuccess').text('success!');
+					window.setTimeout(function() {
+						$('#saveSuccess').text('');
+					}, 2000);
 				},
 				error: function(err) {
 					alert('failed to save annotations on server: ' + err);
