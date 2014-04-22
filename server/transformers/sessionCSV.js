@@ -88,7 +88,7 @@ exports.transformFolder = function(folderPath, callback) {
 			
 			// speed
 			data.speeds = [];
-			names.push['speeds'];
+			names.push('speeds');
 			for (var i = 0; i < (positions.length - 1); i++) {
 				var k = positions[i].payload;
 				var l = positions[i+1].payload;
@@ -100,7 +100,30 @@ exports.transformFolder = function(folderPath, callback) {
 
 				var deltaT = l.time - k.time;
 				var speed = Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z) / deltaT;
-				data.speeds.push(speed);
+				data.speeds.push({value: speed, reference: k.time});
+			}
+
+			// horizontal orientation, phi
+			// vertical orienation, theta
+			data.phi = [];
+			names.push('phi');
+			data.theta = [];
+			names.push('theta')
+			for (var i = 0; i < (positions.length - 1); i++) {
+				var k = positions[i].payload;
+				var l = positions[i+1].payload;
+				
+				var d = { // direction
+					x: l.x - k.x,
+					y: l.y - k.y,
+					z: l.z - k.z
+				}
+				var r = Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
+				var t = Math.acos(d.y / r) || 0; // hint: y is up!
+				var p = Math.atan(d.z / d.x) || 0;
+
+				data.phi.push({value: p, reference: k.time});
+				data.theta.push({value: t, reference: k.time});
 			}
 
 			
