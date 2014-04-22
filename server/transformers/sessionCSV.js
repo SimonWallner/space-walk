@@ -130,11 +130,12 @@ exports.transformFolder = function(folderPath, callback) {
 
 			
 
-
 			// regularise data now...
 			// compute regular time samples
-			// TODO: compute proper parameters
-			data.time = linearData(0, 600, 600 * 10);
+			var timeMin = positions[0].payload.time;
+			var timeMax = positions[positions.length - 1].payload.time;
+			var sampleCount = positions.length;
+			data.time = linearData(timeMin, timeMax, sampleCount);
 
 			regularisedData = {};
 			names.forEach(function(name) {
