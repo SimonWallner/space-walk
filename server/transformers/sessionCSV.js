@@ -3,13 +3,53 @@ var async = require('async');
 var path = require('path');
 
 var pushUnique = function(arr, element) {
-	if (arr.indexOf(element) == -1) {
+	if (arr.indexOf(element) === -1) {
 		arr.push(element);
 	}
 }
 
 var toSeconds = function(s, m, h) {
 	return s + m * 60 + h * 3600;
+}
+
+// creates an array of numbers in [min, max] of length count
+// e.g: [0, 1, 2, 3] === linearData(0, 3, 4);
+var linearData = function(min, max, count) {
+	var length = max - min;
+	var increment = length / (count - 1);
+
+	var result = [];
+	for (t = min; t <= max; t += increment) {
+		result.push(t);
+	}
+
+	return result;
+}
+
+var regulariseNearest = function(regularTimes, data) {
+	
+	var result = [];
+
+	// push an extra element to avoid falling off the edge
+	data.push({value: 42, reference: Infinity});
+
+	var j = 0; // index into the data array
+	for (var i = 0 ; i < regularTimes.length; i++) {
+		while (regularTimes[i] > data[j + 1].reference) {
+			j++;
+		}
+		var leftTime = data[j].reference;
+		var rightTime = data[j+1].reference;
+
+		var time = regularTimes[i];
+		if ((time - leftTime) < (rightTime - time)) {
+			result.push(data[j].value);
+		} else {
+			result.push(data[j+1].value);
+		}
+	}
+
+	return result;
 }
 
 exports.transformFolder = function(folderPath, callback) {
@@ -27,18 +67,31 @@ exports.transformFolder = function(folderPath, callback) {
 			var raw = JSON.parse(results[0]);
 
 			var data = {};
+			var names = [];
 
 			// positions
-			data.positions = raw.filter(function(element) {
+			var positions = raw.filter(function(element) {
 				return (element.type === 'position');
+			})
+			names.push('positionX');
+			names.push('positionY');
+			names.push('positionZ');
+			data.positionX = [];
+			data.positionY = [];
+			data.positionZ = [];
+			positions.forEach(function(element) {
+				data.positionX.push({value: element.payload.x, reference: element.payload.time});
+				data.positionY.push({value: element.payload.y, reference: element.payload.time});
+				data.positionZ.push({value: element.payload.z, reference: element.payload.time});
 			})
 
 			
 			// speed
-			data.speeds = []
-			for (var i = 0; i < (data.positions.length - 1); i++) {
-				var k = data.positions[i].payload;
-				var l = data.positions[i+1].payload;
+			data.speeds = [];
+			names.push['speeds'];
+			for (var i = 0; i < (positions.length - 1); i++) {
+				var k = positions[i].payload;
+				var l = positions[i+1].payload;
 				var d = {
 					x: k.x - l.x,
 					y: k.y - l.y,
@@ -50,6 +103,50 @@ exports.transformFolder = function(folderPath, callback) {
 				data.speeds.push(speed);
 			}
 
+			
+
+			// misc data samples
+			var dataSamples = raw.filter(function(element) {
+				return (element.type === 'data');
+			});
+
+			// extract names
+			var dataAttributeNames = [];
+			dataSamples.forEach(function(d) {
+				pushUnique(dataAttributeNames, d.payload.name);
+			});
+			names = names.concat(dataAttributeNames);
+
+			// create empty arrays
+			dataAttributeNames.forEach(function(name) {
+				data[name] = [];
+			});
+
+			// separate data
+			dataSamples.forEach(function(sample) {
+				data[sample.payload.name].push(sample.payload);
+			});
+
+
+			
+
+
+			// regularise data now...
+			// compute regular time samples
+			// TODO: compute proper parameters
+			data.time = linearData(0, 600, 600 * 10);
+
+			regularisedData = {};
+			names.forEach(function(name) {
+				regularisedData[name] = regulariseNearest(data.time, data[name]);
+			})
+
+			// add time
+			names.push('time')
+			regularisedData.time = data.time;
+
+
+
 			// expanding annotations
 			var labels = [];
 			var annotations = JSON.parse(results[1]);
@@ -58,55 +155,43 @@ exports.transformFolder = function(folderPath, callback) {
 				var start = annotations.offset + toSeconds(annotation.start.s, annotation.start.m, annotation.start.h);
 				var end = annotations.offset + toSeconds(annotation.end.s, annotation.end.m, annotation.end.h);
 
-				data[annotation.label] = [];
+				regularisedData[annotation.label] = [];
 				labels.push(annotation.label);
 
-				for (var j = 0; j < data.speeds.length; j++) {
-					var time = data.positions[j].payload.time;
-					data[annotation.label].push((start < time && time < end) ? 1 : 0);
+				for (var j = 0; j < data.time.length; j++) {
+					var time = data.time[j];
+					regularisedData[annotation.label].push((start < time && time < end) ? 1 : 0);
 				}	
 			}
+			names = names.concat(labels);
 			
 			// grouping annotations
 			var groups = [];
 			annotations.annotations.forEach(function(annotation) {
 				pushUnique(groups, annotation.group);
 
-				if (!data[annotation.group]) {
-					data[annotation.group] = data[annotation.label];
+				if (!regularisedData[annotation.group]) {
+					regularisedData[annotation.group] = regularisedData[annotation.label];
 				} else {
-					data[annotation.group] = data[annotation.group].map(function(element, i) {
-						return Math.max(element, data[annotation.label][i]);
+					regularisedData[annotation.group] = regularisedData[annotation.group].map(function(element, i) {
+						return Math.max(element, regularisedData[annotation.label][i]);
 					});
 				}
 			})
+			names = names.concat(groups);
 
 			// writing csv string
-			var csv = 'time, x, y, z, speed';
-			labels.forEach(function(label) {
-				csv += ', ' + label;
-			});
-			groups.forEach(function(group) {
-				csv += ', ' + group
-			});
+			var csv = names.join(', ') + '\n';
 
-			csv += '\n'
+			for (var i = 0; i < regularisedData.time.length; i++) { // all data should be regralised by now
 
+				names.forEach(function(name, j) {
+					csv += regularisedData[name][i];
+					if (j != names.length - 1) { // not at the last element yet
+						csv += ', ';
+					}
+				})
 
-			for (var i = 0; i < data.speeds.length; i++) {
-				csv += data.positions[i].payload.time;
-				csv += ', ' + data.positions[i].payload.x;
-				csv += ', ' + data.positions[i].payload.y;
-				csv += ', ' + data.positions[i].payload.z;
-				csv += ', ' + data.speeds[i];
-
-				labels.forEach(function(label) {
-					csv += ', ' + data[label][i]
-				});
-				
-				groups.forEach(function(group) {
-					csv += ', ' + data[group][i]
-				});
 				csv += '\n'
 			}
 

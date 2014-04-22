@@ -351,7 +351,7 @@ var init = function() {
 			.call(xAxis);
 
 		g.append("path")
-			.datum(data)
+			.datum(positions)
 				.attr("class", "line")
 				.attr("d", line);
 
