@@ -92,3 +92,13 @@ Map tiles have span a quad with the following coords: (x, y), (x + width, y), (x
 			"z": 789
 		}
 	}
+
+## Events
+	{
+		"type": "event"
+		"payload": {
+			"reference": 123.123,
+			"name": "foo",
+			"data": "bar"
+		}
+	}
