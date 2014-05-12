@@ -226,6 +226,7 @@ var init = function() {
 						annotation.start = toTimeObject($('#start-' + d.id).val());
 						annotation.end = toTimeObject($('#end-' + d.id).val());
 						annotation.annotation = $('#annotation-' + d.id).val();
+						annotation.label = annotation.annotation.replace(/,/g, ''),
 						annotation.group =  $('#group-' + d.id).val();
 
 						updateData();

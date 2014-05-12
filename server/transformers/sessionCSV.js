@@ -170,10 +170,12 @@ exports.transformFolder = function(folderPath, callback) {
 			regularisedData.time = data.time;
 
 
-
+	
+			// ----- annotations ------
+			var annotations = JSON.parse(results[1]);
+			
 			// expanding annotations
 			var labels = [];
-			var annotations = JSON.parse(results[1]);
 			for (var i = 0; i < annotations.annotations.length; i++) {
 				var annotation = annotations.annotations[i];
 				var start = annotations.offset + toSeconds(annotation.start.s, annotation.start.m, annotation.start.h);
@@ -204,11 +206,18 @@ exports.transformFolder = function(folderPath, callback) {
 			})
 			names = names.concat(groups);
 
+			
+
 			// writing csv string
-			var csv = names.join(', ') + '\n';
+			// sanitize field names
+			var sanitizedNames = names.map(function(name) {
+				return name.replace(/ /g, '_').replace(/\./g, '-');
+			})
+
+			// write header
+			var csv = sanitizedNames.join(', ') + '\n';
 
 			for (var i = 0; i < regularisedData.time.length; i++) { // all data should be regralised by now
-
 				names.forEach(function(name, j) {
 					csv += regularisedData[name][i];
 					if (j != names.length - 1) { // not at the last element yet
