@@ -181,12 +181,7 @@ function transformFolder(directory, transformer) {
 		
 		var response = this.res;
 
-		var result = transformer.transformFolder(fullPath, function(result) {
-			var header = buildHeader(result.mime);
-			header['content-length'] = Buffer.byteLength(result.data);
-			response.writeHead(result.code, header);
-			response.end(result.data);	
-		});
+		transformer.transformFolder(fullPath, response);
 	}
 }
 

@@ -52,24 +52,29 @@ var regulariseNearest = function(regularTimes, data) {
 	return result;
 }
 
-exports.transformFolder = function(folderPath, callback) {
+
+
+
+exports.transformFolder = function(folderPath, response) {
 
 	var dataPath = path.join(folderPath, 'data.json');
 	var annotationsPath = path.join(folderPath, 'annotations.json');
 
+	console.log('start reading file...');
 	async.map([dataPath, annotationsPath], fs.readFile, function(err, results){
 		if (err) {
-			callback({
-				code: 500,
-				data: "failed reading files: " + err
-			});
+				response.writeHead(500);
+				response.end('Failed to load files.');
 		} else {
+			console.log('files read, starting parser...');
 			var raw = JSON.parse(results[0]);
+			console.log('data file parsed.')
 
 			var data = {};
 			var names = [];
 
 			// positions
+			console.log('processing positions');
 			var positions = raw.filter(function(element) {
 				return (element.type === 'position');
 			})
@@ -87,6 +92,7 @@ exports.transformFolder = function(folderPath, callback) {
 
 			
 			// speed
+			console.log('processing speed');
 			data.speeds = [];
 			names.push('speeds');
 			for (var i = 0; i < (positions.length - 1); i++) {
@@ -105,6 +111,7 @@ exports.transformFolder = function(folderPath, callback) {
 
 			// horizontal orientation, phi
 			// vertical orienation, theta
+			console.log('processing orientation');
 			data.phi = [];
 			names.push('phi');
 			data.theta = [];
@@ -129,6 +136,7 @@ exports.transformFolder = function(folderPath, callback) {
 			
 
 			// misc data samples
+			console.log('processing data samples');
 			var dataSamples = raw.filter(function(element) {
 				return (element.type === 'data');
 			});
@@ -155,6 +163,8 @@ exports.transformFolder = function(folderPath, callback) {
 
 			// regularise data now...
 			// compute regular time samples
+			console.log('regularising data');
+
 			var timeMin = positions[0].payload.time;
 			var timeMax = positions[positions.length - 1].payload.time;
 			var sampleCount = positions.length;
@@ -175,6 +185,7 @@ exports.transformFolder = function(folderPath, callback) {
 			var annotations = JSON.parse(results[1]);
 			
 			// expanding annotations
+			console.log('processing annotations');
 			var labels = [];
 			for (var i = 0; i < annotations.annotations.length; i++) {
 				var annotation = annotations.annotations[i];
@@ -192,6 +203,7 @@ exports.transformFolder = function(folderPath, callback) {
 			names = names.concat(labels);
 			
 			// grouping annotations
+			console.log('processing groups');
 			var groups = [];
 			annotations.annotations.forEach(function(annotation) {
 				pushUnique(groups, annotation.group);
@@ -208,31 +220,37 @@ exports.transformFolder = function(folderPath, callback) {
 
 			
 
-			// writing csv string
+			// writing csv string to reponse
+			response.writeHead('200', {
+				'Content-Type': 'text/csv',
+				'Cache-Control': 'no-cache',
+				'Accept-Ranges': 'none'
+			});
+
 			// sanitize field names
 			var sanitizedNames = names.map(function(name) {
 				return name.replace(/ /g, '_').replace(/\./g, '-');
 			})
 
 			// write header
-			var csv = sanitizedNames.join(', ') + '\n';
+			console.log('writing csv to response');
+			response.write(sanitizedNames.join(', ') + '\n');
 
 			for (var i = 0; i < regularisedData.time.length; i++) { // all data should be regralised by now
+				var line = '';
 				names.forEach(function(name, j) {
-					csv += regularisedData[name][i];
+					line += regularisedData[name][i];
 					if (j != names.length - 1) { // not at the last element yet
-						csv += ', ';
+						line += ', ';
 					}
 				})
 
-				csv += '\n'
+				line += '\n';
+				response.write(line);
 			}
 
-			callback({
-				code: 200,
-				data: csv,
-				mime: 'text/csv'
-			});
+			response.end();
+			console.log('done, ' + regularisedData.time.length + ' data lines written to response');
 		}
 	});
 }
