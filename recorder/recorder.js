@@ -15,57 +15,84 @@ var sessionActive = false;
 var WebSocket = require('ws');
 var ws;
 
-var samples = [];
 var sampleCount = 0;
 var fs = require('fs');
+var fileStream = null;
+
+var path = require('path');
 
 var strftime = require('strftime')
 
-// options
-// arg[0] is node
-// arg[1] is the pwd
-// hence we are interested in index > 1
+var commander = require('commander')
+commander
+	.version('dev snapshot')
+	.option('-v, --verbose', 'verbose output')
+	.option('-d, --dry-run', 'dry run, i.e. don\'t write to disk')
+	.option('-o, --output-folder [folder]', 'output folder path')
+	.option('-t, --timeout [seconds]', 'session timeout in seconds')
+	.parse(process.argv);
 
-if ((process.argv.indexOf('-h') > 1) || (process.argv.indexOf('--help') > 1)) {
-	console.log('space walk recorder help:');
-	console.log('The recorder records session data to a json file named automatically.');
-	console.log('usage: ./recorder.js [flags]');
-	console.log('\t -h \t this help message');
-	console.log('\t -v \t verbose output');
-	console.log('\t -d \t dry run, i.e. don\' write to the file system');
-	process.exit();
-}
-
-var verbose = (process.argv.indexOf('-v') > 1);
+var verbose = commander.verbose;
 if (verbose) {
 	console.log('verbose!');
 }
 
-var dryRun = (process.argv.indexOf('-d') > 1);
+var dryRun = commander.dryRun;
 if (dryRun) {
 	console.log('This is a dry run, no data is saved to disk!!!');
 }
 
+if (commander.outputFolder) {
+	console.log('output folder is set to: ' + commander.outputFolder);
+}
 
+sessionCloseTimeout = commander.timeout || sessionCloseTimeout;
+console.log('session timeout: ' + sessionCloseTimeout);
+
+console.log('--- --- ---')
 console.log('starting recorder...');
 
 var sessionStart = function() {
 	console.log('session started');
+
+	if (!dryRun) {
+		var fileName = 'data_' + strftime('%F_%H-%M-%S') + '.json';
+		if (commander.outputFolder) {
+			if (commander.outputFolder[0] === '/') { // absolute path
+				var fullPath = path.join(commander.outputFolder, fileName);	
+			} else {
+				var fullPath = path.join(process.cwd(), commander.outputFolder, fileName);	
+			}
+		} else {
+			var fullPath = path.join(process.cwd(), 'sessions', fileName);	
+		}
+		
+
+		fileStream = fs.createWriteStream(fullPath, {flags: 'wx'});
+		fileStream.on('error', function(error) {
+			console.log('failed to open file: ' + fullPath);
+			console.log(error);
+		});
+
+		fileStream.on('open', function() {
+			console.log('output file opened (' + fullPath + ')');
+		})
+
+		fileStream.on('finish', function() {
+			fileStream = null;
+			console.log('finished writing to file');
+		})
+
+		// write header
+		fileStream.write('[\n');
+	}
 }
 
 var sessionEnd = function() {
 	console.log('session ended');
 
-	var fileName = strftime('%F_%H-%M-%S');
-
 	if (!dryRun) {
-		fs.writeFile('sessions/positions_' + fileName + '.json', JSON.stringify(samples, null, '\t'), function(err) {
-			if (err) {
-				console.log('error writing to file: ' + err);
-			} else {
-				console.log('+++ json file writte: ' + fileName);
-			}
-		})
+		fileStream.end(']\n')
 	}
 
 	samples = [];
@@ -119,8 +146,19 @@ function connect() {
 				console.log('message got: ' + msg.data);
 			}
 
-			samples.push(JSON.parse(msg.data));
+			sample = JSON.parse(msg.data);
 			sampleCount += 1;
+
+			if (!dryRun) {
+				if (sampleCount == 1) {
+					fileStream.write(JSON.stringify(sample, null, 4));	
+				} else {
+					var ok = fileStream.write(',\n' + JSON.stringify(sample, null, 4));
+					if (!ok) {
+						console.log('file stream is clogging up...');
+					}	
+				}
+			}
 		}
 	}
 }
