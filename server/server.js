@@ -95,7 +95,7 @@ var staticFile = function(file, request, response) {
 
 	// source based on: http://blog.dojchinovski.mk/?p=41
 
-	// hint a request for 'range: bytes 42-42' requests byte 42
+	// hint: a request for 'range: bytes 42-42' requests byte 42
 	// and thus the returned chunk has a length of 1
 	fs.stat(fullPath, function(err, stats) {
 		if (err) {

@@ -117,6 +117,108 @@ var gotoVideo = function(seconds) {
 	video.currentTime = seconds;
 }
 
+var createPlot = function(data, timeAccessor, dataAccessor) {
+	var plots = d3.select('#plots');
+
+	// get min/max values
+	var minT = timeAccessor(data[0]);
+	var maxT = timeAccessor(data[data.length - 1]);
+
+	extendedWidth = 8 * width;
+	var margin = {top: 20, right: 10, bottom: 20, left: 10};
+	var innerWidth = extendedWidth - margin.left - margin.right;
+	var innerHeight = height - margin.top - margin.bottom;
+
+	var svg = plots.append('svg')
+		.attr('width', extendedWidth)
+		.attr('height', height);
+
+	var g = svg.append('g')
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	var x = d3.scale.linear()
+		.range([0, innerWidth])
+		.domain([minT, maxT]);
+
+	var y = d3.scale.linear()
+		.range([innerHeight, 0])
+		.domain(d3.extent(data, dataAccessor));
+
+	var line = d3.svg.line()
+		.x(function(d) { return x(timeAccessor(d)); })
+		.y(function(d) { return y(dataAccessor(d)); });
+
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.orient("bottom")
+		.ticks(40);
+
+	 g.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + innerHeight + ")")
+		.call(xAxis);
+
+	// play head
+	g.append("path")
+		.datum(data)
+			.attr("class", "line")
+			.attr("d", line);
+
+	var playHead = g.append('line')
+		.attr('class', 'hover-line')
+		.attr('x1', 20).attr('x2', 20)
+		.attr('y1', -100)
+		.attr('y2', 500)
+		.attr('stroke-width', 1)
+		.attr('stroke', 'red')
+		.attr('opacity', 1);
+
+	var movePlayhead = function() {
+		if (video) {
+			playHead
+				.attr('x1', x(video.currentTime + annotations.offset))
+				.attr('x2', x(video.currentTime + annotations.offset));
+		}
+	}
+
+	window.setInterval(movePlayhead, 1000);
+
+	var hoverLine = g.append('line')
+			.attr('class', 'hover-line')
+			.attr('x1', 20).attr('x2', 20)
+			.attr('y1', -100)
+			.attr('y2', 500)
+			.attr('stroke-width', 1)
+			.attr('stroke', 'grey')
+			.attr('opacity', 1e-6);
+
+		svg.on('mouseover', function () {
+			var mouse = d3.mouse(this);
+			var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
+
+			if (mX > 0 && mY > 0 && mX < extendedWidth)                    
+				hoverLine.style('opacity', 1);                
+			else
+				hoverLine.style("opacity", 1e-6);
+			})
+			.on('mouseout', function () {
+				hoverLine.style("opacity", 1e-6);
+			})
+			.on('mousemove', function () {
+				var mouse = d3.mouse(this);
+				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
+				hoverLine.attr('x1', mX).attr('x2', mX);
+			})
+			.on('click', function () {
+				var mouse = d3.mouse(this);
+				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
+				var time = x.invert(mX);
+				video.currentTime = time - annotations.offset;
+				console.log(time);
+			});	
+}
+
 var init = function() {
 	d3.select('#video').append('video')
 		.attr('src', '/data/sessionCSV/' + QueryString.dataset + '/screen-capture.mp4')
@@ -130,6 +232,7 @@ var init = function() {
 	video.addEventListener('loadedmetadata', function() {
 		duration = video.duration;
 		
+		// load annotations and draw fields
 		$.get('/data/sessionCSV/' + QueryString.dataset + '/annotations.json', function(data) {
 			annotations = data;
 
@@ -305,75 +408,16 @@ var init = function() {
 		});
 	});
 
+	// get data.json and create plot
 	$.get('/data/sessionCSV/' + QueryString.dataset + '/data.json', function(data) {
-		var plots = d3.select('#plots');
-
+		
 		var positions = data.filter(function(element) {
 			return (element.type === 'position');
 		});
 
-		// get min/max values
-		var minT = positions[0].payload.time;
-		var maxT = positions[positions.length - 1].payload.time;
-
-		extendedWidth = 8 * width;
-		var margin = {top: 20, right: 10, bottom: 20, left: 10};
-		var innerWidth = extendedWidth - margin.left - margin.right;
-		var innerHeight = height - margin.top - margin.bottom;
-
-		var svg = plots.append('svg')
-			.attr('width', extendedWidth)
-			.attr('height', height);
-
-		var g = svg.append('g')
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-		var x = d3.scale.linear()
-			.range([0, innerWidth])
-			.domain([minT, maxT]);
-
-		var y = d3.scale.linear()
-			.range([innerHeight, 0])
-			.domain(d3.extent(positions, function(d) {return d.payload.x; }));
-
-		var line = d3.svg.line()
-			.x(function(d) { return x(d.payload.time); })
-			.y(function(d) { return y(d.payload.x); });
-
-
-		var xAxis = d3.svg.axis()
-			.scale(x)
-			.orient("bottom")
-			.ticks(40);
-
-		 g.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + innerHeight + ")")
-			.call(xAxis);
-
-		g.append("path")
-			.datum(positions)
-				.attr("class", "line")
-				.attr("d", line);
-
-		var playHead = g.append('line')
-			.attr('class', 'hover-line')
-			.attr('x1', 20).attr('x2', 20)
-			.attr('y1', -100)
-			.attr('y2', 500)
-			.attr('stroke-width', 1)
-			.attr('stroke', 'red')
-			.attr('opacity', 1);
-
-		var movePlayhead = function() {
-			if (video) {
-				playHead
-					.attr('x1', x(video.currentTime + annotations.offset))
-					.attr('x2', x(video.currentTime + annotations.offset));
-			}
-		}
-
-		window.setInterval(movePlayhead, 1000);
+		createPlot(positions,
+			function(d) { return d.payload.time; },
+			function(d) { return d.payload.x; });
 
 		$('#offsetPlus').click(function() {
 			annotations.offset += offsetIncrement;
@@ -383,41 +427,7 @@ var init = function() {
 		$('#offsetMinus').click(function() {
 			annotations.offset -= offsetIncrement;
 			$('#offset').val(annotations.offset);
-		})
-
-		var hoverLine = g.append('line')
-			.attr('class', 'hover-line')
-			.attr('x1', 20).attr('x2', 20)
-			.attr('y1', -100)
-			.attr('y2', 500)
-			.attr('stroke-width', 1)
-			.attr('stroke', 'grey')
-			.attr('opacity', 1e-6);
-
-		svg.on('mouseover', function () {
-			var mouse = d3.mouse(this);
-			var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
-
-			if (mX > 0 && mY > 0 && mX < extendedWidth)                    
-				hoverLine.style('opacity', 1);                
-			else
-				hoverLine.style("opacity", 1e-6);
-			})
-			.on('mouseout', function () {
-				hoverLine.style("opacity", 1e-6);
-			})
-			.on('mousemove', function () {
-				var mouse = d3.mouse(this);
-				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
-				hoverLine.attr('x1', mX).attr('x2', mX);
-			})
-			.on('click', function () {
-				var mouse = d3.mouse(this);
-				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
-				var time = x.invert(mX);
-				video.currentTime = time - annotations.offset;
-				console.log(time);
-			});	
+		})		
 	});
 
 	$('#save').click(function() {
