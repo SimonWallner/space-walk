@@ -119,12 +119,30 @@ var gotoVideo = function(seconds) {
 
 var createPlot = function(data, timeAccessor, dataAccessor, name) {
 	var plots = d3.select('#plots');
-	var container = plots.append('div')
-		.attr('class', 'plotContainer');
 
-	container.append('div')
+	var container = plots.append('div')
+		.attr('class', 'plotContainer hidden');
+
+	var unfold = plots.append('div')
+		.attr('class', 'unfold')
+		.text(name)
+		.on('click', function() {
+			$(container).toggleClass('hidden');
+			$(unfold).toggleClass('hidden');
+		});
+
+	var label = container.append('div')
 		.attr('class', 'plotLabel')
-		.text(name);
+		.text(name)
+			.append('span')
+			.text('fold')
+			.attr('class', 'foldPlot')
+			.on('click', function() {
+				$(container).toggleClass('hidden');
+				$(unfold).toggleClass('hidden');
+			});
+
+
 
 	// get min/max values
 	var minT = timeAccessor(data[0]);
@@ -222,7 +240,7 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 				var time = x.invert(mX);
 				video.currentTime = time - annotations.offset;
 				console.log(time);
-			});	
+			});
 }
 
 var init = function() {
@@ -411,12 +429,14 @@ var init = function() {
 			$('#copyEnd').click(function() {
 				$('#end').val(toHumanReadableTime(video.currentTime));
 			});
+
+			d3.select('#annotations .spinner').remove();
 		});
 	});
 
 	// get data.json and create plot
 	$.get('/data/sessionCSV/' + QueryString.dataset + '/data.json', function(data) {
-		
+
 		// plotting positions
 		var positions = data.filter(function(element) {
 			return (element.type === 'position');
@@ -469,7 +489,9 @@ var init = function() {
 		$('#offsetMinus').click(function() {
 			annotations.offset -= offsetIncrement;
 			$('#offset').val(annotations.offset);
-		})		
+		})
+
+		d3.select('#plots .spinner').remove();
 	});
 
 	$('#save').click(function() {
