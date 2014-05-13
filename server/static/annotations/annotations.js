@@ -417,6 +417,7 @@ var init = function() {
 	// get data.json and create plot
 	$.get('/data/sessionCSV/' + QueryString.dataset + '/data.json', function(data) {
 		
+		// plotting positions
 		var positions = data.filter(function(element) {
 			return (element.type === 'position');
 		});
@@ -436,6 +437,30 @@ var init = function() {
 			function(d) { return d.payload.z; },
 			'Position Z');
 
+		// plotting other data values
+		// extract unique data fields
+		var dataFields = [];
+		data.forEach(function(element) {
+			if (element.type === 'data') {
+				var name = element.payload.name;
+				if (dataFields[name] === undefined) {
+					dataFields[name] = [];
+				}
+				dataFields[name].push(element);
+			}
+		})
+
+		for (var name in dataFields) {
+			if (dataFields.hasOwnProperty(name)) {
+				createPlot(dataFields[name],
+					function(d) { return d.payload.reference; },
+					function(d) { return d.payload.value; },
+					name);
+			}
+		}
+
+
+		// offset clicky functions
 		$('#offsetPlus').click(function() {
 			annotations.offset += offsetIncrement;
 			$('#offset').val(annotations.offset);
