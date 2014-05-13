@@ -120,7 +120,21 @@ div.section {
 
 #plots {
 	overflow-x: scroll;
+	
+	.plotContainer {
+		position: relative;
+	}
+
+	.plotLabel {
+		position: absolute;
+		top: 0.5em;
+		left: 0.5em;
+		font-size: 2em;
+		text-transform: uppercase;
+		color: #ccc;
+	}
 }
+
 
 button.danger {
 	color: red;

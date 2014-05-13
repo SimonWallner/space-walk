@@ -117,8 +117,14 @@ var gotoVideo = function(seconds) {
 	video.currentTime = seconds;
 }
 
-var createPlot = function(data, timeAccessor, dataAccessor) {
+var createPlot = function(data, timeAccessor, dataAccessor, name) {
 	var plots = d3.select('#plots');
+	var container = plots.append('div')
+		.attr('class', 'plotContainer');
+
+	container.append('div')
+		.attr('class', 'plotLabel')
+		.text(name);
 
 	// get min/max values
 	var minT = timeAccessor(data[0]);
@@ -129,7 +135,7 @@ var createPlot = function(data, timeAccessor, dataAccessor) {
 	var innerWidth = extendedWidth - margin.left - margin.right;
 	var innerHeight = height - margin.top - margin.bottom;
 
-	var svg = plots.append('svg')
+	var svg = container.append('svg')
 		.attr('width', extendedWidth)
 		.attr('height', height);
 
@@ -417,7 +423,18 @@ var init = function() {
 
 		createPlot(positions,
 			function(d) { return d.payload.time; },
-			function(d) { return d.payload.x; });
+			function(d) { return d.payload.x; },
+			'Position X');
+
+		createPlot(positions,
+			function(d) { return d.payload.time; },
+			function(d) { return d.payload.y; },
+			'Position Y');
+
+		createPlot(positions,
+			function(d) { return d.payload.time; },
+			function(d) { return d.payload.z; },
+			'Position Z');
 
 		$('#offsetPlus').click(function() {
 			annotations.offset += offsetIncrement;
