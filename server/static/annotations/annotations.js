@@ -88,7 +88,6 @@ var trt = null;
 var svg = null;
 var width = null;
 var height = 200;
-var margin = 40;
 
 var video;
 var duration = 0;
@@ -117,6 +116,25 @@ var gotoVideo = function(seconds) {
 	video.currentTime = seconds;
 }
 
+var selectNSamples = function(data, n) {
+	var length = data.length;
+	if (n >= length) {
+		return data;
+	}
+
+	var increment = length / n;
+	var count = -1;
+	return data.filter(function(element, index) {
+		count++;
+
+		if (count >= 0) {
+			count -= increment;
+			return true;
+		}
+		return false;
+	});
+}
+
 var createPlot = function(data, timeAccessor, dataAccessor, name) {
 	var plots = d3.select('#plots');
 
@@ -142,14 +160,16 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 				$(unfold).toggleClass('hidden');
 			});
 
-
-
 	// get min/max values
 	var minT = timeAccessor(data[0]);
 	var maxT = timeAccessor(data[data.length - 1]);
 
+	// subset data, one sample per pixel
 	extendedWidth = 8 * width;
-	var margin = {top: 20, right: 10, bottom: 20, left: 10};
+	var subsetData = selectNSamples(data, extendedWidth);
+	delete(data);
+
+	var margin = {top: 20, right: 10, bottom: 25, left: 10};
 	var innerWidth = extendedWidth - margin.left - margin.right;
 	var innerHeight = height - margin.top - margin.bottom;
 
@@ -166,7 +186,7 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 
 	var y = d3.scale.linear()
 		.range([innerHeight, 0])
-		.domain(d3.extent(data, dataAccessor));
+		.domain(d3.extent(subsetData, dataAccessor));
 
 	var line = d3.svg.line()
 		.x(function(d) { return x(timeAccessor(d)); })
@@ -185,7 +205,7 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 
 	// play head
 	g.append("path")
-		.datum(data)
+		.datum(subsetData)
 			.attr("class", "line")
 			.attr("d", line);
 
@@ -458,9 +478,9 @@ var init = function() {
 			'Position Z');
 
 		// plotting other data values
-		// extract unique data fields
+		// extract data fields
 		var dataFields = [];
-		data.forEach(function(element) {
+		data.forEach(function(element, index) {
 			if (element.type === 'data') {
 				var name = element.payload.name;
 				if (dataFields[name] === undefined) {
@@ -469,6 +489,8 @@ var init = function() {
 				dataFields[name].push(element);
 			}
 		})
+
+		delete(data);
 
 		for (var name in dataFields) {
 			if (dataFields.hasOwnProperty(name)) {

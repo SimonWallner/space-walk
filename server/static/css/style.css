@@ -138,7 +138,8 @@ button.danger {
   color: red; }
 
 svg {
-  background-color: white; }
+  background-color: white;
+  border-radius: 0.2em; }
 
 .line {
   fill: none;
