@@ -2,6 +2,8 @@ var annotations = null;
 var runningID = 0;
 var offsetIncrement = 0.5;
 
+var breakoutHandle = null;
+
 removeElement = function(needle, haystack) {
 	for (var i = 0; i < haystack.length; i++) {
 		if (haystack[i].id === needle) {
@@ -114,6 +116,10 @@ var objToTime = function(obj) {
 
 var gotoVideo = function(seconds) {
 	video.currentTime = seconds;
+
+	if (breakoutHandle) {
+		breakoutHandle.postMessage(seconds, '*');
+	}
 }
 
 var selectNSamples = function(data, n) {
@@ -258,7 +264,7 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 				var mouse = d3.mouse(this);
 				var mX = mouse[0] - margin.left, mY = mouse[1] - margin.top;
 				var time = x.invert(mX);
-				video.currentTime = time - annotations.offset;
+				gotoVideo(time - annotations.offset);
 				console.log(time);
 			});
 }
@@ -544,6 +550,13 @@ var init = function() {
 			console.log('fold!');
 		});
 	});
+
+	$('#breakout').click(function() {
+		$(this).parent().parent().toggleClass('folded');
+
+		var url = '/annotations/video.html?v=' + QueryString.dataset;
+		breakoutHandle = window.open(url, 'break out video', 'width = 770, height = 580');
+	})
 }
 
 $('document').ready(init)

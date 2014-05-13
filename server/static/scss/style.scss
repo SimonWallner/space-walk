@@ -46,6 +46,32 @@ video {
 	width: 100%;
 }
 
+#breakout {
+	margin-left: 0.5em;
+	margin-left: 0.5em;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	cursor: pointer;
+	display: inline-block;
+	border-radius: 0.2em;
+	font-weight: 300;
+	
+	&::before {
+		content: '(';
+	}
+	&::after {
+		content: ')';
+	}
+	&:hover {
+		background-color: #000;
+		color: #fff;
+	}
+}
+
+.folded #breakout {
+	display: none;
+}
+
 .folded {
 	height: 0.95em;
 	overflow: hidden;
