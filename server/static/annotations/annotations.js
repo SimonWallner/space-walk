@@ -4,6 +4,8 @@ var offsetIncrement = 0.5;
 
 var breakoutHandle = null;
 
+var widthMultiplyer = 50;
+
 removeElement = function(needle, haystack) {
 	for (var i = 0; i < haystack.length; i++) {
 		if (haystack[i].id === needle) {
@@ -171,7 +173,7 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 	var maxT = timeAccessor(data[data.length - 1]);
 
 	// subset data, one sample per pixel
-	extendedWidth = 8 * width;
+	extendedWidth = widthMultiplyer * width;
 	var subsetData = selectNSamples(data, extendedWidth);
 	delete(data);
 
@@ -268,6 +270,51 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 				console.log(time);
 			});
 }
+
+// var annotationsOverview = function(minT, maxT, annotations) {
+// 	var overview = d3.select('#annotations-overview');
+
+// 	// subset data, one sample per pixel
+// 	extendedWidth = widthMultiplyer * width;
+
+// 	var margin = {top: 20, right: 10, bottom: 25, left: 10};
+// 	var innerWidth = extendedWidth - margin.left - margin.right;
+// 	var innerHeight = height - margin.top - margin.bottom;
+
+// 	var svg = overview.append('svg')
+// 		.attr('width', extendedWidth)
+// 		.attr('height', height);
+
+// 	var g = svg.append('g')
+// 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// 	var x = d3.scale.linear()
+// 		.range([0, innerWidth])
+// 		.domain([minT, maxT]);
+
+// 	var y = d3.scale.linear()
+// 		.range([innerHeight, 0])
+// 		.domain([0, 1]);
+
+// 	var updateRect = function(selection) {
+// 		selection
+// 			.attr('class', 'entry')
+// 			.attr('x', function(d) { return x(toSecond(d.start)); })
+// 			.attr('width', function(d) { return x(toSeconds(d.end) - toSecond(d.start)); })
+// 			.attr('y', y(0))
+// 			.attr('hieght', y(1));
+// 	}
+
+// 	g.selectAll('.entry').data(annotations)
+// 		.enter()
+// 			.append('rect')
+// 				.call(updateRect)
+// 		.update()
+// 			.call(updateRect)
+// 		.exit()
+// 			.remove();
+
+// }
 
 var init = function() {
 	d3.select('#video').append('video')
@@ -520,6 +567,12 @@ var init = function() {
 		})
 
 		d3.select('#plots .spinner').remove();
+
+		// // annotations overview stuff
+		// var minT = data[0].payload.time;
+		// var maxT = data[data.length - 1].payload.time;
+		// annotationsOverview(minT, maxT, annotations.annotations);
+
 	});
 
 	$('#save').click(function() {
