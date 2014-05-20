@@ -2,6 +2,8 @@ $light: #F3EFEB;
 $color: #F3594F;
 $lightColor: #E5CDCB;
 
+$large-and-up: "screen and (min-width: 1400px)";
+
 body {
 	background-color: $light;
 	font-family: 'Dosis';
@@ -14,6 +16,13 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 2em;
+
+	@media #{$large-and-up} {
+		width: 100%;
+		padding-right: 2em;
+		padding-left: 4em;
+		box-sizing: border-box; 
+	}
 }
 
 h1 {
@@ -46,6 +55,12 @@ video {
 	width: 100%;
 }
 
+#video {
+	@media #{$large-and-up} {
+		float:left;
+		width: 50%;
+	}
+}
 #breakout {
 	margin-left: 0.5em;
 	margin-left: 0.5em;
@@ -111,6 +126,11 @@ div.section {
 	h2 {
 		text-transform: uppercase;
 		margin-bottom: 0.5em;
+	}
+
+	@media #{$large-and-up} {
+		width: 40%;
+		float: right;
 	}
 }
 

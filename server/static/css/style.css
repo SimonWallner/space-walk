@@ -9,6 +9,12 @@ body {
   margin-left: auto;
   margin-right: auto;
   margin-top: 2em; }
+  @media screen and (min-width: 1400px) {
+    #container {
+      width: 100%;
+      padding-right: 2em;
+      padding-left: 4em;
+      box-sizing: border-box; } }
 
 h1 {
   font-size: 2em;
@@ -33,6 +39,11 @@ hr {
 
 video {
   width: 100%; }
+
+@media screen and (min-width: 1400px) {
+  #video {
+    float: left;
+    width: 50%; } }
 
 #breakout {
   margin-left: 0.5em;
@@ -88,6 +99,10 @@ div.section {
   div.section h2 {
     text-transform: uppercase;
     margin-bottom: 0.5em; }
+  @media screen and (min-width: 1400px) {
+    div.section {
+      width: 40%;
+      float: right; } }
 
 .entry {
   background-color: #ccc;
