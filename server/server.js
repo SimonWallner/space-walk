@@ -13,7 +13,7 @@
 
 var http = require('http')
 var director = require('director');
-var fs = require('fs');
+var fs = require('graceful-fs');
 var path = require('path');
 var mustache = require('mustache');
 
