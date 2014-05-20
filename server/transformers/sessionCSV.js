@@ -224,7 +224,8 @@ exports.transformFolder = function(folderPath, response) {
 			response.writeHead('200', {
 				'Content-Type': 'text/csv',
 				'Cache-Control': 'no-cache',
-				'Accept-Ranges': 'none'
+				'Accept-Ranges': 'none',
+				'Content-disposition': 'attachment;filename=data.csv'
 			});
 
 			// sanitize field names
