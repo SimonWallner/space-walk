@@ -7,7 +7,6 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 # xcode Product Name
 set(APP_NAME space-walk-input-logger)
 
-
 # -- add subdirs -------------------------------------------------------------
 add_subdirectory(external/sdl)
 add_subdirectory(src)
