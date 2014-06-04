@@ -1,6 +1,9 @@
 # compiler settings
 add_definitions(-std=c++11)
 add_definitions(-Wall -pedantic)
+
+add_definitions(-g -O0) # debugging
+
 if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	add_definitions(-Wextra -Werror -Winit-self)
 	add_definitions(-Wno-long-long)

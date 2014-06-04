@@ -1,12 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 #include <SDL.h>
-#include <boost/asio.hpp>
 
 #include "compiler.h"
-
-using boost::asio::ip::tcp;
+#include "TCPServer.hpp"
 
 int main(int argc, char* argv[]) {
 
@@ -62,24 +61,26 @@ int main(int argc, char* argv[]) {
 	    }
 	}
 
-	// setup networking
-	boost::asio::io_service io_service;
-	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), port));
-    tcp::socket socket(io_service);
+    // setup networking
+    boost::asio::io_service io_service;
+    TCPServer server(io_service, 60601);
+    
 
 	// run!
+    std::cout << "entering main loop" << std::endl;
 	bool running = true;
 	while (running)
 	{
-        if (!socket.is_open()) {
-            std::cout << "listening to socket: " << port << std::endl;
-            acceptor.accept(socket);
-
-            boost::system::error_code ignored_error;
-            boost::asio::write(socket, boost::asio::buffer("hello space walk"), ignored_error);
-            std::cout << "socket connection established" << std::endl;
+        try
+        {
+            io_service.poll();
+        }
+        catch (std::exception& e)
+        {
+            std::cerr << e.what() << std::endl;
         }
 
+		server.broadcast("hello Space Walk");
 
 		SDL_JoystickUpdate();
 
@@ -106,3 +107,37 @@ int main(int argc, char* argv[]) {
 	SDL_Quit();
 	return 0;
 }
+
+
+
+//void data(tcp::socket&, std::string name, float value)
+//{
+//	float time = 0;
+//
+//	std::stringstream sstr;
+//	sstr << "{";
+//	sstr << "\"type\": \"data\", ";
+//	sstr << "\"payload\": { ";
+//	sstr <<	"\"reference\": " << time << ", ";
+//	sstr <<	"\"value\": " << value << ", ";
+//	sstr <<	"\"name\": \"" << name << "\"";
+//	sstr << "}}\n";
+//
+//	send(socket, sstr.str());
+//}
+//
+//void event(tcp::socket&, std::string name, std::string data) {
+//	float time = ginkgo().runningTime();
+//
+//	std::stringstream sstr;
+//
+//	sstr << "{";
+//	sstr << "\"type\": \"event\", ";
+//	sstr << "\"payload\": { ";
+//	sstr <<	"\"reference\": " << time << ", ";
+//	sstr <<	"\"name\": \"" << name << "\", ";
+//	sstr <<	"\"data\": \"" << data << "\"";
+//	sstr << "}}\n";
+//
+//	send(socket, sstr.str());
+//}
