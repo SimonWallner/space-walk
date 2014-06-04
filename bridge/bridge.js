@@ -5,14 +5,33 @@ var connecting = false;
 var socket = null;
 
 var net = require('net');
-var host = process.argv[2] || '127.0.0.1';
-var port = process.argv[3] || 60601;
 
 var connectionPool = [];
-
-var incomingMessageBuffer = "";
+var incomingMessageBuffer = '';
 
 var clientSocket = null;
+
+
+var commander = require('commander')
+commander
+	.version('dev snapshot')
+	.option('-v, --verbose', 'verbose output')
+	.option('-h, --host [host]', 'host')
+	.option('-p, --port [port]', 'TCP port')
+	.parse(process.argv);
+
+var verbose = commander.verbose || false;
+var host = commander.host || '127.0.0.1';
+var port = commander.port || 60601;
+
+console.log('Space Walk TCP <--> WebSocket Bridge');
+console.log('TCP host: ' + host + ':' + port);
+if (verbose) {
+	console.log('verbose output activated');
+}
+
+console.log('---')
+
 
 var connect = function() {
 	if (connected || connecting) {
@@ -29,8 +48,10 @@ var connect = function() {
 	});
 
 	clientSocket.on('data', function(data) {
-		// console.log('socket data: ' + data);
-
+		if (verbose) {
+			console.log('socket data (chunk): ' + data);	
+		}
+		
 		incomingMessageBuffer += data;
 		// console.log("buffer init: " + incomingMessageBuffer);
 		var split = incomingMessageBuffer.split("\n");
