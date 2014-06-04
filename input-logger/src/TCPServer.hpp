@@ -11,6 +11,8 @@ public:
     TCPServer(boost::asio::io_service& io_service, unsigned int port);
     void broadcast(std::string message);
     
+    void data(std::string name, float value, float time);
+    
 private:
     void startAccept();
 	void handleAccept(TCPConnection::pointer new_connection,

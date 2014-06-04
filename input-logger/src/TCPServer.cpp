@@ -37,3 +37,17 @@ void TCPServer::broadcast(std::string message)
 		connectionPointer->send(message);
     }
 }
+
+void TCPServer::data(std::string name, float value, float time)
+{
+	std::stringstream sstr;
+	sstr << "{";
+	sstr << "\"type\": \"data\", ";
+	sstr << "\"payload\": { ";
+	sstr <<	"\"reference\": " << time << ", ";
+	sstr <<	"\"value\": " << value << ", ";
+	sstr <<	"\"name\": \"" << name << "\"";
+	sstr << "}}\n";
+
+	broadcast(sstr.str());
+}

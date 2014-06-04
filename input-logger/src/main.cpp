@@ -80,12 +80,12 @@ int main(int argc, char* argv[]) {
             std::cerr << e.what() << std::endl;
         }
 
-		server.broadcast("hello Space Walk");
+		float time = (float)SDL_GetTicks() / 1000.0f;
 
 		SDL_JoystickUpdate();
 
 		SDL_Event e;
-		while (SDL_PollEvent(&e)){
+		while (SDL_PollEvent(&e)) {
 			//If user closes the window
 			if (e.type == SDL_QUIT)
 			{
@@ -93,15 +93,17 @@ int main(int argc, char* argv[]) {
 			}
 			else if (e.type == SDL_JOYAXISMOTION)
 			{
-//				std::cout << "joystic: " << e.jaxis.which << ", axis: " << e.jaxis.axis;
-//				std::cout << " , value: " << e.jaxis.value << ", time: " << e.jaxis.timestamp << std::endl;
-                std::cout << "which: " << e.jaxis.which << std::endl;
-                std::cout << "axis: " << (int) e.jaxis.axis << std::endl;
-                std::cout << "type: " << e.jaxis.type << std::endl;
-                std::cout << "time stamp: " << e.jaxis.timestamp << std::endl;
+//                std::stringstream sstr;
+//                sstr << "joystick: " << e.jaxis.which << ", axis: " << (int)e.jaxis.axis;
+//                server.data(sstr.str(), (float)e.jaxis.value / (float)0x7fff, time);
+			}
+            else if (e.type == SDL_JOYBUTTONDOWN)
+			{
+                std::stringstream sstr;
+                sstr << "joystick: " << e.jbutton.which << ", button: " << (int)e.jbutton.button;
+                server.data(sstr.str(), 1, time);
 			}
 		}
-		SDL_Delay(1);
 	}
 
 	SDL_Quit();
@@ -109,35 +111,3 @@ int main(int argc, char* argv[]) {
 }
 
 
-
-//void data(tcp::socket&, std::string name, float value)
-//{
-//	float time = 0;
-//
-//	std::stringstream sstr;
-//	sstr << "{";
-//	sstr << "\"type\": \"data\", ";
-//	sstr << "\"payload\": { ";
-//	sstr <<	"\"reference\": " << time << ", ";
-//	sstr <<	"\"value\": " << value << ", ";
-//	sstr <<	"\"name\": \"" << name << "\"";
-//	sstr << "}}\n";
-//
-//	send(socket, sstr.str());
-//}
-//
-//void event(tcp::socket&, std::string name, std::string data) {
-//	float time = ginkgo().runningTime();
-//
-//	std::stringstream sstr;
-//
-//	sstr << "{";
-//	sstr << "\"type\": \"event\", ";
-//	sstr << "\"payload\": { ";
-//	sstr <<	"\"reference\": " << time << ", ";
-//	sstr <<	"\"name\": \"" << name << "\", ";
-//	sstr <<	"\"data\": \"" << data << "\"";
-//	sstr << "}}\n";
-//
-//	send(socket, sstr.str());
-//}
