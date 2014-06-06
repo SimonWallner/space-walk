@@ -49,7 +49,7 @@ var connect = function() {
 
 	clientSocket.on('data', function(data) {
 		if (verbose) {
-			console.log('socket data (chunk): ' + data);	
+			console.log('socket data (chunk): ' + data);
 		}
 		
 		incomingMessageBuffer += data;

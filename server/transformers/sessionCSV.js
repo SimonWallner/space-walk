@@ -165,10 +165,32 @@ exports.transformFolder = function(folderPath, response) {
 			// compute regular time samples
 			console.log('regularising data');
 
+			// computing max sample rate
+			var frameDelta = []
+			raw.forEach(function(value, index) {
+				if (index > 0) {
+					var currentTime = value.payload.reference || value.payload.time;
+					var previousTime = raw[index-1].payload.reference || raw[index-1].payload.time;
+					var deltaT = currentTime - previousTime;
+
+					if (deltaT !== 0) {
+						frameDelta.push(deltaT);
+					}
+				}
+			})
+
+			var frameDeltaSorted = frameDelta.sort(function(a, b) {return a - b;});
+			var dLimit = frameDeltaSorted[Math.floor(frameDeltaSorted.length * 0.05)]
+			var fLimit = 1 / dLimit;
+			console.log('95% F_limit estimate: ' + fLimit);
+			
+			var sampleRate = Math.ceil(fLimit * 2);
+			console.log('resampling rete set to: ' + sampleRate);
+
 			var timeMin = positions[0].payload.time;
 			var timeMax = positions[positions.length - 1].payload.time;
 			var sampleCount = positions.length;
-			data.time = linearData(timeMin, timeMax, sampleCount);
+			data.time = linearData(timeMin, timeMax, (timeMax - timeMin) * sampleRate);
 
 			regularisedData = {};
 			names.forEach(function(name) {
