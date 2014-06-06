@@ -21,7 +21,7 @@ void TCPConnection::start()
 void TCPConnection::send(std::string message)
 {
     if (socket.is_open()) {
-        std::cout << "sending data..." << std::endl;
+//        std::cout << "sending data..." << std::endl;
         
         boost::asio::async_write(socket, boost::asio::buffer(message),
              boost::bind(&TCPConnection::handleWrite, shared_from_this(),
@@ -37,5 +37,10 @@ TCPConnection::TCPConnection(boost::asio::io_service& io_service)
 
 void TCPConnection::handleWrite(const boost::system::error_code& error, size_t bitesTransferred)
 {
-    std::cout << "handle write - error: " << error << ", bites transferred: " << bitesTransferred << std::endl;
+    UNUSED bitesTransferred;
+    
+    if (error.value() != boost::system::errc::success)
+    {
+        std::cout << "Encountered write error! errc: " << error << ", value: " << error.message() << std::endl;
+    }
 }
