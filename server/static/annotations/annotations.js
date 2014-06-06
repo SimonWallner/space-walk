@@ -231,6 +231,8 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 			playHead
 				.attr('x1', x(video.currentTime + annotations.offset))
 				.attr('x2', x(video.currentTime + annotations.offset));
+
+			$('#currentTime').text(video.currentTime.toFixed(2));
 		}
 	}
 
