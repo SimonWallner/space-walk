@@ -10,7 +10,12 @@
 #include "compiler.h"
 #include "TCPServer.hpp"
 
-int main(int argc, char* argv[]) {
+#ifdef _WINDOWS
+#include <tchar.h>
+int wmain(int argc, _TCHAR* argv[]) {
+#else
+int main(int argc, char** argv) {
+#endif
 
 	// defaults
 	unsigned int port = 60601;
@@ -160,7 +165,7 @@ int main(int argc, char* argv[]) {
             auto dt = time - lastFrame;
             minFrameDelta = std::min(minFrameDelta, dt);
             maxFrameDelta = std::max(maxFrameDelta, dt);
-            std::cout << "dt: " << dt << ", min dt: " << minFrameDelta << ", max dt: " << maxFrameDelta << ;
+            std::cout << "dt: " << dt << ", min dt: " << minFrameDelta << ", max dt: " << maxFrameDelta << std::endl;
             
 			lastFrame = time;
         }
