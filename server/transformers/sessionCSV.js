@@ -31,15 +31,15 @@ var regulariseNearest = function(regularTimes, data) {
 	var result = [];
 
 	// push an extra element to avoid falling off the edge
-	data.push({value: 42, reference: Infinity});
+	data.push({value: 42, time: Infinity});
 
 	var j = 0; // index into the data array
 	for (var i = 0 ; i < regularTimes.length; i++) {
-		while (regularTimes[i] > data[j + 1].reference) {
+		while (regularTimes[i] > data[j + 1].time) {
 			j++;
 		}
-		var leftTime = data[j].reference;
-		var rightTime = data[j+1].reference;
+		var leftTime = data[j].time;
+		var rightTime = data[j+1].time;
 
 		var time = regularTimes[i];
 		if ((time - leftTime) < (rightTime - time)) {
@@ -78,61 +78,63 @@ exports.transformFolder = function(folderPath, response) {
 			var positions = raw.filter(function(element) {
 				return (element.type === 'position');
 			})
-			names.push('positionX');
-			names.push('positionY');
-			names.push('positionZ');
-			data.positionX = [];
-			data.positionY = [];
-			data.positionZ = [];
-			positions.forEach(function(element) {
-				data.positionX.push({value: element.payload.x, reference: element.payload.time});
-				data.positionY.push({value: element.payload.y, reference: element.payload.time});
-				data.positionZ.push({value: element.payload.z, reference: element.payload.time});
-			})
 
+			if (positions.length > 0) {
+				names.push('positionX');
+				names.push('positionY');
+				names.push('positionZ');
+				data.positionX = [];
+				data.positionY = [];
+				data.positionZ = [];
+				positions.forEach(function(element) {
+					data.positionX.push({value: element.payload.x, time: element.payload.time});
+					data.positionY.push({value: element.payload.y, time: element.payload.time});
+					data.positionZ.push({value: element.payload.z, time: element.payload.time});
+				})
 			
-			// speed
-			console.log('processing speed');
-			data.speeds = [];
-			names.push('speeds');
-			for (var i = 0; i < (positions.length - 1); i++) {
-				var k = positions[i].payload;
-				var l = positions[i+1].payload;
-				var d = {
-					x: k.x - l.x,
-					y: k.y - l.y,
-					z: k.z - l.z
+			
+				// speed
+				console.log('processing speed');
+				data.speeds = [];
+				names.push('speeds');
+				for (var i = 0; i < (positions.length - 1); i++) {
+					var k = positions[i].payload;
+					var l = positions[i+1].payload;
+					var d = {
+						x: k.x - l.x,
+						y: k.y - l.y,
+						z: k.z - l.z
+					}
+
+					var deltaT = l.time - k.time;
+					var speed = Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z) / deltaT;
+					data.speeds.push({value: speed, time: k.time});
 				}
 
-				var deltaT = l.time - k.time;
-				var speed = Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z) / deltaT;
-				data.speeds.push({value: speed, reference: k.time});
-			}
+				// horizontal orientation, phi
+				// vertical orienation, theta
+				console.log('processing orientation');
+				data.phi = [];
+				names.push('phi');
+				data.theta = [];
+				names.push('theta')
+				for (var i = 0; i < (positions.length - 1); i++) {
+					var k = positions[i].payload;
+					var l = positions[i+1].payload;
+					
+					var d = { // direction
+						x: l.x - k.x,
+						y: l.y - k.y,
+						z: l.z - k.z
+					}
+					var r = Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
+					var t = Math.acos(d.y / r) || 0; // hint: y is up!
+					var p = Math.atan(d.z / d.x) || 0;
 
-			// horizontal orientation, phi
-			// vertical orienation, theta
-			console.log('processing orientation');
-			data.phi = [];
-			names.push('phi');
-			data.theta = [];
-			names.push('theta')
-			for (var i = 0; i < (positions.length - 1); i++) {
-				var k = positions[i].payload;
-				var l = positions[i+1].payload;
-				
-				var d = { // direction
-					x: l.x - k.x,
-					y: l.y - k.y,
-					z: l.z - k.z
+					data.phi.push({value: p, time: k.time});
+					data.theta.push({value: t, time: k.time});
 				}
-				var r = Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
-				var t = Math.acos(d.y / r) || 0; // hint: y is up!
-				var p = Math.atan(d.z / d.x) || 0;
-
-				data.phi.push({value: p, reference: k.time});
-				data.theta.push({value: t, reference: k.time});
 			}
-
 			
 
 			// misc data samples
@@ -169,8 +171,8 @@ exports.transformFolder = function(folderPath, response) {
 			var frameDelta = []
 			raw.forEach(function(value, index) {
 				if (index > 0) {
-					var currentTime = value.payload.reference || value.payload.time;
-					var previousTime = raw[index-1].payload.reference || raw[index-1].payload.time;
+					var currentTime = value.payload.time || value.payload.time;
+					var previousTime = raw[index-1].payload.time || raw[index-1].payload.time;
 					var deltaT = currentTime - previousTime;
 
 					if (deltaT !== 0) {
@@ -180,15 +182,18 @@ exports.transformFolder = function(folderPath, response) {
 			})
 
 			var frameDeltaSorted = frameDelta.sort(function(a, b) {return a - b;});
-			var dLimit = frameDeltaSorted[Math.floor(frameDeltaSorted.length * 0.05)]
+			var dLimit = frameDeltaSorted[Math.floor(frameDeltaSorted.length * 0.05)];
 			var fLimit = 1 / dLimit;
 			console.log('95% F_limit estimate: ' + fLimit);
+			console.log('90%: ' + 1 / frameDeltaSorted[Math.floor(frameDeltaSorted.length * 0.10)]);
+			console.log('80%: ' + 1 / frameDeltaSorted[Math.floor(frameDeltaSorted.length * 0.20)]);
+			console.log('50%: ' + 1 / frameDeltaSorted[Math.floor(frameDeltaSorted.length * 0.50)]);
 			
 			var sampleRate = Math.ceil(fLimit * 2);
 			console.log('resampling rete set to: ' + sampleRate);
 
-			var timeMin = positions[0].payload.time;
-			var timeMax = positions[positions.length - 1].payload.time;
+			var timeMin = raw[0].payload.time;
+			var timeMax = raw[raw.length - 1].payload.time;
 			var sampleCount = positions.length;
 			data.time = linearData(timeMin, timeMax, (timeMax - timeMin) * sampleRate);
 

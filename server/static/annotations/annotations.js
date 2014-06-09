@@ -232,7 +232,7 @@ var createPlot = function(data, timeAccessor, dataAccessor, name) {
 				.attr('x1', x(video.currentTime + annotations.offset))
 				.attr('x2', x(video.currentTime + annotations.offset));
 
-			$('#currentTime').text(video.currentTime.toFixed(2));
+			$('#currentTime').text(video.currentTime.toFixed(2) + ' | ' + (video.currentTime + annotations.offset).toFixed(2));
 		}
 	}
 
@@ -517,20 +517,23 @@ var init = function() {
 			return (element.type === 'position');
 		});
 
-		createPlot(positions,
-			function(d) { return d.payload.time; },
-			function(d) { return d.payload.x; },
-			'Position X');
+		if (positions.length > 0)
+		{
+			createPlot(positions,
+				function(d) { return d.payload.time; },
+				function(d) { return d.payload.x; },
+				'Position X');
 
-		createPlot(positions,
-			function(d) { return d.payload.time; },
-			function(d) { return d.payload.y; },
-			'Position Y');
+			createPlot(positions,
+				function(d) { return d.payload.time; },
+				function(d) { return d.payload.y; },
+				'Position Y');
 
-		createPlot(positions,
-			function(d) { return d.payload.time; },
-			function(d) { return d.payload.z; },
-			'Position Z');
+			createPlot(positions,
+				function(d) { return d.payload.time; },
+				function(d) { return d.payload.z; },
+				'Position Z');
+		}
 
 		// plotting other data values
 		// extract data fields
@@ -550,7 +553,7 @@ var init = function() {
 		for (var name in dataFields) {
 			if (dataFields.hasOwnProperty(name)) {
 				createPlot(dataFields[name],
-					function(d) { return d.payload.reference; },
+					function(d) { return d.payload.time; },
 					function(d) { return d.payload.value; },
 					name);
 			}
