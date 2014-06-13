@@ -53,6 +53,36 @@ var regulariseNearest = function(regularTimes, data) {
 }
 
 
+var mapMix = function(ta, tb, va, vb, t) {
+	r = (ta - t) / (ta - tb);
+	return va * (1-r) + vb * r;
+}
+
+var regulariseLinear = function(regularTimes, data) {
+	
+	var result = [];
+
+	// push an extra element to avoid falling off the edge
+	data.push({value: 0, time: Infinity});
+
+	var j = 0; // index into the data array
+	for (var i = 0 ; i < regularTimes.length; i++) {
+		while (regularTimes[i] > data[j + 1].time) {
+			j++;
+		}
+		var leftTime = data[j].time;
+		var rightTime = data[j+1].time;
+		var leftValue = data[j].value;
+		var rightValue = data[j+1].value;
+
+		var time = regularTimes[i];
+		result.push(mapMix(leftTime, rightTime, leftValue, rightValue, time));
+	}
+
+	return result;
+}
+
+
 
 
 exports.transformFolder = function(folderPath, response) {
@@ -199,7 +229,12 @@ exports.transformFolder = function(folderPath, response) {
 
 			regularisedData = {};
 			names.forEach(function(name) {
-				regularisedData[name] = regulariseNearest(data.time, data[name]);
+				// XXX: Hack ahead!!!
+				if (name === 'axis-0' || name === 'axis-1') {
+					regularisedData[name] = regulariseLinear(data.time, data[name]);
+				} else {
+					regularisedData[name] = regulariseNearest(data.time, data[name]);
+				}
 			})
 
 			// add time
