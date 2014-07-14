@@ -2,6 +2,8 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 #include <cfloat>
 
@@ -165,12 +167,16 @@ int main(int argc, char** argv) {
             auto dt = time - lastFrame;
             minFrameDelta = std::min(minFrameDelta, dt);
             maxFrameDelta = std::max(maxFrameDelta, dt);
-            std::cout << "dt: " << dt << ", min dt: " << minFrameDelta << ", max dt: " << maxFrameDelta << std::endl;
+            std::cout << "dt: " << dt * 1000 << "ms, min dt: " << minFrameDelta * 1000 << "ms, max dt: " << maxFrameDelta << std::endl;
             
 			lastFrame = time;
         }
         
         dirty = false;
+
+        // deschedule this thread to save some resources...
+        // time passed to the function is lower bound
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	SDL_Quit();
