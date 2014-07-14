@@ -4,7 +4,7 @@ Space walk uses a human readable and understandable json message interface. The 
 ## JSON
 JSON is used as the transport format, becase it is easily understandable and parsable by both humans and computers. Keywords are therefore not ordered, since is an unordered set of name/value pairs.
 
-## Server (game) --> Client (btowser)
+## Server (game) --> Client (browser)
 
 ### Log messages
 	{
@@ -33,7 +33,7 @@ and the time referenced 'data' message
 		"type": "data",
 		"payload": {
 			"name": "my first scalar",
-			"reference": 123.456,
+			"time": 123.456,
 			"value": 42.314
 		}
 	}
@@ -97,8 +97,36 @@ Map tiles have span a quad with the following coords: (x, y), (x + width, y), (x
 	{
 		"type": "event"
 		"payload": {
-			"reference": 123.123,
+			"time": 123.123,
 			"name": "foo",
 			"data": "bar"
+		}
+	}
+
+
+## User Input Data
+Digital Button input, {0, 1}
+	{
+		"type": "input"
+		"payload": {
+			"type": "digital",
+			"name": "foo",
+			"value": 1 // {0, 1}
+			"time": 123.34,
+		}
+	}
+
+Analog input, e.g. stick axis...
+	{
+		"type": "input"
+		"payload": {
+			"type": "analog",
+			"name": "foo",
+			"value": 1
+			"range": {
+				"min": -1,
+				"max": 1
+			}
+			"time": 123.34,
 		}
 	}

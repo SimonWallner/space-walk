@@ -46,13 +46,19 @@ int main(int argc, char** argv) {
 
 
     bool dirty = false;
-	unsigned int numAxes = 0;
-	unsigned int numButtons = 0;
-	unsigned int numJoysticks = SDL_NumJoysticks();
+    unsigned int numJoysticks = SDL_NumJoysticks();
+
+	auto numAxes = new unsigned int[numJoysticks];
+	auto numButtons = new unsigned int[numJoysticks];
+	
+    int activeJoystick = 0; // starting with 0
 	std::cout << numJoysticks << " joystic(s) found." << std::endl;
     
 	for (unsigned int i = 0; i < numJoysticks; i++)
 	{
+		numAxes[i] = 0;
+		numButtons[i] = 0;
+
 		SDL_Joystick* stick = SDL_JoystickOpen(i);
 
 		if (stick) {
@@ -63,29 +69,32 @@ int main(int argc, char** argv) {
 	        printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(stick));
 	        printf("Number of Balls: %d\n", SDL_JoystickNumBalls(stick));
             
-            numAxes = SDL_JoystickNumAxes(stick);
-            numButtons = SDL_JoystickNumButtons(stick);
+            numAxes[i] = SDL_JoystickNumAxes(stick);
+            numButtons[i] = SDL_JoystickNumButtons(stick);
 	    } else {
 	        printf("Couldn't open Joystick 0\n");
 	    }
 	}
     
-    if (numJoysticks > 1)
+
+    auto axesBuffer = new float*[numJoysticks];
+    auto buttonsBuffer = new float*[numJoysticks];
+
+    for (unsigned int i = 0; i < numJoysticks; i++)
     {
-        std::cout << "WARNING: multiple joysticks found! This implementation only supports a single attached device!" << std::endl;
+    	axesBuffer[i] = new float[numAxes[i]];
+    	for (unsigned int j = 0; j < numAxes[i]; j++)
+	    {
+	        axesBuffer[i][j] = 0;
+	    }
+	    
+	    buttonsBuffer[i] = new float[numButtons[i]];
+	    for (unsigned int j = 0; j < numButtons[i]; j++)
+	    {
+			buttonsBuffer[i][j] = 0;
+	    }	
     }
     
-    auto axesBuffer = new float[numAxes];
-    for (unsigned int i = 0; i < numAxes; i++)
-    {
-        axesBuffer[i] = 0;
-    }
-    
-    auto buttonsBuffer = new float[numButtons];
-    for (unsigned int i = 0; i < numButtons; i++)
-    {
-		buttonsBuffer[i] = 0;
-    }
 
     
     
@@ -101,6 +110,7 @@ int main(int argc, char** argv) {
 
 	// run!
     std::cout << "entering main loop" << std::endl;
+    std::cout << "active joystic is: " << activeJoystick << std::endl;
 	bool running = true;
 	while (running)
 	{
@@ -122,24 +132,46 @@ int main(int argc, char** argv) {
 			{
 				running = false;
 			}
+            else if (e.type == SDL_KEYDOWN)
+            {
+             if (e.key.state == SDL_PRESSED && e.key.keysym.scancode == SDL_SCANCODE_LEFT)
+                {
+                    activeJoystick = (activeJoystick - 1) % numJoysticks;
+                    std::cout << "active joystic is: " << activeJoystick << std::endl;
+                }
+                if (e.key.state == SDL_PRESSED && e.key.keysym.scancode == SDL_SCANCODE_RIGHT)
+                {
+                    activeJoystick = (activeJoystick + 1) % numJoysticks;
+                    std::cout << "active joystic is: " << activeJoystick << std::endl;
+                }
+            }
 			else if (e.type == SDL_JOYAXISMOTION)
 			{
-                float oldValue = axesBuffer[e.jaxis.axis];
-                float newValue = (float)e.jaxis.value / (float)(0xffff / 2);
-                
-                dirty = dirty || (oldValue != newValue);
-                
-				axesBuffer[e.jaxis.axis] = newValue;
+                if (e.jaxis.which == activeJoystick)
+                {
+					float oldValue = axesBuffer[activeJoystick][e.jaxis.axis];
+					float newValue = (float)e.jaxis.value / (float)(0xffff / 2);
+
+					dirty = dirty || (oldValue != newValue);
+
+					axesBuffer[activeJoystick][e.jaxis.axis] = newValue;
+				}
             }
             else if (e.type == SDL_JOYBUTTONDOWN)
 			{
-				dirty = dirty || (buttonsBuffer[e.jbutton.button] != 1.0f);
-                buttonsBuffer[e.jbutton.button] = 1.0f;
+				if (e.jaxis.which == activeJoystick)
+                {
+					dirty = dirty || (buttonsBuffer[activeJoystick][e.jbutton.button] != 1.0f);
+	                buttonsBuffer[activeJoystick][e.jbutton.button] = 1.0f;
+	            }
 			}
             else if (e.type == SDL_JOYBUTTONUP)
 			{
-                dirty = dirty || (buttonsBuffer[e.jbutton.button] != 0.0f);
-                buttonsBuffer[e.jbutton.button] = 0.0f;
+                if (e.jaxis.which == activeJoystick)
+                {
+	                dirty = dirty || (buttonsBuffer[activeJoystick][e.jbutton.button] != 0.0f);
+	                buttonsBuffer[activeJoystick][e.jbutton.button] = 0.0f;
+	            }
 			}
 		}
         
@@ -148,20 +180,20 @@ int main(int argc, char** argv) {
 
         if (dirty)
         {
-            for (unsigned int i = 0; i < numAxes; i++)
+            for (unsigned int i = 0; i < numAxes[activeJoystick]; i++)
             {
                 std::stringstream sstr;
                 sstr << "axis-" << i;
                 
-                server.data(sstr.str(), axesBuffer[i], time);
+                server.inputAnalog(sstr.str(), axesBuffer[activeJoystick][i], time, -1.0f, 1.0f);
             }
             
-            for (unsigned int i = 0; i < numButtons; i++)
+            for (unsigned int i = 0; i < numButtons[activeJoystick]; i++)
             {
                 std::stringstream sstr;
                 sstr << "button-" << i;
                 
-                server.data(sstr.str(), buttonsBuffer[i], time);
+                server.inputDigital(sstr.str(), buttonsBuffer[activeJoystick][i], time);
             }
             
             auto dt = time - lastFrame;
