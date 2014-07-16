@@ -67,6 +67,7 @@ var connect = function() {
 		$('#connection_status').text('online');
 	};
 
+	var rxHandle = $('#rx');
 	ws.onmessage = function(message) {
 		if (sessionActive === false) {
 			broadcast({type: 'sessionStarted'});
@@ -78,7 +79,7 @@ var connect = function() {
 		broadcast({type: 'data', data: parsedData});
 
 		rxStatus = !rxStatus;
-		$('#rx').toggleClass('on', rxStatus);
+		rxHandle.toggleClass('on', rxStatus);
 	};
 
 	ws.onerror = function(event) {
