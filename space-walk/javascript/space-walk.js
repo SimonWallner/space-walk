@@ -115,7 +115,7 @@ var loadPlugin = function(plugin) {
 	var iframe = $(document.createElement('iframe'))
 		.attr('src', plugin.url)
 		.attr('seamless', '')
-		.attr('sandbox', 'allow-scripts allow-same-origin')
+		// .attr('sandbox', 'allow-scripts allow-same-origin')
 		.attr('id', id)[0];
 
 	$('#container').append(iframe);
