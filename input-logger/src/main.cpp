@@ -53,6 +53,12 @@ int main(int argc, char** argv) {
 	
     int activeJoystick = 0; // starting with 0
 	std::cout << numJoysticks << " joystic(s) found." << std::endl;
+
+	if (numJoysticks == 0)
+	{
+		std::cout << "quitting..." << std::endl;
+		return 1;
+	}
     
 	for (unsigned int i = 0; i < numJoysticks; i++)
 	{
