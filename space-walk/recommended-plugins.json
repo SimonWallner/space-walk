@@ -1,0 +1,14 @@
+[
+	{
+		"name": "Mapper",
+		"url": "plugins/mapper/mapper.html",
+		"info": "http://example.com",
+		"icon": "http://example.com"
+	},
+	{
+		"name": "Debugger",
+		"url": "plugins/debug/debug.html",
+		"info": "http://example.com",
+		"icon": "http://example.com"
+	}
+]

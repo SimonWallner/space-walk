@@ -16,17 +16,6 @@ var iframes = [];
 
 var pluginIndex = 0;
 
-var plugins = [
-	{
-		name: 'Mapper',
-		url: 'plugins/mapper/mapper.html'
-	},
-	{
-		name: 'Debugger',
-		url: 'plugins/debug/debug.html'
-	}
-];
-
 var sessionTimeout = 3000; // ms
 var lastTimeStamp
 var sessionActive = false;
@@ -235,24 +224,6 @@ window.onload = function() {
 			sessionActive = false;
 		}
 	}, 500)
-
-	// load plugins
-	plugins.forEach(function(element, index) {
-		var option = $(document.createElement('option'))
-			.attr('value', index)
-			.text(element.name);
-
-		$('#build_in_plugins').append(option);
-	})
-	$('#build_in_plugins').change(function(e) {
-		var index = $('#build_in_plugins option:selected').val();
-		if (index !== '-1') {
-			loadPlugin(plugins[index]);
-
-			userSettings.plugins.push(plugins[index]);
-			window.localStorage['userSettings'] = JSON.stringify(userSettings);
-		}
-	});
 
 	window.addEventListener('message', function (e) {
 		// console.log('post message got: ' + e.data);

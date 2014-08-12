@@ -3,7 +3,7 @@ var LibSpaceWalk = function() {
 
 	/*
 	 * message callback that is called with the incoming message as an already
-	 * parse object.
+	 * parsed object.
 	 */
 	this.onMessage = function(object) {};
 
@@ -28,24 +28,15 @@ var LibSpaceWalk = function() {
 		window.parent.postMessage(messageString, '*');
 	}
 
+	// this id is used for the resizing magic of the iframes
 	var pluginId = null
 
 	// init
-	window.addEventListener('message', function (message) {
-		// console.log(message);
+	window.addEventListener('message', function(message) {
 		var data = JSON.parse(message.data);
 
 		if (data.type === 'load') {
 			pluginId = data.id;
-
-			data.styleSheets.reverse().forEach(function(element) {
-				var link = document.createElement('link');
-				link.href = element;
-				link.type = 'text/css';
-				link.rel = 'stylesheet';
-
-				document.head.insertBefore(link, document.head.firstChild);
-			});
 			that.onPluginLoaded();
 		}
 		else if (data.type === 'sessionStarted') {
