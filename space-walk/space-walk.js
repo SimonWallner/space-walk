@@ -1,4 +1,4 @@
-// stuff
+// utils
 var removeFromArray = function(array, element) {
 	var index = array.indexOf(element);
 
@@ -6,6 +6,23 @@ var removeFromArray = function(array, element) {
 		array.splice(index, 1);
 	}
 }
+
+var loadFile = function(path, callback) {
+	var request = new XMLHttpRequest();
+	request.open('GET', path);
+	request.onreadystatechange = function() {
+		if (request.readyState === this.DONE) {
+			if (request.status === 200) {
+				callback(request.responseText);
+			}
+			else {
+				console.log('request for: "' + path + '" failed!');
+				console.log(request.responseText);
+			}
+		}
+	};
+	request.send();
+};
 
 
 var userSettings = null;
@@ -147,9 +164,6 @@ var loadPlugin = function(plugin) {
 }
 
 window.onload = function() {
-
-	console.log('------- onload --------');
-
 	// user settings
 	if (window.localStorage['userSettings']) {
 		userSettings = JSON.parse(window.localStorage['userSettings']);
@@ -244,5 +258,26 @@ window.onload = function() {
 	    }
 	});
 
-	console.log('------- /onload --------');
+	// recommended plugins
+	loadFile('recommended-plugins.json', function(data) {
+		var plugins = JSON.parse(data);
+		
+		plugins.forEach(function(element, index) {
+			var option = $(document.createElement('option'))
+				.attr('value', index)
+				.text(element.name);
+
+			$('#recommended_plugins').append(option);
+		})
+
+		$('#recommended_plugins').change(function(e) {
+			var index = $('#recommended_plugins option:selected').val();
+			if (index !== '-1') {
+				loadPlugin(plugins[index]);
+
+				userSettings.plugins.push(plugins[index]);
+				window.localStorage['userSettings'] = JSON.stringify(userSettings);
+			}
+		});	
+	})
 }

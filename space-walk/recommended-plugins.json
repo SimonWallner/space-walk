@@ -1,14 +1,17 @@
 [
 	{
-		"name": "Mapper",
-		"url": "plugins/mapper/mapper.html",
-		"info": "http://example.com",
-		"icon": "http://example.com"
+		"name": "Controller Visualisation",
+		"url": "http://simonwallner.github.io/space-walk-input/controller-vis.htm",
+		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
-		"name": "Debugger",
-		"url": "plugins/debug/debug.html",
-		"info": "http://example.com",
-		"icon": "http://example.com"
+		"name": "Input Debugger",
+		"url": "http://simonwallner.github.io/space-walk-input/input-debugger.htm",
+		"info": "http://simonwallner.github.io/space-walk-input/"
+	},
+	{
+		"name": "Input Complexity Vis",
+		"url": "http://simonwallner.github.io/space-walk-input/input-complexity.htm",
+		"info": "http://simonwallner.github.io/space-walk-input/"
 	}
 ]
