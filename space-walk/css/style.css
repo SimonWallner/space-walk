@@ -14,7 +14,8 @@ iframe {
     margin-bottom: 0.0em; }
 
 #container {
-  padding: 0.5em; }
+  padding: 0.5em;
+  background-color: #fff; }
 
 div {
   vertical-align: top; }
@@ -105,6 +106,15 @@ div {
     border: none;
     margin: 0;
     background-color: #3fc0c9; }
+
+#astronaut {
+  position: absolute;
+  top: 1em;
+  width: 100%;
+  text-align: center;
+  font-size: 10em;
+  color: #3fc0c9;
+  z-index: -1; }
 
 span.button {
   display: inline-block; }

@@ -1,0 +1,20 @@
+@font-face {
+  font-family: 'space-walk';
+  src: url('../font/space-walk.eot?99398656');
+  src: url('../font/space-walk.eot?99398656#iefix') format('embedded-opentype'),
+       url('../font/space-walk.woff?99398656') format('woff'),
+       url('../font/space-walk.ttf?99398656') format('truetype'),
+       url('../font/space-walk.svg?99398656#space-walk') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'space-walk';
+    src: url('../font/space-walk.svg?99398656#space-walk') format('svg');
+  }
+}
+*/

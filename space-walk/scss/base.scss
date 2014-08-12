@@ -1,3 +1,5 @@
+@import url("fontello/css/space-walk.css");
+
 body {
 	font-size: 16px;
 	font-family: 'Dosis';
@@ -12,4 +14,30 @@ h1 {
 
 .hidden {
 	display: none;
+}
+
+.space-walk-logo {
+	font-family: 'Dosis';
+	text-transform: uppercase;
+	font-weight: 200;
+	letter-spacing: 0.05em;
+}
+
+.space-walk-boxed {
+	display: inline-block;
+	padding: 0.2em;
+	padding-top: 0.18em;
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+	border-radius: 3px;
+	background-color: #000;
+	color: #fff;
+}
+
+.astronaut {
+	&:before {
+		content: '\e800'; /* '' */
+		font-weight: normal;
+		font-family: 'space-walk';
+	}
 }

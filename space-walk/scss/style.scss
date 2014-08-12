@@ -36,6 +36,7 @@ iframe {
 
 #container {
 	padding: 0.5em;
+	background-color: #fff;
 }
 
 div {
@@ -170,7 +171,15 @@ div {
 	}
 }
 
-
+#astronaut {
+	position: absolute;
+	top: 1em;
+	width: 100%;
+	text-align: center;
+	font-size: 10em;
+	color: $blue;
+	z-index: -1;
+}
 
 span.button {
 	display: inline-block;
