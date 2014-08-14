@@ -1,3 +1,0 @@
-[submodule "objectif-lune/client/d3"]
-	path = objectif-lune/client/d3
-	url = https://github.com/mbostock/d3.git
