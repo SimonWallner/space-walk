@@ -1,3 +1,5 @@
 # Space Walk
 
-A telemetry, handling and analysis tool for gameplay data streams. This is a work in progress.
+A networked telemetry and analysis platform for games.
+
+Find out more at http://spacewalk.simonwallner.at
