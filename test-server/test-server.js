@@ -11,6 +11,7 @@ commander
 	.option('-l, --generate-location-data', 'generating location data')
 	.option('-s, --generate-scalar-data', 'generating scalar data')
 	.option('-t, --generate-time-series-data', 'generating time series data')
+	.option('-L, --generate-log-data', 'generating log data')
 	.option('-p, --port [port number]', 'the port number to be used')
 	.option('-i, --interval [interval in ms]', 'the send interval in ms')
 	.parse(process.argv);
@@ -25,6 +26,7 @@ console.log('generate user input .................... ' + (commander.generateUse
 console.log('generate location data ................. ' + (commander.generateLocationData ? 'yes' : 'no'));
 console.log('generate scalar data ................... ' + (commander.generateScalarData ? 'yes' : 'no'));
 console.log('generate time series data .............. ' + (commander.generateTimeSeriesData ? 'yes' : 'no'));
+console.log('generate log data ...................... ' + (commander.generateLogData ? 'yes' : 'no'));
 console.log('Using port ............................. ' + port);
 console.log('Send interval in ms .................... ' + interval);
 console.log();
@@ -149,4 +151,20 @@ setInterval(function() {
 			broadcast(message);
 		}
 	}
+
+	if (commander.generateLogData) {
+		var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
+		for (var i = 0; i < levels.length; i++) {
+			message = {
+				type: 'log',
+				payload: {
+					level: levels[i],
+					message: 'log message for ' + levels[i]
+				}
+			};
+			
+			broadcast(message);
+		}
+	}
+
 }, interval);
