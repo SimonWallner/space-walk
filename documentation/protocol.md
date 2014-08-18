@@ -16,10 +16,12 @@ JSON is used as the transport format, becase it is easily understandable and par
 	}
 
 *level* can be a keyword from (with rising severity)
+
 	[trace, debug, info, warn, error, fatal]
 
 ### Sending scalar values
 Their are two different modes of sending scalar values. Time referenced or not.
+
 	{
 		"type": "scalar",
 		"payload": {
@@ -29,6 +31,7 @@ Their are two different modes of sending scalar values. Time referenced or not.
 	}
 
 and the time referenced 'data' message
+
 	{
 		"type": "data",
 		"payload": {
@@ -41,6 +44,7 @@ and the time referenced 'data' message
 ### Variable Tweaking
 
 Variables can be registered to be tweaked remotely
+
 	{
 		"type": "floatVariable",
 		"payload": {
@@ -56,6 +60,7 @@ Variables can be registered to be tweaked remotely
 ### Map tiles
 
 Map tiles have span a quad with the following coords: (x, y), (x + width, y), (x, y + height), (x + width, y + height).
+
 	{
 		"type": "mapTileRequest",
 		"payload": {
@@ -95,7 +100,7 @@ Map tiles have span a quad with the following coords: (x, y), (x + width, y), (x
 
 ## Events
 	{
-		"type": "event"
+		"type": "event",
 		"payload": {
 			"time": 123.123,
 			"name": "foo",
@@ -106,8 +111,9 @@ Map tiles have span a quad with the following coords: (x, y), (x + width, y), (x
 
 ## User Input Data
 Digital Button input, {0, 1}
+
 	{
-		"type": "input"
+		"type": "input",
 		"payload": {
 			"type": "digital",
 			"name": "foo",
@@ -117,8 +123,9 @@ Digital Button input, {0, 1}
 	}
 
 Analog input, e.g. stick axis...
+
 	{
-		"type": "input"
+		"type": "input",
 		"payload": {
 			"type": "analog",
 			"name": "foo",
