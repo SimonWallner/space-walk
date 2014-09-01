@@ -1,12 +1,24 @@
-# protocol documentation for Space Walk
-Space walk uses a human readable and understandable json message interface. The messages are as follows:
+# The Space Walk Protocol
+One of the three pillars of Space Walk is the common protocol. Having an (easy to use) common protocol, allows developers and researchers to share their tools and to make them interoperable with the tools of other devs. 
 
-## JSON
-JSON is used as the transport format, becase it is easily understandable and parsable by both humans and computers. Keywords are therefore not ordered, since is an unordered set of name/value pairs.
+## Design Goals
+The following design goals are leading the development of the protocol:
 
-## Server (game) --> Client (browser)
+- Ease of use: The protocol shall be simple to work with and debugging friendly. 
+- Extensible: The protocol shall be easy to extend. Additions to the protocol should not impact older implementations.
+- Low complexity: The protocol shall not depend on state, and not require any sort of complex handshake or negotiation. 
+- Graceful degradation: As far as possible the service shall degrade gracefully.
+- Low barrier of entry for new devs
+- Self documenting
 
-### Log messages
+This lead to a human readable and understandable json based message interface. Performance is not one of the main goals. It only has to run "fast enough". Using a mostly stateless json protocol sure is wasteful in terms of message size and computational overhead, but on the other hand, using this simple protocol makes working with it much easier, and should also lower the barrier of entry for new developers.
+
+Space Walk not only supports sending messages from the server to the client (even though most of the data will flow in that direction) but is also meant to support message going from the client back to the server. This can for instance be used for live parameter tuning or to request screen shots form the game.
+
+
+## The Base Structure
+The basic message structure is quite simple. It has a unique `type` and a `payload` field that encapsulates the arbitrary payload. Let's take a look at an example:
+
 	{
 		"type": "log",
 		"payload": {
@@ -15,9 +27,32 @@ JSON is used as the transport format, becase it is easily understandable and par
 		}
 	}
 
-*level* can be a keyword from (with rising severity)
+The protocol should be self describing and easy to understand. The different message types form *protocol features*. Each feature can be implemented independently of others.
 
-	[trace, debug, info, warn, error, fatal]
+TODO: namespaces!!!
+feature.messageName
+extension namespaces?
+x.feature.messageName
+core.feature.messageName?
+at.simonwallner.feature.message?
+
+core. meant to stay the way they are within a major version
+ex. experimental, likely to change in a major version, might turn into a core feature at some point.
+
+
+##Core Features
+These are the cure features that currently form the Space Walk protocol. Over time, more and more features are expected to make it into the core section. 
+
+### Log Messages
+	{
+		"type": "core.log.message",
+		"payload": {
+			"level": "info",
+			"message": "Hello, Space Walk!"
+		}
+	}
+
+`level` can be one of the following keywords (with rising severity):	`[trace, debug, info, warn, error, fatal]`
 
 ### Sending scalar values
 Their are two different modes of sending scalar values. Time referenced or not.
@@ -41,12 +76,12 @@ and the time referenced 'data' message
 		}
 	}
 
-### Variable Tweaking
+### Parameter Tweaking
 
 Variables can be registered to be tweaked remotely
 
 	{
-		"type": "floatVariable",
+		"type": "floatParameter",
 		"payload": {
 			"name": "my first scalar",
 			"value": 42.314,
