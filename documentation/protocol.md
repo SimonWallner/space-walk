@@ -136,4 +136,6 @@ Analog controls use the following message.
 		}
 	}
 
+## Extending and Maintaining the Protocol
+I am always happy to hear your comments about this protocol and the project in general. I will try my best to update it regularly and to push popular features into core extensions and into the core. If you used or extended the protocol just get in touch. I am curious to hear your experience with it and how we can improve it in future revisions.
 
