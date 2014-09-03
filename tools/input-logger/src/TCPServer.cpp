@@ -42,7 +42,7 @@ void TCPServer::data(std::string name, float value, float time)
 {
 	std::stringstream sstr;
 	sstr << "{";
-	sstr << "\"type\": \"data\", ";
+	sstr << "\"type\": \"core.simpleTelemetry.sample\", ";
 	sstr << "\"payload\": { ";
 	sstr <<	"\"time\": " << time << ", ";
 	sstr <<	"\"value\": " << value << ", ";
@@ -56,7 +56,7 @@ void TCPServer::inputDigital(std::string name, float value, float time)
 {
 	std::stringstream sstr;
 	sstr << "{";
-	sstr << "\"type\": \"input\", ";
+	sstr << "\"type\": \"ext.input.gamePad.sample\", ";
 	sstr << "\"payload\": { ";
 	sstr << "\"type\": \"digital\", ";
 	sstr <<	"\"time\": " << time << ", ";
@@ -70,7 +70,7 @@ void TCPServer::inputAnalog(std::string name, float value, float time, float min
 {
 	std::stringstream sstr;
 	sstr << "{";
-	sstr << "\"type\": \"input\", ";
+	sstr << "\"type\": \"ext.input.gamePad.sample\", ";
 	sstr << "\"payload\": { ";
 	sstr << "\"type\": \"analog\", ";
 	sstr <<	"\"time\": " << time << ", ";
