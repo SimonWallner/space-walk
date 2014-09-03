@@ -18,14 +18,17 @@ var LibSpaceWalk = function() {
 	this.onSessionStarted = function() {};
 
 	this.postMessage = function(message) {
-		var messageString;
+		
 		if (typeof(message) === 'string') {
-			messageString = message;
-		} else {
-			messageString = JSON.stringify(message)
+			message = JSON.parse(message);
+		}
+		
+		msgObject = {
+			type: 'message',
+			payload: message
 		}
 
-		window.parent.postMessage(messageString, '*');
+		window.parent.postMessage(JSON.stringify(msgObject), '*');
 	}
 
 	// this id is used for the resizing magic of the iframes

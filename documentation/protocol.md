@@ -136,6 +136,50 @@ Analog controls use the following message.
 		}
 	}
 
+### Telemetry
+There is more to telemetry than just drawing nicely looking plots of data. How about drawing nicely looking plots of location data!
+
+	{
+		"type": "ext.simpleTelemetry.location",
+		"payload": {
+			"time": 123.34,
+			"x": 123,
+			"y": 3456,
+			"z": 789
+		}
+	}
+
+Plotting the location is fine on its own, but it gets much nicer when you can overlay it on map screenshots from your game. Getting a map tile from the server requires sending a request. The map camera is considered to be an orthographic camera pointing downwards.
+
+Map tiles have span a quad with the following coords: `{(x, y), (x + width, y), (x, y + height), (x + width, y + height)}`.
+
+	{
+		"type": "ext.simpleTelemetry.mapTileRequest",
+		"payload": {
+			"x": 1234.1234,
+			"y": 123,
+			"width": 123,
+			"height": 1234
+		}
+	}
+
+The reply then has the following form. Note that the dimensions of the returned map tile must not match the dimensions of the request.
+
+	{
+		"type": "ext.simpleTelemetry.mapTileData",
+		"payload": {
+			"mime": "image/png",
+			"encoding": "base64",
+			"data": "YWxsIHlvdXIgYmFzZSBhcmUgYmVsb25nIHRvIHVz",
+			"left": 123,
+			"top": 1234.1234,
+			"width": 123,
+			"height": 1234
+		}
+	}
+
+Note: Take a look at this Unity project, to see it in action: https://github.com/SimonWallner/space-walk-mapper-extras
+
 ## Extending and Maintaining the Protocol
 I am always happy to hear your comments about this protocol and the project in general. I will try my best to update it regularly and to push popular features into core extensions and into the core. If you used or extended the protocol just get in touch. I am curious to hear your experience with it and how we can improve it in future revisions.
 

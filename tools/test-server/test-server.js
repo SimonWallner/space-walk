@@ -21,14 +21,14 @@ var port = commander.port || 60600;
 var interval = commander.interval || 1000;
 
 console.log('starting test server...\n');
-console.log('verbose mode ........................... ' + (commander.verbose ? 'yes' : 'no'));
-console.log('generate user input .................... ' + (commander.generateUserInput ? 'yes' : 'no'));
-console.log('generate location data ................. ' + (commander.generateLocationData ? 'yes' : 'no'));
-console.log('generate scalar data ................... ' + (commander.generateScalarData ? 'yes' : 'no'));
-console.log('generate time series data .............. ' + (commander.generateTimeSeriesData ? 'yes' : 'no'));
-console.log('generate log data ...................... ' + (commander.generateLogData ? 'yes' : 'no'));
-console.log('Using port ............................. ' + port);
-console.log('Send interval in ms .................... ' + interval);
+console.log('verbose mode (-v) ........................... ' + (commander.verbose ? 'yes' : 'no'));
+console.log('generate user input (-u) .................... ' + (commander.generateUserInput ? 'yes' : 'no'));
+console.log('generate location data (-l) ................. ' + (commander.generateLocationData ? 'yes' : 'no'));
+console.log('generate scalar data (-s) ................... ' + (commander.generateScalarData ? 'yes' : 'no'));
+console.log('generate time series data (-t) .............. ' + (commander.generateTimeSeriesData ? 'yes' : 'no'));
+console.log('generate log data (-L) ...................... ' + (commander.generateLogData ? 'yes' : 'no'));
+console.log('Using port (-p) ............................. ' + port);
+console.log('Send interval in ms (-i) .................... ' + interval);
 console.log();
 
 
@@ -73,6 +73,10 @@ var broadcast = function(object) {
 	for (var i = 0; i < connectionPool.length; ++i) {
 		connectionPool[i].sendUTF(JSON.stringify(object));
 	}
+
+	// if (commander.verbose) {
+	// 	console.log('sending: ' + JSON.stringify(object));
+	// }
 }
 
 var ConstrainedRandomWalk = function() {
@@ -140,7 +144,7 @@ setInterval(function() {
 	if (commander.generateTimeSeriesData) {
 		for (var i = 0; i < 3; i++) {
 			var message = {
-				type: 'data',
+				type: 'core.simpleTelemetry.sample',
 				payload: {
 					name: 'data no ' + i,
 					time: getTime(),
@@ -156,7 +160,7 @@ setInterval(function() {
 		var levels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 		for (var i = 0; i < levels.length; i++) {
 			message = {
-				type: 'log',
+				type: 'core.simpleLog.message',
 				payload: {
 					level: levels[i],
 					message: 'log message for ' + levels[i]

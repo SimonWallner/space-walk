@@ -1,0 +1,56 @@
+@import url(reset.css);
+@import url(http://fonts.googleapis.com/css?family=Dosis:300,400);
+@import url(http://fonts.googleapis.com/css?family=Nunito:400,300,700);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800);
+@import url(http://fonts.googleapis.com/css?family=PT+Mono);
+body {
+  font-family: 'Nunito';
+  font-size: 16px;
+  line-height: 150%;
+  font-weight: 300;
+  background-color: #f3efeb;
+  padding: 3em; }
+
+h1 {
+  font-size: 3.0em;
+  font-family: 'Open Sans';
+  font-weight: 300;
+  line-height: 1.2em;
+  border-bottom: 2px solid black;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.1em;
+  width: 750px;
+  text-transform: uppercase; }
+
+h2, h3, h4, h5, h6 {
+  font-family: 'Open Sans';
+  font-weight: 400;
+  margin-top: 1em; }
+
+h2 {
+  font-size: 1.5em; }
+
+h3 {
+  font-size: 1.2em; }
+
+h4, h5, h6 {
+  font-size: 1.1em; }
+
+p {
+  width: 600px; }
+
+p + p {
+  margin-top: 1.5em; }
+
+#license {
+  box-sizing: border-box;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5em;
+  width: 750px;
+  font-family: 'PT Mono';
+  margin-top: 1em;
+  white-space: pre-wrap;
+  font-size: .95em;
+  line-height: 1.5em; }
