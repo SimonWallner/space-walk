@@ -74,9 +74,9 @@ var broadcast = function(object) {
 		connectionPool[i].sendUTF(JSON.stringify(object));
 	}
 
-	// if (commander.verbose) {
-	// 	console.log('sending: ' + JSON.stringify(object));
-	// }
+	if (commander.verbose) {
+		console.log('sending: ' + JSON.stringify(object));
+	}
 }
 
 var ConstrainedRandomWalk = function() {
