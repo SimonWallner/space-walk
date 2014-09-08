@@ -16,8 +16,8 @@ var commander = require('commander')
 commander
 	.version('dev snapshot')
 	.option('-v, --verbose', 'verbose output')
-	.option('-h, --host [host]', 'host')
-	.option('-p, --port [port]', 'TCP port')
+	.option('-h, --host [host]', 'IP address of the TCP host/server')
+	.option('-p, --port [port]', 'TCP port number of the host/server')
 	.parse(process.argv);
 
 var verbose = commander.verbose || false;
@@ -25,7 +25,10 @@ var host = commander.host || '127.0.0.1';
 var port = commander.port || 60601;
 
 console.log('Space Walk TCP <--> WebSocket Bridge');
+console.log('TCP messages are expected to be \\n terminated.\n');
 console.log('TCP host: ' + host + ':' + port);
+console.log('serving WebSocket server at port: 60600');
+
 if (verbose) {
 	console.log('verbose output activated');
 }

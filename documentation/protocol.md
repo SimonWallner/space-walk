@@ -85,7 +85,7 @@ Samples are time referenced measurements of scalar data. The name string is uniq
 		"type": "core.simpleTelemetry.sample",
 		"payload": {
 			"name": "frame time",
-			"time": 3.141
+			"time": 3.141,
 			"value": 2.718
 		}
 	}
@@ -127,11 +127,11 @@ Analog controls use the following message.
 		"payload": {
 			"type": "analog",
 			"name": "foo",
-			"value": 1
+			"value": 1,
 			"range": {
 				"min": -1,
 				"max": 1
-			}
+			},
 			"time": 123.34,
 		}
 	}
