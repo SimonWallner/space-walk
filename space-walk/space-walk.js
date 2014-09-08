@@ -198,13 +198,6 @@ window.onload = function() {
 		disconnect();
 	})
 
-	$('#dump_settings').click(function() {
-		alert('user settings: \n' + JSON.stringify(userSettings));
-	})
-
-	$('#load_settings').click(function() {
-		alert('not implemented yet :(')
-	})
 
 	$('#load_external_plugin').click(function() {
 		var url = $('#external_plugin').val();
@@ -279,5 +272,30 @@ window.onload = function() {
 				window.localStorage['userSettings'] = JSON.stringify(userSettings);
 			}
 		});	
+	});
+
+	// settings
+	$('#dump_settings').click(function() {
+		alert('user settings: \n' + JSON.stringify(userSettings));
+	});
+
+	$('#load_settings').click(function() {
+		if (confirm('Do you really want to override the current settings? (There is no undo)')) {
+			try {
+				var input = $('#user_settings').val();
+				json = JSON.parse(input);
+				window.localStorage['userSettings'] = JSON.stringify(json);
+				location.reload();
+			} catch (e) {
+				alert('failed to parse setting: ' + e);
+			}
+		}
+	});
+
+	$('#clear_settings').click(function() {
+		if (confirm("Do you really to clear all the setttings? (There is no undo)")) {
+			window.localStorage['userSettings'] = '{}';
+			location.reload();
+		}
 	})
 }

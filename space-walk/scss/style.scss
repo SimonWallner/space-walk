@@ -150,6 +150,10 @@ div {
 		display: block;
 		padding: 0.5em;
 		background-color: $lightBlue;
+
+		&:nth-child(2n) {
+			background-color: $lightBlue * 0.95;
+		}
 	}
 
 	input {

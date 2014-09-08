@@ -94,6 +94,8 @@ div {
     display: block;
     padding: 0.5em;
     background-color: #c1dfe1; }
+    #settings ul li:nth-child(2n) {
+      background-color: #b7d3d5; }
   #settings input {
     background-color: #cccccc;
     border: solid 1px;
