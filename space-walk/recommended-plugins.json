@@ -5,29 +5,23 @@
 		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
-		"name": "Input Debugger",
-		"url": "http://simonwallner.github.io/space-walk-input/input-debugger.htm",
+		"name": "Input Complexity Vis",
+		"url": "http://simonwallner.github.io/space-walk-input/input-complexity.htm",
 		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
-		"name": "Input Complexity Vis",
-		"url": "http://simonwallner.github.io/space-walk-input/input-complexity.htm",
+		"name": "Simple Telemetry: Sampled Data",
+		"url": "http://simonwallner.github.io/space-walk-telemetry/time-series.htm",
+		"info": "http://simonwallner.github.io/space-walk-telemetry/"
+	},
+	{
+		"name": "Input Debugger",
+		"url": "http://simonwallner.github.io/space-walk-input/input-debugger.htm",
 		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
 		"name": "Simple Debugger",
 		"url": "http://simonwallner.github.io/space-walk-debugger/debug.html",
 		"info": "http://simonwallner.github.io/space-walk-debugger/"
-	},
-	{
-		"name": "Telemetry: Scalar Data",
-		"url": "http://simonwallner.github.io/space-walk-telemetry/super-scalar.htm",
-		"info": "http://simonwallner.github.io/space-walk-telemetry"
-	},
-	{
-		"name": "Telemetry: Time Series Data",
-		"url": "http://simonwallner.github.io/space-walk-telemetry/time-series.htm",
-		"info": "http://simonwallner.github.io/space-walk-telemetry/"
 	}
-
 ]

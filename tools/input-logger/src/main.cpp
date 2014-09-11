@@ -37,9 +37,9 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	std::cout << "hello sdl" << std::endl;
+	std::cout << "Serving at port " << port << std::endl;
 
-	SDL_Window* windowHandle = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	SDL_Window* windowHandle = SDL_CreateWindow("Space Walk input logger", 100, 100, 200, 200, SDL_WINDOW_SHOWN);
 	
 	if (windowHandle == nullptr) {
 		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
