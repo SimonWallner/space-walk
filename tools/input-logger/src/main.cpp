@@ -17,6 +17,9 @@ struct Sample {
 	bool valueChanged;
 };
 
+void rescan();
+
+
 #ifdef _WINDOWS
 #include <tchar.h>
 int wmain(int argc, _TCHAR* argv[]) {
@@ -30,14 +33,15 @@ int main(int argc, char** argv) {
 	// command line params
 	if (argc >= 2) {
 		port = atoi(argv[1]);
+	} else {
+		std::cout << "Serving at default port: " << port << std::endl;
+		std::cout << "call 'input-logger xxxxxx' to specify the port manually." << std::enl;
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
 		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
-
-	std::cout << "Serving at port " << port << std::endl;
 
 	SDL_Window* windowHandle = SDL_CreateWindow("Space Walk input logger", 100, 100, 200, 200, SDL_WINDOW_SHOWN);
 	
@@ -50,86 +54,16 @@ int main(int argc, char** argv) {
 	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 
 
-	unsigned int numJoysticks = SDL_NumJoysticks();
-
-	auto numAxes = new unsigned int[numJoysticks];
-	auto numButtons = new unsigned int[numJoysticks];
-	bool globalDirtyFlag = false;
-	
-	int activeJoystick = 0; // starting with 0
-	std::cout << numJoysticks << " joystic(s) found." << std::endl;
-
-	if (numJoysticks == 0)
-	{
-		std::cout << "quitting..." << std::endl;
-		return 1;
-	}
-	
-	for (unsigned int i = 0; i < numJoysticks; i++)
-	{
-		numAxes[i] = 0;
-		numButtons[i] = 0;
-
-		SDL_Joystick* stick = SDL_JoystickOpen(i);
-
-		if (stick) {
-			printf("Opened Joystick 0\n");
-			printf("Name: %s\n", SDL_JoystickNameForIndex(i));
-			// printf("Devise GUID: %s\n", SDL_JoystickGetGUIDString(i));
-			printf("Number of Axes: %d\n", SDL_JoystickNumAxes(stick));
-			printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(stick));
-			printf("Number of Balls: %d\n", SDL_JoystickNumBalls(stick));
-			
-			numAxes[i] = SDL_JoystickNumAxes(stick);
-			numButtons[i] = SDL_JoystickNumButtons(stick);
-		} else {
-			printf("Couldn't open Joystick 0\n");
-		}
-	}
-	
-
-	auto axesBuffer = new Sample*[numJoysticks];
-	auto buttonsBuffer = new Sample*[numJoysticks];
-
-	for (unsigned int i = 0; i < numJoysticks; i++)
-	{
-		axesBuffer[i] = new Sample[numAxes[i]];
-		for (unsigned int j = 0; j < numAxes[i]; j++)
-		{
-			Sample sample = {};
-			sample.valueChanged = false;
-			sample.value = 0.0f;
-
-			axesBuffer[i][j] = sample;
-		}
-		
-		buttonsBuffer[i] = new Sample[numButtons[i]];
-		for (unsigned int j = 0; j < numButtons[i]; j++)
-		{
-			Sample sample = {};
-			sample.valueChanged = false;
-			sample.value = 0.0f;
-
-			buttonsBuffer[i][j] = sample;
-		}	
-	}
-	
-
-	
 	
 	
 	// setup networking
 	boost::asio::io_service io_service;
-	TCPServer server(io_service, 60601);
+	TCPServer server(io_service, port);
 	
-	
-	auto lastFrame = 0.0f;
-	auto minFrameDelta = FLT_MAX;
-	auto maxFrameDelta = 0.0f;
 
 	// run!
 	std::cout << "entering main loop" << std::endl;
-	std::cout << "active joystic is: " << activeJoystick << std::endl;
+	
 	bool running = true;
 	while (running)
 	{
@@ -143,10 +77,14 @@ int main(int argc, char** argv) {
 		}
 
 		SDL_JoystickUpdate();
+		if (sticks == nullptr || numJoysticks == 0 || SDL_JoystickGetAttached(sticks[activeJoystick]) == SDL_FALSE) {
+			rescan();
+		}
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
+
 			if (e.type == SDL_QUIT)
 			{
 				running = false;
@@ -259,4 +197,6 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
+
+v
 
