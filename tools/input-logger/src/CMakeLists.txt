@@ -8,7 +8,13 @@ if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	add_definitions(-Wextra -Werror -Winit-self)
 	add_definitions(-Wno-long-long)
 	add_definitions(-Wno-c++11-extensions)
+	add_definitions(-Wno-unused-variable)
 endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	add_definitions(-Wno-deprecated-declarations)
+endif()
+
 
 # -- find stuff --------------------------------------------------------------
 if (WIN32)

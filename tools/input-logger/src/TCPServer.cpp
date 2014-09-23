@@ -52,7 +52,7 @@ void TCPServer::data(std::string name, float value, float time)
 	broadcast(sstr.str());
 }
 
-void TCPServer::inputDigital(std::string name, float value, float time)
+void TCPServer::inputDigital(std::string name, unsigned int controllerNumber, unsigned int buttonNumber, float value, float time)
 {
 	std::stringstream sstr;
 	sstr << "{";
@@ -60,13 +60,15 @@ void TCPServer::inputDigital(std::string name, float value, float time)
 	sstr << "\"payload\": { ";
 	sstr << "\"type\": \"digital\", ";
 	sstr <<	"\"time\": " << time << ", ";
+	sstr <<	"\"controllerNumber\": \"" << controllerNumber << "\", ";
+	sstr <<	"\"number\": \"" << buttonNumber << "\", ";
 	sstr <<	"\"value\": " << value << ", ";
 	sstr <<	"\"name\": \"" << name << "\"";
 	sstr << "}}\n";
 
 	broadcast(sstr.str());
 }
-void TCPServer::inputAnalog(std::string name, float value, float time, float min, float max)
+void TCPServer::inputAnalog(std::string name, unsigned int controllerNumber, float value, float time, float min, float max)
 {
 	std::stringstream sstr;
 	sstr << "{";
@@ -76,6 +78,7 @@ void TCPServer::inputAnalog(std::string name, float value, float time, float min
 	sstr <<	"\"time\": " << time << ", ";
 	sstr <<	"\"value\": " << value << ", ";
 	sstr <<	"\"name\": \"" << name << "\", ";
+	sstr <<	"\"controllerNumber\": \"" << controllerNumber << "\", ";
 	sstr << "\"range\": { ";
 	sstr <<	"\"min\": " << min << ", ";
 	sstr <<	"\"max\": " << max;

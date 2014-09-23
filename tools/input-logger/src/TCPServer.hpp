@@ -12,8 +12,8 @@ public:
     void broadcast(std::string message);
     
     void data(std::string name, float value, float time);
-    void inputDigital(std::string name, float value, float time);
-    void inputAnalog(std::string name, float value, float time, float min, float max);
+	void inputDigital(std::string name, unsigned int controllerNumber, unsigned int buttonNumber, float value, float time);
+	void inputAnalog(std::string name, unsigned int controllerNumber, float value, float time, float min, float max);
     
 private:
     void startAccept();

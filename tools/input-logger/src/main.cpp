@@ -11,13 +11,12 @@
 
 #include "compiler.h"
 #include "TCPServer.hpp"
+#include "JoystickManager.hpp"
 
-struct Sample {
-	float value;
-	bool valueChanged;
-};
+#include "data.hpp"
 
-void rescan();
+float lastDeviceUpdateTime = 0;
+float UpdateIntervalSeconds = 1;
 
 
 #ifdef _WINDOWS
@@ -35,7 +34,7 @@ int main(int argc, char** argv) {
 		port = atoi(argv[1]);
 	} else {
 		std::cout << "Serving at default port: " << port << std::endl;
-		std::cout << "call 'input-logger xxxxxx' to specify the port manually." << std::enl;
+		std::cout << "call 'input-logger xxxxxx' to specify the port manually." << std::endl;
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_TIMER) != 0) {
@@ -50,9 +49,15 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	auto renderer = SDL_CreateRenderer(windowHandle, -1, 0);
+	SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255);
+	SDL_RenderClear(renderer);
+	SDL_RenderPresent(renderer);
+
+
+
 	// setup joysticks
 	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-
 
 	
 	
@@ -63,6 +68,8 @@ int main(int argc, char** argv) {
 
 	// run!
 	std::cout << "entering main loop" << std::endl;
+
+	auto joystickManager = new JoystickManager(renderer);
 	
 	bool running = true;
 	while (running)
@@ -76,10 +83,14 @@ int main(int argc, char** argv) {
 			std::cerr << e.what() << std::endl;
 		}
 
-		SDL_JoystickUpdate();
-		if (sticks == nullptr || numJoysticks == 0 || SDL_JoystickGetAttached(sticks[activeJoystick]) == SDL_FALSE) {
-			rescan();
+		auto time = (float)SDL_GetTicks() / 1000.0f;
+		if (lastDeviceUpdateTime + UpdateIntervalSeconds < time)
+		{
+			joystickManager->updateDeviceList();
+			lastDeviceUpdateTime = time;
 		}
+
+		SDL_JoystickUpdate();
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -89,104 +100,10 @@ int main(int argc, char** argv) {
 			{
 				running = false;
 			}
-			else if (e.type == SDL_KEYDOWN)
-			{
-			 if (e.key.state == SDL_PRESSED && e.key.keysym.scancode == SDL_SCANCODE_LEFT)
-				{
-					activeJoystick = (activeJoystick - 1) % numJoysticks;
-					std::cout << "active joystic is: " << activeJoystick << std::endl;
-				}
-				if (e.key.state == SDL_PRESSED && e.key.keysym.scancode == SDL_SCANCODE_RIGHT)
-				{
-					activeJoystick = (activeJoystick + 1) % numJoysticks;
-					std::cout << "active joystic is: " << activeJoystick << std::endl;
-				}
-			}
-			else if (e.type == SDL_JOYAXISMOTION)
-			{
-				if (e.jaxis.which == activeJoystick)
-				{
-					float oldValue = axesBuffer[activeJoystick][e.jaxis.axis].value;
-					float newValue = (float)e.jaxis.value / (float)(0xffff / 2);
 
-					auto dirty = (oldValue != newValue);
-					if (dirty)
-					{
-						Sample sample = {};
-						sample.valueChanged = true;
-						sample.value = newValue;
-
-						axesBuffer[activeJoystick][e.jaxis.axis] = sample;
-					}
-
-					globalDirtyFlag = globalDirtyFlag || dirty;
-				}
-			}
-			else if (e.type == SDL_JOYBUTTONDOWN)
-			{
-				if (e.jaxis.which == activeJoystick)
-				{
-					Sample sample = {};
-					sample.valueChanged = true;
-					sample.value = 1.0f;
-					buttonsBuffer[activeJoystick][e.jbutton.button] = sample;	
-
-					globalDirtyFlag = true;
-				}
-			}
-			else if (e.type == SDL_JOYBUTTONUP)
-			{
-				if (e.jaxis.which == activeJoystick)
-				{
-					Sample sample = {};
-					sample.valueChanged = true;
-					sample.value = 0.0f;
-					buttonsBuffer[activeJoystick][e.jbutton.button] = sample;	
-
-					globalDirtyFlag = true;
-				}
-			}
+			joystickManager->handleEvent(e, &server);
 		}
 		
-		// transfer frame
-		float time = (float)SDL_GetTicks() / 1000.0f;
-
-		for (unsigned int i = 0; i < numAxes[activeJoystick]; i++)
-		{
-			if (axesBuffer[activeJoystick][i].valueChanged)
-			{
-				std::stringstream sstr;
-				sstr << "axis-" << i;
-				
-				server.inputAnalog(sstr.str(), axesBuffer[activeJoystick][i].value, time, -1.0f, 1.0f);	
-
-				axesBuffer[activeJoystick][i].valueChanged = false;
-			}
-		}
-		
-		for (unsigned int i = 0; i < numButtons[activeJoystick]; i++)
-		{
-			if (buttonsBuffer[activeJoystick][i].valueChanged)
-			{
-				std::stringstream sstr;
-				sstr << "button-" << i;
-				
-				server.inputDigital(sstr.str(), buttonsBuffer[activeJoystick][i].value, time);	
-
-				buttonsBuffer[activeJoystick][i].valueChanged = false;	
-			}
-		}
-		
-		if (globalDirtyFlag)
-		{
-			auto dt = time - lastFrame;
-			minFrameDelta = std::min(minFrameDelta, dt);
-			maxFrameDelta = std::max(maxFrameDelta, dt);
-			std::cout << "dt: " << dt * 1000 << "ms, min dt: " << minFrameDelta * 1000 << "ms, max dt: " << maxFrameDelta << std::endl;
-			
-			lastFrame = time;
-			globalDirtyFlag = false;
-		}
 
 		// deschedule this thread to save some resources...
 		// time passed to the function is lower bound
@@ -196,7 +113,3 @@ int main(int argc, char** argv) {
 	SDL_Quit();
 	return 0;
 }
-
-
-v
-
