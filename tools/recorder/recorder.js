@@ -26,6 +26,8 @@ var strftime = require('strftime')
 var commander = require('commander')
 commander
 	.version('dev snapshot')
+	.option('-h, --host [ip]', 'host ip address')
+	.option('-p, --port [port]', 'host port number')
 	.option('-v, --verbose', 'verbose output')
 	.option('-d, --dry-run', 'dry run, i.e. don\'t write to disk')
 	.option('-o, --output-folder [folder]', 'output folder path')
@@ -36,6 +38,12 @@ var verbose = commander.verbose;
 if (verbose) {
 	console.log('verbose!');
 }
+
+host = commander.host || host;
+port = commander.port || port;
+
+console.log('host set to: ' + host);
+console.log('port set to: ' + port);
 
 var dryRun = commander.dryRun;
 if (dryRun) {
