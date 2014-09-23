@@ -171,4 +171,20 @@ setInterval(function() {
 		}
 	}
 
+	if (commander.generateUserInput) {
+		message = {
+			type: 'ext.input.gamePad.sample',
+			payload: {
+				type: 'digital',
+				name: 'button-0',
+				controllerNumber: 0,
+				buttonNumber: 0,
+				value: 1 * (Math.sin(getTime()) > 0),
+				time: getTime()
+			}
+        }
+
+		broadcast(message);
+	}
+
 }, interval);
