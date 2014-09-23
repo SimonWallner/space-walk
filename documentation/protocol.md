@@ -1,5 +1,5 @@
 # The Space Walk Protocol
-`Version 1.0.0 draft 1`
+`Version 1.0.0 draft 2`
 
 One of the three pillars of Space Walk is the common protocol. Having an (easy to use) common protocol, allows developers and researchers to share their tools and to make them interoperable with the tools of other devs. 
 
@@ -115,7 +115,9 @@ This feature uses an additional `type` parameter to discern between buttons and 
 		"payload": {
 			"type": "digital",
 			"name": "foo",
-			"value": 1 // {0, 1}
+			"controllerNumber": 2,
+			"buttonNumber": 13,
+			"value": 1, // {0, 1}
 			"time": 123.34,
 		}
 	}
@@ -127,6 +129,7 @@ Analog controls use the following message.
 		"payload": {
 			"type": "analog",
 			"name": "foo",
+			"controllerNumber": 2,
 			"value": 1,
 			"range": {
 				"min": -1,
