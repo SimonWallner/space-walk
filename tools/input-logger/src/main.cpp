@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	SDL_Window* windowHandle = SDL_CreateWindow("Space Walk input logger", 100, 100, 200, 200, SDL_WINDOW_SHOWN);
+	SDL_Window* windowHandle = SDL_CreateWindow("Space Walk input logger", 100, 100, 336, 374, SDL_WINDOW_SHOWN);
 	
 	if (windowHandle == nullptr) {
 		std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 	}
 
 	auto renderer = SDL_CreateRenderer(windowHandle, -1, 0);
-	SDL_SetRenderDrawColor(renderer, 128, 128, 128, 255);
+	SDL_SetRenderDrawColor(renderer, 243, 239, 236, 255);
 	SDL_RenderClear(renderer);
 	SDL_RenderPresent(renderer);
 

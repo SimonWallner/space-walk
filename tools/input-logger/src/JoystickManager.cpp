@@ -10,7 +10,7 @@
 JoystickManager::JoystickManager(SDL_Renderer* renderer)
 	: renderer(renderer)
 {
-	SDL_RWops* rw = SDL_RWFromConstMem(controllerImageData, controllerImageLength);
+	auto rw = SDL_RWFromConstMem(controllerImageData, controllerImageLength);
 	auto img = SDL_LoadBMP_RW(rw, 1);
 
 	if (img == nullptr)
@@ -18,7 +18,27 @@ JoystickManager::JoystickManager(SDL_Renderer* renderer)
 		 std::cout << "failed to load image from memory: " << SDL_GetError() << std::endl;
 		 exit(1);
 	}
-	texture = SDL_CreateTextureFromSurface(renderer, img);
+	controllerTexture = SDL_CreateTextureFromSurface(renderer, img);
+
+	rw = SDL_RWFromConstMem(controllerImageDataLight, controllerImageLightLength);
+	img = SDL_LoadBMP_RW(rw, 1);
+
+	if (img == nullptr)
+	{
+		 std::cout << "failed to load image from memory: " << SDL_GetError() << std::endl;
+		 exit(1);
+	}
+	controllerTextureLight = SDL_CreateTextureFromSurface(renderer, img);
+
+	rw = SDL_RWFromConstMem(bannerImageData, bannerImageLength);
+	img = SDL_LoadBMP_RW(rw, 1);
+
+	if (img == nullptr)
+	{
+		 std::cout << "failed to load image from memory: " << SDL_GetError() << std::endl;
+		 exit(1);
+	}
+	bannerTexture = SDL_CreateTextureFromSurface(renderer, img);
 }
 
 void JoystickManager::updateDeviceList()
@@ -54,14 +74,27 @@ void JoystickManager::updateDeviceList()
 
 	// draw icons on the screen
 	SDL_RenderClear(renderer);
-	for (unsigned int i = 0; i < numJoysticks; i++) {
-		SDL_Rect rect;
-		rect.w = 20;
-		rect.h = 15;
-		rect.x = 25 * 1 + 20;
-		rect.y = 20;
 
-		SDL_RenderCopy(renderer, texture, nullptr, &rect);
+	SDL_Rect rect;
+	rect.w = 304;
+	rect.h = 54;
+	rect.x = 15;
+	rect.y = 0;
+
+	SDL_RenderCopy(renderer, bannerTexture, nullptr, &rect);
+
+	for (unsigned int i = 0; i < MAX_DEVISES; i++) {
+		SDL_Rect rect;
+		rect.w = 72;
+		rect.h = 72;
+		rect.x = 78 * (i % 4) + 15;
+		rect.y = 78 * (i / 4) + 54;
+
+		if (i < numJoysticks) {
+			SDL_RenderCopy(renderer, controllerTexture, nullptr, &rect);
+		} else {
+			SDL_RenderCopy(renderer, controllerTextureLight, nullptr, &rect);
+		}
 	}
 	SDL_RenderPresent(renderer);
 }

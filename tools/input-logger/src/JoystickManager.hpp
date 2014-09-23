@@ -30,6 +30,8 @@ private:
 
 	Device devices[MAX_DEVISES];
 
-	SDL_Texture* texture;
+	SDL_Texture* controllerTexture;
+	SDL_Texture* controllerTextureLight;
+	SDL_Texture* bannerTexture;
 	SDL_Renderer* renderer;
 };
