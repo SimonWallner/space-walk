@@ -1,0 +1,23 @@
+<html>
+<head>
+	<link rel="stylesheet" href="style.css" type="text/css">
+	<script src="script.js"></script>
+</head>
+<body>
+	<div id="dropZone">Drop files here</div>
+	<output id="list"></output>
+	<output id="data"></output>
+
+	<div id="fileContents">
+		// data.hpp<br>
+		extern const unsigned char data[];<br>
+		extern const unsigned int length;<br>
+		<br>
+		<br>
+		// data.cpp<br>
+		#include "data.hpp"
+		const unsigned char data[] = <span id="dataSpan">...</span>;<br>
+		const unsigned int length = <span id="lengthSpan">...</span>;
+	</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+#dropZone {
+	padding: 5em;
+	border: 1px dashed gray;
+	text-align: center;
+	background-color: lightGray;
+}
+
+#fileContents {
+	height: 10em;
+	overflow: scroll;
+	background-color: #333;
+	padding: 0.5em;
+	color: #ddd
+}
