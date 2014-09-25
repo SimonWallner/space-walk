@@ -60,8 +60,8 @@ void TCPServer::inputDigital(std::string name, unsigned int controllerNumber, un
 	sstr << "\"payload\": { ";
 	sstr << "\"type\": \"digital\", ";
 	sstr <<	"\"time\": " << time << ", ";
-	sstr <<	"\"controllerNumber\": \"" << controllerNumber << "\", ";
-	sstr <<	"\"number\": \"" << buttonNumber << "\", ";
+	sstr <<	"\"controllerNumber\": " << controllerNumber << ", ";
+	sstr <<	"\"buttonNumber\": \"" << buttonNumber << "\", ";
 	sstr <<	"\"value\": " << value << ", ";
 	sstr <<	"\"name\": \"" << name << "\"";
 	sstr << "}}\n";
@@ -78,7 +78,7 @@ void TCPServer::inputAnalog(std::string name, unsigned int controllerNumber, flo
 	sstr <<	"\"time\": " << time << ", ";
 	sstr <<	"\"value\": " << value << ", ";
 	sstr <<	"\"name\": \"" << name << "\", ";
-	sstr <<	"\"controllerNumber\": \"" << controllerNumber << "\", ";
+	sstr <<	"\"controllerNumber\": " << controllerNumber << ", ";
 	sstr << "\"range\": { ";
 	sstr <<	"\"min\": " << min << ", ";
 	sstr <<	"\"max\": " << max;

@@ -67,8 +67,6 @@ int main(int argc, char** argv) {
 	
 
 	// run!
-	std::cout << "entering main loop" << std::endl;
-
 	auto joystickManager = new JoystickManager(renderer);
 	
 	bool running = true;

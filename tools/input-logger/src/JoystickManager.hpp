@@ -13,22 +13,22 @@ public:
 
 private:
 	struct Device {
-//		unsigned int numAxis;
-//		unsigned int numButtons;
 		float axisBuffer[MAX_AXIS_CNT];
 		int buttonBuffer[MAX_AXIS_CNT];
+		unsigned int index;
 
 		Device() {
-//			numAxis = 0;
-//			numButtons = 0;
 			for (auto i = 0; i < MAX_AXIS_CNT; i++) {
 				axisBuffer[i] = 0;
 				buttonBuffer[i] = 0;
 			}
+
+			index = 0;
 		}
 	};
 
 	Device devices[MAX_DEVISES];
+	unsigned int numJoysticks;
 
 	SDL_Texture* controllerTexture;
 	SDL_Texture* controllerTextureLight;
