@@ -52,6 +52,7 @@ void JoystickManager::updateDeviceList()
 		std::cout << "Joystick count is now at: " << newNumJoystics << std::endl;
 	}
 	numJoysticks = newNumJoystics;
+	deviceMap.clear();
 
 	for (unsigned int i = 0; i < numJoysticks && i < MAX_DEVISES; i++)
 	{
@@ -70,11 +71,17 @@ void JoystickManager::updateDeviceList()
 //			std::cout << "Number of Balls: " << SDL_JoystickNumBalls(stick) << std::endl;
 
 			devices[i].index = SDL_JoystickInstanceID(stick);
+			deviceMap.insert(std::pair<unsigned int, unsigned int>(devices[i].index, i));
 
 		} else {
 			std::cout << "failed to open joystick " << i << std::endl;
 		}
 	}
+
+//	for (auto entry : deviceMap)
+//	{
+//		std::cout << entry.first << " - " << entry.second << std::endl;
+//	}
 
 	// draw icons on the screen
 	SDL_RenderClear(renderer);
@@ -100,7 +107,8 @@ void JoystickManager::updateDeviceList()
 
 	for (unsigned int i = 0; i < numJoysticks; i++)
 	{
-		auto index = devices[i].index;
+//		auto index = devices[i].index;
+		auto index = i;
 
 		SDL_Rect rect;
 		rect.w = 72;
@@ -119,7 +127,7 @@ void JoystickManager::handleEvent(const SDL_Event &e, TCPServer* server) {
 	if (e.type == SDL_JOYAXISMOTION)
 	{
 		{
-			auto number = e.jdevice.which;
+			auto number = deviceMap[e.jdevice.which];
 			auto axis = (unsigned int)e.jaxis.axis;
 
 			std::stringstream sstr;
