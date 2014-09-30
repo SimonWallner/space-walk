@@ -105,7 +105,13 @@ int main(int argc, char** argv) {
 
 		// deschedule this thread to save some resources...
 		// time passed to the function is lower bound
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		if (joystickManager->getNumJoystics() == 0)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		} else
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
 	}
 
 	SDL_Quit();

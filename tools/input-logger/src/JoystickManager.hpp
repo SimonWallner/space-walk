@@ -12,6 +12,8 @@ public:
 	void pollDevices();
 	void handleEvent(const SDL_Event &, TCPServer*);
 
+	unsigned int getNumJoystics();
+
 private:
 	struct Device {
 		float axisBuffer[MAX_AXIS_CNT];

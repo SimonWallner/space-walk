@@ -145,7 +145,7 @@ void JoystickManager::handleEvent(const SDL_Event &e, TCPServer* server) {
 	}
 	else if (e.type == SDL_JOYBUTTONDOWN || e.type == SDL_JOYBUTTONUP)
 	{
-		auto number = e.jdevice.which;
+		auto number = deviceMap[e.jdevice.which];
 		auto button = (unsigned int)e.jbutton.button;
 
 		std::stringstream sstr;
@@ -160,4 +160,9 @@ void JoystickManager::handleEvent(const SDL_Event &e, TCPServer* server) {
 			devices[number].buttonBuffer[button] = value;
 		}
 	}
+}
+
+unsigned int JoystickManager::getNumJoystics()
+{
+	return numJoysticks;
 }
