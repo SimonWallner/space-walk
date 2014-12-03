@@ -30,8 +30,8 @@ The basic message structure is quite simple. It has a unique `type` id and a `pa
 
 The protocol should be self describing and easy to understand. The different message types form *protocol features*. Each feature can be implemented independently of others.
 
-### Name spaces
-The protocol supports name spaces for message types to avoid name collisions and to provide a mechanism for continually extending and improving the protocol, while allowing others to extend it for their purposes.
+### Name Spaces
+The protocol supports name spaces for message types to avoid name collisions and to provide a mechanism for continually extending and improving the protocol, while allowing others to extend it for their own purposes.
 
 #### Built in Name Spaces
 Space Walk comes with two reserved namespaces: `core` and `ext`. The `core` name space is meant to be stable throughout a major version of the protocol. New features are first introduced as an extension in the `ext` name space and then move into the `core` once they have stabilised enough and proven useful. 
@@ -47,7 +47,7 @@ The reverse domain name notation scheme is recommended for developers who are ex
 	}
 
 ## Naming Conventions
-Message must be valid JSON objects and all parameter names should be in camel case starting with a lower case letter. The reverse domain part of the name space  should be in lower case followed by further sub name spaces, feature names and message names in camel case. E.g.
+Messages must be valid JSON objects and all parameter names should be in camel case starting with a lower case letter. The reverse domain part of the name space  should be in lower case followed by further sub name spaces, feature names and message names in camel case. E.g.
 
 	at.simonwallner.spaceWalk.myFeature.messageName
 
