@@ -44,6 +44,7 @@ var connectionState = {
 };
 
 var state = connectionState.notConnected;
+var isPaused = false;
 
 var broadcast = function(data) {
 	iframes.forEach(function(iframe) {
@@ -55,7 +56,7 @@ var connect = function() {
 	state = connectionState.connecting;
 	$('#connection_status').attr('class', 'connecting padded');
 	$('#connection_status').text('connecting');
-	
+
 	if ("WebSocket" in window) {
 		ws = new WebSocket(userSettings.server);
 	} else if ("MozWebSocket" in window) {
@@ -125,7 +126,7 @@ var loadPlugin = function(plugin) {
 		.attr('id', id)[0];
 
 	$('#container').append(iframe);
-	
+
 	(function(id, plugin, pluginIndex) {
 		$('#' + id).load(function() {
 			var message = {
@@ -153,7 +154,7 @@ var loadPlugin = function(plugin) {
 					$(item).remove();
 					removeFromArray(userSettings.plugins, plugin);
 					window.localStorage['userSettings'] = JSON.stringify(userSettings)
-					
+
 				})
 			item.append(deleteLink);
 		});
@@ -169,9 +170,9 @@ window.onload = function() {
 		userSettings = JSON.parse(window.localStorage['userSettings']);
 	}
 	else {
-		userSettings =  {};	
+		userSettings =  {};
 	}
-	
+
 	userSettings.autoConnect = userSettings.autoConnect || true;
 	userSettings.plugins = userSettings.plugins || [];
 	userSettings.server = userSettings.server || 'ws://localhost:60600';
@@ -235,7 +236,7 @@ window.onload = function() {
 	window.addEventListener('message', function (e) {
 		// console.log('post message got: ' + e.data);
 	    var message = JSON.parse(e.data);
-	    
+
 		switch (message.type) {
 			case 'height':
 				$('#' + message.id).height(message.height);
@@ -254,7 +255,7 @@ window.onload = function() {
 	// recommended plugins
 	loadFile('recommended-plugins.json', function(data) {
 		var plugins = JSON.parse(data);
-		
+
 		plugins.forEach(function(element, index) {
 			var option = $(document.createElement('option'))
 				.attr('value', index)
@@ -271,7 +272,7 @@ window.onload = function() {
 				userSettings.plugins.push(plugins[index]);
 				window.localStorage['userSettings'] = JSON.stringify(userSettings);
 			}
-		});	
+		});
 	});
 
 	// settings
@@ -297,5 +298,15 @@ window.onload = function() {
 			window.localStorage['userSettings'] = '{}';
 			location.reload();
 		}
+	})
+
+	// pause
+	$('#pause').click(function() {
+		isPaused = !isPaused;
+		$('body').toggleClass('paused', isPaused)
+		broadcast(JSON.stringify({
+			type: 'pause',
+			value: isPaused
+		}))
 	})
 }

@@ -13,22 +13,27 @@ var LibSpaceWalk = function() {
 	this.onPluginLoaded = function() {};
 
 	/*
-	 * Called whenever a new session was started. 
+	 * Called whenever a new session was started.
 	 */
 	this.onSessionStarted = function() {};
 
 	this.postMessage = function(message) {
-		
+
 		if (typeof(message) === 'string') {
 			message = JSON.parse(message);
 		}
-		
+
 		msgObject = {
 			type: 'message',
 			payload: message
 		}
 
 		window.parent.postMessage(JSON.stringify(msgObject), '*');
+	}
+
+	var isPaused = false;
+	this.isPaused = function() {
+		return isPaused;
 	}
 
 	// this id is used for the resizing magic of the iframes
@@ -48,6 +53,9 @@ var LibSpaceWalk = function() {
 		else if (data.type === 'data') {
 			that.onMessage(data.data);
 		}
+		else if(data.type === 'pause') {
+			isPaused = data.value;
+		}
 	});
 
 	var resize =  function() {
@@ -59,5 +67,3 @@ var LibSpaceWalk = function() {
 
 	window.setInterval(resize, 500);
 }
-
-

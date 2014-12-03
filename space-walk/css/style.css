@@ -1,6 +1,7 @@
 /*
  * space walk main style sheet
  */
+@import url(http://fonts.googleapis.com/css?family=Dosis:200,300,400,600);
 /* some colors */
 body {
   font-size: 16px;
@@ -76,6 +77,20 @@ div {
       vertical-align: middle; }
     #menu_bar #rxtx .on {
       background-color: #b6ce4e; }
+
+#pause {
+  opacity: 0.2;
+  margin-left: -0.5em; }
+  #pause:hover {
+    opacity: 0.3; }
+  #pause img {
+    height: 2em;
+    cursor: pointer; }
+
+.paused #pause {
+  opacity: 1.0; }
+  .paused #pause:hover {
+    opacity: 0.8; }
 
 #settings {
   position: absolute;

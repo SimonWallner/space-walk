@@ -2,6 +2,8 @@
  * space walk main style sheet
  */
 
+@import url(http://fonts.googleapis.com/css?family=Dosis:200,300,400,600);
+
 /* some colors */
 $orange: #e89f49;
 $lime: #b6ce4e;
@@ -127,6 +129,29 @@ div {
 		.on {
 			background-color: $lime;
 		}
+	}
+}
+
+#pause {
+	opacity: 0.2;
+	margin-left: -0.5em;
+
+	&:hover {
+		opacity: 0.3;
+	}
+
+	img {
+		height: 2em;
+		cursor: pointer;
+
+	}
+}
+
+.paused #pause {
+	opacity: 1.0;
+
+	&:hover {
+		opacity: 0.8;
 	}
 }
 
