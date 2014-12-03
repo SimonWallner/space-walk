@@ -304,9 +304,9 @@ window.onload = function() {
 	$('#pause').click(function() {
 		isPaused = !isPaused;
 		$('body').toggleClass('paused', isPaused)
-		broadcast(JSON.stringify({
+		broadcast({
 			type: 'pause',
 			value: isPaused
-		}))
+		})
 	})
 }
