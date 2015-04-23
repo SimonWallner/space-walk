@@ -35,8 +35,9 @@ InputManager:
   serializedVersion: 2
   m_Axes:"""
 
+# buttons
 for i in range(1, 5):
-    for j in range(0, 32):
+    for j in range(0, 20):
         print """  - serializedVersion: 3""";
         print "    m_Name: joystick-" + `i` + "-button-" + `j`
         print "    descriptiveName: joystick-" + `i` + "-button-" + `j`
@@ -45,11 +46,49 @@ for i in range(1, 5):
         print "    positiveButton: " + "joystick " + `i` + " button " + `j`
         print """    altNegativeButton:
     altPositiveButton:
-    gravity: 0
+    gravity: 1000
     dead: 0
-    sensitivity: 0
+    sensitivity: 1000
     snap: 0
     invert: 0
     type: 0
     axis: 0
     joyNum: 0"""
+
+# axis
+for i in range(1, 5):
+    for j in range(0, 20):
+        print """  - serializedVersion: 3""";
+        print "    m_Name: joystick-" + `i` + "-axis-" + `j`
+        print "    descriptiveName: joystick-" + `i` + "-axis-" + `j`
+        print """    descriptiveNegativeName:
+    negativeButton:"""
+        print "    positiveButton: " + "joystick " + `i` + " button " + `j`
+        print """    altNegativeButton:
+    altPositiveButton:
+    gravity: 1000
+    dead: 0
+    sensitivity: 1000
+    snap: 0
+    invert: 0
+    type: 0
+    axis: 0
+    joyNum: 0"""
+
+    for j in range(0, 20):
+        print """  - serializedVersion: 3""";
+        print "    m_Name: joystick-" + `i` + "-axis-" + `j`
+        print "    descriptiveName: joystick-" + `i` + "-axis-" + `j`
+        print """    descriptiveNegativeName:
+    negativeButton:"""
+        print "    positiveButton: "
+        print """    altNegativeButton:
+    altPositiveButton:
+    gravity: 0
+    dead: .00100000005
+    sensitivity: 1
+    snap: 0
+    invert: 0
+    type: 2"""
+        print "    axis: " + `j`
+        print "    joyNum: " + `i`
