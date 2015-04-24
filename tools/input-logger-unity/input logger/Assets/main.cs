@@ -13,10 +13,16 @@ public class main : MonoBehaviour {
 
 	public GameObject[] tiles;
 	public GameObject[] greyTiles;
+	public GameObject controlFlash;
+	public GameObject networkFlash;
+
+	bool controlsActive = false;
+	bool networkAktive = false;
 
 	// Use this for initialization
 	void Start () {
 		Telemetry.info ("input logger starting up...");
+		print ("asdfasdfasdfasdfsadf");
 
 		Application.runInBackground = true;
 
@@ -43,6 +49,8 @@ public class main : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
+		var controlsFlipState = !controlsActive;
+
 		var names = Input.GetJoystickNames ();
 
 		for (var i = 0; i < joystickCount; i++) {
@@ -65,6 +73,7 @@ public class main : MonoBehaviour {
 
 				if (buttonBuffer[i, j] != value) {
 					buttonBuffer[i, j] = value;
+					controlsActive = controlsFlipState;
 					Telemetry.digital("button-" + j, j, i, value);
 				}
 			}
@@ -75,9 +84,12 @@ public class main : MonoBehaviour {
 
 				if (axisBuffer[i, j] != value) {
 					axisBuffer[i, j] = value;
+					controlsActive = controlsFlipState;
 					Telemetry.analog("axis-" + j, j, i, value);
 				}
 			}
 		}
+
+		controlFlash.SetActive (controlsActive);
 	}
 }

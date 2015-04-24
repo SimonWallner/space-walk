@@ -29,10 +29,20 @@ public class SocketServer {
 	// Use this for initialization
 	public void Start () {
 		Debug.Log("trying to start the server");
-		var ipAddress = Dns.GetHostEntry("localhost").AddressList[0];
+//		for some reason, when run in the standalone player 3 addresses are returned instead of just "127.0.0.1"
+//		the others are: 0.0.0.1 and somethings that looks like ipv6
+//		var ipAddress = Dns.GetHostEntry("localhost").AddressList[0];
+		var ipAddress = IPAddress.Parse ("127.0.0.1");
 		IPEndPoint localEndPoint = new IPEndPoint(ipAddress, this.port);
 
 		listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+		foreach (var host in Dns.GetHostEntry("localhost").AddressList) {
+			Debug.Log ("host entry: " + host);
+		}
+//
+//		Debug.Log("ipAddress is: " + ipAddress);
+//		Debug.Log("port is: " + this.port);
 
 		try
 		{
@@ -49,6 +59,8 @@ public class SocketServer {
 
 		} catch (System.Exception e) {
 			Debug.Log(e.ToString());
+			Debug.Log("ipAddress was: " + ipAddress);
+			Debug.Log("port was: " + this.port);
 		}
 	}
 	
