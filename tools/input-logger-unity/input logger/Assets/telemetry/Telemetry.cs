@@ -92,8 +92,8 @@ public static class Telemetry {
 		var json = "{\"type\": \"ext.input.gamePad.sample\", \"payload\": {" +
 			"\"type\": \"digital\", " + 
 			"\"name\": \"" + buttonName + "\", " + 
-			"\"controllerNumber\": \"" + controllerNumber + "\", " + 
-			"\"buttonNumber\": \"" + buttonNumber + "\", " + 
+			"\"controllerNumber\": " + controllerNumber + ", " + 
+			"\"buttonNumber\": " + buttonNumber + ", " + 
 			"\"time\": " + Time.time + ", " + 
 			"\"value\": " + System.Convert.ToInt16(value) + "}}";
 		
@@ -104,8 +104,8 @@ public static class Telemetry {
 		var json = "{\"type\": \"ext.input.gamePad.sample\", \"payload\": {" +
 			"\"type\": \"analog\", " + 
 			"\"name\": \"" + axisName + "\", " + 
-			"\"controllerNumber\": \"" + controllerNumber + "\", " + 
-			"\"axisNumber\": \"" + axisNumber + "\", " + 
+			"\"controllerNumber\": " + controllerNumber + ", " + 
+			"\"axisNumber\": " + axisNumber + ", " + 
 			"\"time\": " + Time.time + ", " + 
 			"\"range\": {\"min\": -1, \"max\": 1}, " + 
 			"\"value\": " + value + "}}";
