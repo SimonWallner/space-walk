@@ -1,3 +1,4 @@
 server/data
 recorder/sessions
 CMakeLists.txt.user
+tools/input-logger-unity/build

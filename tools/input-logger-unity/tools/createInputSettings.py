@@ -63,24 +63,6 @@ for i in range(1, 5):
         print "    descriptiveName: joystick-" + `i` + "-axis-" + `j`
         print """    descriptiveNegativeName:
     negativeButton:"""
-        print "    positiveButton: " + "joystick " + `i` + " button " + `j`
-        print """    altNegativeButton:
-    altPositiveButton:
-    gravity: 1000
-    dead: 0
-    sensitivity: 1000
-    snap: 0
-    invert: 0
-    type: 0
-    axis: 0
-    joyNum: 0"""
-
-    for j in range(0, 20):
-        print """  - serializedVersion: 3""";
-        print "    m_Name: joystick-" + `i` + "-axis-" + `j`
-        print "    descriptiveName: joystick-" + `i` + "-axis-" + `j`
-        print """    descriptiveNegativeName:
-    negativeButton:"""
         print "    positiveButton: "
         print """    altNegativeButton:
     altPositiveButton:
