@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include <GLFW/glfw3.h>
 #include <map>
 #include "TCPServer.hpp"
 
@@ -7,10 +7,9 @@
 
 class JoystickManager {
 public:
-	JoystickManager(SDL_Renderer *renderer);
+	JoystickManager(GLFWwindow* window);
 	void updateDeviceList();
 	void pollDevices();
-	void handleEvent(const SDL_Event &, TCPServer*);
 
 	unsigned int getNumJoystics();
 
@@ -31,15 +30,13 @@ private:
 			number = 0;
 		}
 	};
+    
+    GLFWwindow* window;
+    unsigned int joystickMaxCount;
 
 	Device devices[MAX_DEVISES];
 	unsigned int numJoysticks;
 
 	// maps the device index to indices in the devices array;
 	std::map<unsigned int, unsigned int> deviceMap;
-
-	SDL_Texture* controllerTexture;
-	SDL_Texture* controllerTextureLight;
-	SDL_Texture* bannerTexture;
-	SDL_Renderer* renderer;
 };

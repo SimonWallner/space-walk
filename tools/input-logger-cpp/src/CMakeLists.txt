@@ -27,10 +27,13 @@ if(NOT Boost_FOUND)
 	message(WARNING "Boost not found")
 endif()
 
+find_library(COCOA_FRAMEWORK Cocoa)
+find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+find_library(IOKIT_FRAMEWORK IOKit)
 
 
 include_directories(
-	${PROJECT_SOURCE_DIR}/external/sdl/include
+	${PROJECT_SOURCE_DIR}/external/glfw/include
 	${Boost_INCLUDE_DIR}
 )
 
@@ -38,21 +41,19 @@ link_directories(
 	${Boost_LIBRARY_DIRS}
 )
 
-# collect the files
-file(GLOB_RECURSE HEADER_FILES *.hpp)
-file(GLOB_RECURSE SOURCE_FILES *.cpp)
-
-
-
-add_executable(input-logger ${SOURCE_FILES} ${HEADER_FILES})
-
-set (TARGET_LINK_LIBRARIES input-logger
-   SDL2-static
-   ${Boost_SYSTEM_LIBRARY}
+add_executable(input-logger
+	main.cpp
+	TCPServer.hpp
+	TCPServer.cpp
+	TCPConnection.hpp
+	TCPConnection.cpp
 )
 
-target_link_libraries(${TARGET_LINK_LIBRARIES})
-
-
-
-
+target_link_libraries(input-logger
+	glfw
+	${Boost_SYSTEM_LIBRARY}
+	${COCOA_FRAMEWORK}
+	${CORE_VIDEO_FRAMEWORK}
+	${IOKIT_FRAMEWORK}
+	${OPENGL_gl_LIBRARY}
+)

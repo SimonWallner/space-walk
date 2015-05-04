@@ -3,85 +3,22 @@
 #include <iostream>
 #include <sstream>
 
-#include <SDL.h>
-
 #include "data.hpp"
 
-JoystickManager::JoystickManager(SDL_Renderer* renderer)
+JoystickManager::JoystickManager(GLFWwindow* window)
 	: numJoysticks(0)
-	, renderer(renderer)
+	, window(window)
 {
-	auto rw = SDL_RWFromConstMem(controllerImageData, controllerImageLength);
-	auto img = SDL_LoadBMP_RW(rw, 1);
-
-	if (img == nullptr)
-	{
-		 std::cout << "failed to load image from memory: " << SDL_GetError() << std::endl;
-		 exit(1);
-	}
-	controllerTexture = SDL_CreateTextureFromSurface(renderer, img);
-
-	rw = SDL_RWFromConstMem(controllerImageLightData, controllerImageLightLength);
-	img = SDL_LoadBMP_RW(rw, 1);
-
-	if (img == nullptr)
-	{
-		 std::cout << "failed to load image from memory: " << SDL_GetError() << std::endl;
-		 exit(1);
-	}
-	controllerTextureLight = SDL_CreateTextureFromSurface(renderer, img);
-
-	rw = SDL_RWFromConstMem(bannerImageData, bannerImageLength);
-	img = SDL_LoadBMP_RW(rw, 1);
-
-	if (img == nullptr)
-	{
-		 std::cout << "failed to load image from memory: " << SDL_GetError() << std::endl;
-		 exit(1);
-	}
-	bannerTexture = SDL_CreateTextureFromSurface(renderer, img);
+    joystickMaxCount = GLFW_JOYSTICK_LAST - GLFW_JOYSTICK_1 + 1;
 }
 
 void JoystickManager::updateDeviceList()
 {
-//	std::cout << "updating device list" << std::endl;
-	
-	unsigned int newNumJoystics = SDL_NumJoysticks();
-	if (newNumJoystics != numJoysticks)
-	{
-		std::cout << "Joystick count is now at: " << newNumJoystics << std::endl;
-	}
-	numJoysticks = newNumJoystics;
-	deviceMap.clear();
-
-	for (unsigned int i = 0; i < numJoysticks && i < MAX_DEVISES; i++)
-	{
-		auto stick = SDL_JoystickOpen(i);
-
-		if (stick) {
-//			SDL_JoystickGUID guid = SDL_JoystickGetDeviceGUID(i);
-//			auto pszGUID = new char[128];
-//			SDL_JoystickGetGUIDString(guid, pszGUID, 128);
-
-//			std::cout << "Opened Joystick " << i << std::endl;
-//			std::cout << "Name: " << SDL_JoystickNameForIndex(i) << std::endl;
-//			std::cout << "Devise GUID string: " << pszGUID << std::endl;
-//			std::cout << "Number of Axes: " << SDL_JoystickNumAxes(stick) << std::endl;
-//			std::cout << "Number of Buttons: " << SDL_JoystickNumButtons(stick) << std::endl;
-//			std::cout << "Number of Balls: " << SDL_JoystickNumBalls(stick) << std::endl;
-
-			devices[i].index = SDL_JoystickInstanceID(stick);
-			deviceMap.insert(std::pair<unsigned int, unsigned int>(devices[i].index, i));
-
-		} else {
-			std::cout << "failed to open joystick " << i << std::endl;
-		}
+    for (var i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++)
+    {
+		
 	}
 
-//	for (auto entry : deviceMap)
-//	{
-//		std::cout << entry.first << " - " << entry.second << std::endl;
-//	}
 
 	// draw icons on the screen
 	SDL_RenderClear(renderer);

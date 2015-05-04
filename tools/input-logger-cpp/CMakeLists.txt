@@ -15,4 +15,5 @@ set(APP_NAME space-walk-input-logger)
 
 # -- add subdirs -------------------------------------------------------------
 add_subdirectory(external/sdl)
+add_subdirectory(external/glfw)
 add_subdirectory(src)

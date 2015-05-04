@@ -1,0 +1,3 @@
+[submodule "tools/input-logger-cpp/external/glfw"]
+	path = tools/input-logger-cpp/external/glfw
+	url = https://github.com/glfw/glfw.git
