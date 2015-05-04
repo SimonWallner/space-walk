@@ -71,15 +71,9 @@ int main(int argc, char** argv) {
     
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-    
-    while (!glfwWindowShouldClose(window))
-    {
+  
 
-    }
-    
-
-
-
+    std::cout << "setting up server..." << std::endl;
 	// setup networking
 	boost::asio::io_service io_service;
 	TCPServer server(io_service, port);
@@ -90,14 +84,13 @@ int main(int argc, char** argv) {
 	bool running = true;
 	while (running)
 	{
-
         for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++)
         {
             if (glfwJoystickPresent(i)) {
                 int count;
                 const float* axis = glfwGetJoystickAxes(i, &count);
                 for (int j = 0; j < count; j++) {
-                    std::cout << "stick: " << i << ", axis: " << j << ": " << axis[j];
+                    std::cout << "stick: " << i << ", axis: " << j << ": " << axis[j] << std:: endl;
                 }
             }
         }
