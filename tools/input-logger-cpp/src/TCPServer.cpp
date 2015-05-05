@@ -11,6 +11,7 @@ TCPServer::TCPServer(boost::asio::io_service& io_service, unsigned int port)
 
 void TCPServer::startAccept()
 {
+    std::cout << "start accept" << std::endl;
 	TCPConnection::pointer new_connection = TCPConnection::create(acceptor.get_io_service());
     connections.push_back(new_connection);
 
@@ -25,6 +26,7 @@ void TCPServer::handleAccept(TCPConnection::pointer new_connection,
     if (!error)
     {
     	new_connection->start();
+        std::cout << "connection accepted" << std::endl;
     }
 
 	startAccept();

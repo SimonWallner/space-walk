@@ -49,6 +49,7 @@ add_executable(input-logger
 	TCPConnection.cpp
 )
 
+
 target_link_libraries(input-logger
 	glfw
 	${Boost_SYSTEM_LIBRARY}

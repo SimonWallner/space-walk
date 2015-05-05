@@ -4,8 +4,10 @@
 #include <algorithm>
 #include <chrono>
 #include <thread>
+#include <sstream>
 
 #include <cfloat>
+#include <cmath>
 
 #include <GLFW/glfw3.h>
 
@@ -31,6 +33,11 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 #pragma GCC diagnostic pop
+
+void drawBox(int top, int left, int width, int height) {
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glRecti(left, top, left + width, top + height);
+}
 
 
 #ifdef _WINDOWS
@@ -60,7 +67,7 @@ int main(int argc, char** argv) {
     if (!glfwInit())
         exit(EXIT_FAILURE);
     
-    window = glfwCreateWindow(640, 480, "Joystick Test", NULL, NULL);
+    window = glfwCreateWindow(300, 100, "Input Logger", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -71,6 +78,7 @@ int main(int argc, char** argv) {
     
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
   
 
     std::cout << "setting up server..." << std::endl;
@@ -79,21 +87,78 @@ int main(int argc, char** argv) {
 	TCPServer server(io_service, port);
 
 
+    int maxJoysticCount = GLFW_JOYSTICK_LAST - GLFW_JOYSTICK_1 + 1;
+    int maxAxisCount = 32;
+    int maxButtonCount = 32;
+    
+    auto axisBuffer = new float*[maxJoysticCount];
+    for (auto i = 0; i < maxJoysticCount; i++)
+    {
+        axisBuffer[i] = new float[maxAxisCount];
+        for (auto j = 0; j < maxAxisCount; j++)
+        {
+            axisBuffer[i][j] = 0.0f;
+        }
+    }
+    
+    auto buttonBuffer = new bool*[maxJoysticCount];
+    for (auto i = 0; i < maxJoysticCount; i++)
+    {
+        buttonBuffer[i] = new bool[maxButtonCount];
+        for (auto j = 0; j < maxButtonCount; j++)
+        {
+            buttonBuffer[i][j] = false;
+        }
+    }
+    
+    
 	// run!
 
 	bool running = true;
 	while (running)
 	{
+        auto joysticCount = 0;
+        auto eps = 0.01f;
+        
         for (int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++)
         {
             if (glfwJoystickPresent(i)) {
-                int count;
-                const float* axis = glfwGetJoystickAxes(i, &count);
-                for (int j = 0; j < count; j++) {
-                    std::cout << "stick: " << i << ", axis: " << j << ": " << axis[j] << std:: endl;
+                joysticCount++;
+                auto name = glfwGetJoystickName(i);
+                
+                int axisCount;
+                auto axis = glfwGetJoystickAxes(i, &axisCount);
+                for (auto j = 0; j < axisCount; j++) {
+                    auto newValue = axis[j];
+                    auto bufferedValue = axisBuffer[i][j];
+                    
+                    if (fabs(newValue - bufferedValue) > eps)
+                    {
+//                        std::cout << "joy: " << i << ", axis: " << j << ", value: " << newValue << std::endl;
+                        server.inputAnalog(name, i, newValue, glfwGetTime(), -1.0f, 1.0f);
+                        axisBuffer[i][j] = newValue;
+                    }
+                }
+                
+                int buttonCount;
+                auto buttons = glfwGetJoystickButtons(i, &buttonCount);
+                for (auto j = 0; j < buttonCount; j++) {
+                    auto newValue = buttons[j];
+                    auto bufferedValue = buttonBuffer[i][j];
+                    
+                    if (newValue != bufferedValue)
+                    {
+//                        std::cout << "joy: " << i << ", button: " << j << ", value: " << (int)newValue << std::endl;
+                        server.inputDigital(name,  i, j, (float)newValue, glfwGetTime());
+                        buttonBuffer[i][j] = newValue;
+                    }
                 }
             }
         }
+        
+        std::stringstream sstr;
+        sstr << "joystics connected: " << joysticCount;
+        glfwSetWindowTitle(window, sstr.str().c_str());
         
 
 		// deschedule this thread to save some resources...
