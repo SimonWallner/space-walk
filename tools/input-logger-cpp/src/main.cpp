@@ -58,6 +58,10 @@ int main(int argc, char** argv) {
 		std::cout << "call 'input-logger xxxxxx' to specify the port manually." << std::endl;
 	}
 
+    std::cout << "setting up server..." << std::endl;
+    // setup networking
+    boost::asio::io_service io_service;
+    TCPServer server(io_service, port);
     
     
     // glfw window setup
@@ -80,13 +84,7 @@ int main(int argc, char** argv) {
     glfwSwapInterval(1);
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
   
-
-    std::cout << "setting up server..." << std::endl;
-	// setup networking
-	boost::asio::io_service io_service;
-	TCPServer server(io_service, port);
-
-
+    
     int maxJoysticCount = GLFW_JOYSTICK_LAST - GLFW_JOYSTICK_1 + 1;
     int maxAxisCount = 32;
     int maxButtonCount = 32;

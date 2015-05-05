@@ -21,12 +21,16 @@ void TCPConnection::start()
 void TCPConnection::send(std::string message)
 {
     if (socket.is_open()) {
-//        std::cout << "sending data..." << std::endl;
+        std::cout << "sending data..." << std::endl;
         
         boost::asio::async_write(socket, boost::asio::buffer(message),
              boost::bind(&TCPConnection::handleWrite, shared_from_this(),
              boost::asio::placeholders::error,
              boost::asio::placeholders::bytes_transferred));
+    }
+    else
+    {
+        std::cout << "socket not open!" << std::endl;
     }
 }
 
