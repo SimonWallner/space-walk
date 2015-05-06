@@ -27,10 +27,13 @@ if(NOT Boost_FOUND)
 	message(WARNING "Boost not found")
 endif()
 
-find_library(COCOA_FRAMEWORK Cocoa)
-find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
-find_library(IOKIT_FRAMEWORK IOKit)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	find_library(COCOA_FRAMEWORK Cocoa)
+	find_library(CORE_VIDEO_FRAMEWORK CoreVideo)
+	find_library(IOKIT_FRAMEWORK IOKit)
+endif()
 
+find_package(OpenGL REQUIRED)
 
 include_directories(
 	${PROJECT_SOURCE_DIR}/external/glfw/include
@@ -49,12 +52,27 @@ add_executable(input-logger
 	TCPConnection.cpp
 )
 
-
-target_link_libraries(input-logger
+set(TARGET_LINK_LIBRARIES
 	glfw
 	${Boost_SYSTEM_LIBRARY}
-	${COCOA_FRAMEWORK}
-	${CORE_VIDEO_FRAMEWORK}
-	${IOKIT_FRAMEWORK}
-	${OPENGL_gl_LIBRARY}
+)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	set(TARGET_LINK_LIBRARIES
+		${TARGET_LINK_LIBRARIES}
+		${COCOA_FRAMEWORK}
+		${CORE_VIDEO_FRAMEWORK}
+		${IOKIT_FRAMEWORK}
+		${OPENGL_gl_LIBRARY}
+	)
+endif()
+
+if(WIN32)
+	set(TARGET_LINK_LIBRARIES
+		${TARGET_LINK_LIBRARIES}
+		${OPENGL_gl_LIBRARY}
+	)
+endif()
+
+target_link_libraries(input-logger
+	${TARGET_LINK_LIBRARIES}
 )

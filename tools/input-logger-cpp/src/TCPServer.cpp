@@ -1,4 +1,7 @@
 #include "TCPServer.hpp"
+
+#include <iostream>
+
 #include "TCPConnection.hpp"
 
 using boost::asio::ip::tcp;
