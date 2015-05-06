@@ -19,7 +19,7 @@ public:
 private:
 	TCPConnection(boost::asio::io_service& io_service);
     
-	void handleWrite(const boost::system::error_code& error, size_t bitesTransferred);
+	void handleWrite(const boost::system::error_code& error, size_t bitesTransferred, std::shared_ptr<std::string> message);
     
     boost::asio::ip::tcp::socket socket;
 //    bool connected;
