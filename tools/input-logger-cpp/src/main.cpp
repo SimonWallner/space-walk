@@ -114,6 +114,9 @@ int main(int argc, char** argv) {
 	bool running = true;
 	while (running)
 	{
+        // poll networking
+        io_service.poll();
+        
         auto joysticCount = 0;
         auto eps = 0.01f;
         
