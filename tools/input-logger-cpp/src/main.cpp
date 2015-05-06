@@ -124,7 +124,6 @@ int main(int argc, char** argv) {
         {
             if (glfwJoystickPresent(i)) {
                 joysticCount++;
-                auto name = glfwGetJoystickName(i);
                 
                 int axisCount;
                 auto axis = glfwGetJoystickAxes(i, &axisCount);
@@ -135,7 +134,10 @@ int main(int argc, char** argv) {
                     if (fabs(newValue - bufferedValue) > eps)
                     {
 //                        std::cout << "joy: " << i << ", axis: " << j << ", value: " << newValue << std::endl;
-                        server.inputAnalog(name, i, newValue, glfwGetTime(), -1.0f, 1.0f);
+                        std::stringstream sstr;
+                        sstr << "axis-" << j;
+                        
+                        server.inputAnalog(sstr.str(), i, newValue, glfwGetTime(), -1.0f, 1.0f);
                         axisBuffer[i][j] = newValue;
                     }
                 }
@@ -149,7 +151,10 @@ int main(int argc, char** argv) {
                     if (newValue != bufferedValue)
                     {
 //                        std::cout << "joy: " << i << ", button: " << j << ", value: " << (int)newValue << std::endl;
-                        server.inputDigital(name,  i, j, (float)newValue, glfwGetTime());
+                        std::stringstream sstr;
+                        sstr << "button-" << j;
+                        
+                        server.inputDigital(sstr.str(),  i, j, (float)newValue, glfwGetTime());
                         buttonBuffer[i][j] = newValue;
                     }
                 }
