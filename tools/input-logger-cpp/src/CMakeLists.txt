@@ -76,3 +76,16 @@ endif()
 target_link_libraries(input-logger
 	${TARGET_LINK_LIBRARIES}
 )
+
+
+# test thingy
+add_executable(test
+	test.cpp
+	TCPServer.hpp
+	TCPServer.cpp
+	TCPConnection.hpp
+	TCPConnection.cpp
+)
+target_link_libraries(test
+	${Boost_SYSTEM_LIBRARY}
+)

@@ -34,11 +34,6 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 #pragma GCC diagnostic pop
 
-void drawBox(int top, int left, int width, int height) {
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glRecti(left, top, left + width, top + height);
-}
-
 
 #ifdef _WINDOWS
 #include <tchar.h>
@@ -62,6 +57,10 @@ int main(int argc, char** argv) {
     // setup networking
     boost::asio::io_service io_service;
     TCPServer server(io_service, port);
+    
+//    while(true) {
+//        server.data("adf", 42, 42);
+//    }
     
     
     // glfw window setup
