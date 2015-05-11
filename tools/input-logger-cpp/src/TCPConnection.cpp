@@ -48,6 +48,7 @@ TCPConnection::TCPConnection(boost::asio::io_service& io_service)
 void TCPConnection::handleWrite(const boost::system::error_code& error, size_t bitesTransferred, std::shared_ptr<std::string> message)
 {
     UNUSED bitesTransferred;
+    UNUSED message;
 
     if (error.value() != boost::system::errc::success)
     {
