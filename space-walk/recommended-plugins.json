@@ -1,13 +1,18 @@
 [
 	{
-		"name": "Controller Visualisation",
+		"name": "Direct Controller Visualisation",
 		"url": "http://simonwallner.github.io/space-walk-input/controller-vis.htm",
 		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
-		"name": "Input Complexity Vis",
+		"name": "Input Complexity Visusalisation",
 		"url": "http://simonwallner.github.io/space-walk-input/input-complexity.htm",
 		"info": "http://simonwallner.github.io/space-walk-input/"
+	},
+	{
+		"name": "Information Content Analysis",
+		"url": "http://simonwallner.github.io/space-walk-entropy/markov.html",
+		"info": "http://simonwallner.github.io/space-walk-entropy/"
 	},
 	{
 		"name": "Simple Telemetry: Sampled Data",
@@ -15,12 +20,12 @@
 		"info": "http://simonwallner.github.io/space-walk-telemetry/"
 	},
 	{
-		"name": "Input Debugger",
+		"name": "Raw Input Debugger",
 		"url": "http://simonwallner.github.io/space-walk-input/input-debugger.htm",
 		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
-		"name": "Simple Debugger",
+		"name": "Space Walk Protocol Debugger",
 		"url": "http://simonwallner.github.io/space-walk-debugger/debug.html",
 		"info": "http://simonwallner.github.io/space-walk-debugger/"
 	}
