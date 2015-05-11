@@ -58,10 +58,6 @@ int main(int argc, char** argv) {
     boost::asio::io_service io_service;
     TCPServer server(io_service, port);
     
-//    while(true) {
-//        server.data("adf", 42, 42);
-//    }
-    
     
     // glfw window setup
     GLFWwindow* window;

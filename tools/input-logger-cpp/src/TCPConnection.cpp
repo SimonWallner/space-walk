@@ -26,10 +26,13 @@ void TCPConnection::send(std::string message)
     if (socket.is_open()) {
         // std::cout << "sending data..." << std::endl;
 
-        boost::asio::async_write(socket, boost::asio::buffer(message),
+		auto heapString = new std::string(message);
+		auto sharedMessage = std::shared_ptr<std::string>(heapString);
+
+        boost::asio::async_write(socket, boost::asio::buffer(*sharedMessage),
              boost::bind(&TCPConnection::handleWrite, shared_from_this(),
-             boost::asio::placeholders::error,
-             boost::asio::placeholders::bytes_transferred));
+				boost::asio::placeholders::error,
+				boost::asio::placeholders::bytes_transferred, sharedMessage));
     }
     else
     {
@@ -42,7 +45,7 @@ TCPConnection::TCPConnection(boost::asio::io_service& io_service)
 //	, connected(false)
 {}
 
-void TCPConnection::handleWrite(const boost::system::error_code& error, size_t bitesTransferred)
+void TCPConnection::handleWrite(const boost::system::error_code& error, size_t bitesTransferred, std::shared_ptr<std::string> message)
 {
     UNUSED bitesTransferred;
 
