@@ -5,14 +5,14 @@
 		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
+		"name": "Information Flow Analysis",
+		"url": "http://simonwallner.github.io/space-walk-entropy/markov.html",
+		"info": "http://simonwallner.github.io/space-walk-entropy/"
+	},
+	{
 		"name": "Input Complexity Visusalisation",
 		"url": "http://simonwallner.github.io/space-walk-input/input-complexity.htm",
 		"info": "http://simonwallner.github.io/space-walk-input/"
-	},
-	{
-		"name": "Information Content Analysis",
-		"url": "http://simonwallner.github.io/space-walk-entropy/markov.html",
-		"info": "http://simonwallner.github.io/space-walk-entropy/"
 	},
 	{
 		"name": "Simple Telemetry: Sampled Data",
