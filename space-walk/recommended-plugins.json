@@ -5,6 +5,11 @@
 		"info": "http://simonwallner.github.io/space-walk-input/"
 	},
 	{
+		"name": "MIDI remote tweaking",
+		"url": "http://simonwallner.github.io/space-walk-midi/midi.html",
+		"info": "http://simonwallner.github.io/space-walk-midi/"
+	},
+	{
 		"name": "Information Flow Analysis",
 		"url": "http://simonwallner.github.io/space-walk-entropy/markov.html",
 		"info": "http://simonwallner.github.io/space-walk-entropy/"
