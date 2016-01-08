@@ -199,6 +199,14 @@ window.onload = function() {
 		disconnect();
 	})
 
+	$('#auto_connect').click(function() {
+		userSettings.autoConnect = true;
+	})
+
+	$('#connect-once').click(function() {
+		connect();
+	})
+
 
 	$('#load_external_plugin').click(function() {
 		var url = $('#external_plugin').val();
