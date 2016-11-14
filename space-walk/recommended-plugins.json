@@ -25,6 +25,11 @@
 		"info": "http://simonwallner.github.io/space-walk-telemetry/"
 	},
 	{
+		"name": "b35 Highscore Histogram",
+		"url": "http://simonwallner.github.io/space-walk-highscore/highscore.html",
+		"info": "http://simonwallner.github.io/space-walk-highscore/"
+	},
+	{
 		"name": "Raw Input Debugger",
 		"url": "http://simonwallner.github.io/space-walk-input/input-debugger.htm",
 		"info": "http://simonwallner.github.io/space-walk-input/"
@@ -33,5 +38,10 @@
 		"name": "Space Walk Protocol Debugger",
 		"url": "http://simonwallner.github.io/space-walk-debugger/debug.html",
 		"info": "http://simonwallner.github.io/space-walk-debugger/"
+	},
+	{
+		"name": "b35k Player Timing",
+		"url": "https://simonwallner.github.io/space-walk-player-timing/timing.html",
+		"info": "https://simonwallner.github.io/space-walk-player-timing/"
 	}
 ]
